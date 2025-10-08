@@ -18,4 +18,8 @@ public class calculator {
 	public float divisione(float a, float b) {
 		return a/b;
 	}
+	
+	public float sommaProdotto(float a, float b) {
+		return a+b*a+b;
+	}
 }
