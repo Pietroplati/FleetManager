@@ -10,4 +10,12 @@ public class calculator {
 	public float sottrazione(float a, float b) {
 		return a-b;
 	}
+	
+	public float prodotto(float a, float b) {
+		return a*b;
+	}
+
+	public float divisione(float a, float b) {
+		return a/b;
+	}
 }
