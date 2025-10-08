@@ -19,6 +19,40 @@
 *.tar.gz
 *.rar
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+# Virtual machine crash logs
 hs_err_pid*
 replay_pid*
+
+
+# File di runtime temporanei
+*.lock
+*.cache
+*.tmp
+
+# Dipendenze
+/vendor/
+/node_modules/
+
+# Directory di compilazione / distribuzione
+/public/
+/out/
+/dist/
+/build/
+/target/
+
+# File di sistema
+.DS_Store
+Thumbs.db
+
+# Configurazioni IDE / editor
+*.swp
+*.swo
+*.iml
+.idea/
+.vscode/
+.metadata/
+
+# File sensibili (API key, config privati)
+*.env
+*.secret
+*.key
