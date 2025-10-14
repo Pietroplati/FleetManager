@@ -1,5 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <notation:Diagram xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.3/notation" xmlns:style="http://www.eclipse.org/papyrus/infra/gmfdiag/style" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML" xmi:id="_RvcA0Kk8EfCy7Z6zNtdvTA" type="UseCase" name="UC_FleetManager" measurementUnit="Pixel">
+  <children xmi:type="notation:Shape" xmi:id="_klCN0Kk8EfCHnsyOEWYR-Q" type="Actor_Shape">
+    <children xmi:type="notation:DecorationNode" xmi:id="_klIUcKk8EfCHnsyOEWYR-Q" type="Actor_NameLabel">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_klI7gKk8EfCHnsyOEWYR-Q" y="15"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_klI7gak8EfCHnsyOEWYR-Q" type="Actor_StereotypeLabel">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_klI7gqk8EfCHnsyOEWYR-Q" x="20" y="100"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_klI7g6k8EfCHnsyOEWYR-Q" type="Actor_QualifiedNameLabel">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_klI7hKk8EfCHnsyOEWYR-Q" x="20" y="80"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_klI7hak8EfCHnsyOEWYR-Q" type="Actor_FloatingNameLabel">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_klI7hqk8EfCHnsyOEWYR-Q" y="15"/>
+    </children>
+    <element xmi:type="uml:Actor" href="FleetManager.uml#_kk2AkKk8EfCHnsyOEWYR-Q"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_klCN0ak8EfCHnsyOEWYR-Q" x="340" y="180"/>
+  </children>
+  <children xmi:type="notation:Shape" xmi:id="_lwxBIKk8EfCHnsyOEWYR-Q" type="Actor_Shape">
+    <children xmi:type="notation:DecorationNode" xmi:id="_lwxBIqk8EfCHnsyOEWYR-Q" type="Actor_NameLabel">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_lwxBI6k8EfCHnsyOEWYR-Q" y="15"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_lwxoMKk8EfCHnsyOEWYR-Q" type="Actor_StereotypeLabel">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_lwxoMak8EfCHnsyOEWYR-Q" x="20" y="100"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_lwxoMqk8EfCHnsyOEWYR-Q" type="Actor_QualifiedNameLabel">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_lwxoM6k8EfCHnsyOEWYR-Q" x="20" y="80"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_lwxoNKk8EfCHnsyOEWYR-Q" type="Actor_FloatingNameLabel">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_lwxoNak8EfCHnsyOEWYR-Q" y="15"/>
+    </children>
+    <element xmi:type="uml:Actor" href="FleetManager.uml#_lwvL8Kk8EfCHnsyOEWYR-Q"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_lwxBIak8EfCHnsyOEWYR-Q" x="440" y="160"/>
+  </children>
   <styles xmi:type="notation:StringValueStyle" xmi:id="_RvcA0ak8EfCy7Z6zNtdvTA" name="diagram_compatibility_version" stringValue="1.4.0"/>
   <styles xmi:type="notation:DiagramStyle" xmi:id="_RvcA0qk8EfCy7Z6zNtdvTA"/>
   <styles xmi:type="style:PapyrusDiagramStyle" xmi:id="_RvcA06k8EfCy7Z6zNtdvTA" diagramKindId="org.eclipse.papyrus.uml.diagram.useCase">
