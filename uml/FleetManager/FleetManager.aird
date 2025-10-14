@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <viewpoint:DAnalysis xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:description="http://www.eclipse.org/sirius/description/1.1.0" xmlns:viewpoint="http://www.eclipse.org/sirius/1.1.0" xsi:schemaLocation="http://www.eclipse.org/sirius/description/1.1.0 http://www.eclipse.org/sirius/1.1.0#//description" uid="_Den4gKk6EfCy7Z6zNtdvTA" selectedViews="_EA3p8Kk6EfCy7Z6zNtdvTA _ECgosKk6EfCy7Z6zNtdvTA _EC5qQKk6EfCy7Z6zNtdvTA _EDKI8Kk6EfCy7Z6zNtdvTA _EF7JEKk6EfCy7Z6zNtdvTA _EGg-8Kk6EfCy7Z6zNtdvTA _EG6nkKk6EfCy7Z6zNtdvTA _EHTCEKk6EfCy7Z6zNtdvTA _EHq1gKk6EfCy7Z6zNtdvTA _EIU80Kk6EfCy7Z6zNtdvTA _EIxowKk6EfCy7Z6zNtdvTA" version="15.4.1.202403191723">
   <semanticResources>FleetManager.uml</semanticResources>
+  <semanticResources>pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml</semanticResources>
+  <semanticResources>pathmap://UML_PROFILES/Ecore.profile.uml</semanticResources>
+  <semanticResources>pathmap://UML_LIBRARIES/EcorePrimitiveTypes.library.uml</semanticResources>
+  <semanticResources>pathmap://UML_PROFILES/Standard.profile.uml</semanticResources>
+  <semanticResources>pathmap://UML_METAMODELS/UML.metamodel.uml</semanticResources>
+  <semanticResources>pathmap://UML_METAMODELS/Ecore.metamodel.uml</semanticResources>
   <ownedViews xmi:type="viewpoint:DView" uid="_EA3p8Kk6EfCy7Z6zNtdvTA">
     <viewpoint xmi:type="description:Viewpoint" href="platform:/plugin/org.eclipse.papyrus.sirius.uml.diagram.statemachine/description/papyrus_statemachine.odesign#//@ownedViewpoints[name='StateMachineDiagram']"/>
   </ownedViews>

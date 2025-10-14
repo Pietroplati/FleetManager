@@ -3,4 +3,5 @@
   <packageImport xmi:type="uml:PackageImport" xmi:id="_EMYWYKk6EfCy7Z6zNtdvTA">
     <importedPackage xmi:type="uml:Model" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#_0"/>
   </packageImport>
+  <packagedElement xmi:type="uml:Package" xmi:id="_rXbZkKk6EfCy7Z6zNtdvTA" name="PlaBas.FleetManager"/>
 </uml:Model>
