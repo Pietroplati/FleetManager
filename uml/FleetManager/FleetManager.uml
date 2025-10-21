@@ -22,6 +22,9 @@
         <body>Operazioni consentite ai Driver&#xD;
 </body>
       </ownedComment>
+      <ownedComment xmi:type="uml:Comment" xmi:id="_KQZssK58EfC22ow3OkHjew">
+        <body>se manca un giorno alla scadenza invio notifica</body>
+      </ownedComment>
       <packagedElement xmi:type="uml:UseCase" xmi:id="_1FsXYK5YEfCvLa-m8fHZ9g" name="Gestire Veicoli">
         <extensionPoint xmi:type="uml:ExtensionPoint" xmi:id="_VY_0wK5bEfCvLa-m8fHZ9g" name="ExtensionPoint1"/>
         <include xmi:type="uml:Include" xmi:id="_YB8L8K5mEfCb9O4J4g0C9g" addition="_E0-eQK5aEfCvLa-m8fHZ9g"/>
@@ -33,8 +36,8 @@
         <include xmi:type="uml:Include" xmi:id="_WimgIK5mEfCb9O4J4g0C9g" addition="_E0-eQK5aEfCvLa-m8fHZ9g"/>
       </packagedElement>
       <packagedElement xmi:type="uml:UseCase" xmi:id="_2gsgUK5ZEfCvLa-m8fHZ9g" name="Gestire scadenze">
-        <include xmi:type="uml:Include" xmi:id="_cjr50K5bEfCvLa-m8fHZ9g" addition="_TdV10K5aEfCvLa-m8fHZ9g"/>
         <include xmi:type="uml:Include" xmi:id="_V0-lIK5mEfCb9O4J4g0C9g" addition="_E0-eQK5aEfCvLa-m8fHZ9g"/>
+        <include xmi:type="uml:Include" xmi:id="_z0DmAK58EfC22ow3OkHjew" addition="_5eJ3gK57EfC22ow3OkHjew"/>
       </packagedElement>
       <packagedElement xmi:type="uml:UseCase" xmi:id="_E0-eQK5aEfCvLa-m8fHZ9g" name="Gestire credenziali e autenticazione">
         <extensionPoint xmi:type="uml:ExtensionPoint" xmi:id="_fn8_QK5fEfChJNbIuAI2xA" name="ExtensionPoint1"/>
@@ -42,29 +45,44 @@
       <packagedElement xmi:type="uml:UseCase" xmi:id="_M6WC4K5aEfCvLa-m8fHZ9g" name="Viasulizzare report e dashboard">
         <extend xmi:type="uml:Extend" xmi:id="_VY9_kK5bEfCvLa-m8fHZ9g" extendedCase="_1FsXYK5YEfCvLa-m8fHZ9g" extensionLocation="_VY_0wK5bEfCvLa-m8fHZ9g"/>
       </packagedElement>
-      <packagedElement xmi:type="uml:UseCase" xmi:id="_TdV10K5aEfCvLa-m8fHZ9g" name="Ricevere notifiche di scadenze"/>
       <packagedElement xmi:type="uml:UseCase" xmi:id="_0mMJMK5eEfChJNbIuAI2xA" name="Visualizzare Veicoli">
         <include xmi:type="uml:Include" xmi:id="_SPvj0K5mEfCb9O4J4g0C9g" addition="_E0-eQK5aEfCvLa-m8fHZ9g"/>
       </packagedElement>
       <packagedElement xmi:type="uml:UseCase" xmi:id="_DXnWIK5fEfChJNbIuAI2xA" name="Effettuare Prenotazione">
         <include xmi:type="uml:Include" xmi:id="_RBcksK5mEfCb9O4J4g0C9g" addition="_E0-eQK5aEfCvLa-m8fHZ9g"/>
+        <include xmi:type="uml:Include" xmi:id="_R39pEK5-EfC22ow3OkHjew" addition="_muCyAK58EfC22ow3OkHjew"/>
       </packagedElement>
       <packagedElement xmi:type="uml:UseCase" xmi:id="_MhDm4K5fEfChJNbIuAI2xA" name="Annullare Prenotazione">
         <include xmi:type="uml:Include" xmi:id="_QM47QK5mEfCb9O4J4g0C9g" addition="_E0-eQK5aEfCvLa-m8fHZ9g"/>
+        <include xmi:type="uml:Include" xmi:id="_TbM9cK5-EfC22ow3OkHjew" addition="_muCyAK58EfC22ow3OkHjew"/>
       </packagedElement>
       <packagedElement xmi:type="uml:UseCase" xmi:id="_QLTrEK5fEfChJNbIuAI2xA" name="Restituire Veicolo">
         <extensionPoint xmi:type="uml:ExtensionPoint" xmi:id="_Gzlb0a5hEfChJNbIuAI2xA" name="ExtensionPoint2"/>
         <include xmi:type="uml:Include" xmi:id="_OhMOcK5mEfCb9O4J4g0C9g" addition="_E0-eQK5aEfCvLa-m8fHZ9g"/>
+        <include xmi:type="uml:Include" xmi:id="_r4iPAK5-EfC22ow3OkHjew" addition="_muCyAK58EfC22ow3OkHjew"/>
       </packagedElement>
       <packagedElement xmi:type="uml:UseCase" xmi:id="_WPdl4K5fEfChJNbIuAI2xA" name="Visualizza Storico Prenotazioni">
         <include xmi:type="uml:Include" xmi:id="_PWYKAK5mEfCb9O4J4g0C9g" addition="_E0-eQK5aEfCvLa-m8fHZ9g"/>
       </packagedElement>
       <packagedElement xmi:type="uml:UseCase" xmi:id="_Y31WUK5fEfChJNbIuAI2xA" name="Segnalare Gusasto o Problema">
         <extend xmi:type="uml:Extend" xmi:id="_Gzlb0K5hEfChJNbIuAI2xA" extendedCase="_QLTrEK5fEfChJNbIuAI2xA" extensionLocation="_Gzlb0a5hEfChJNbIuAI2xA"/>
+        <include xmi:type="uml:Include" xmi:id="_4wf1YK59EfC22ow3OkHjew" addition="_gs35wK58EfC22ow3OkHjew"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="_5eJ3gK57EfC22ow3OkHjew" name="Controllare scadenze periodiche">
+        <extensionPoint xmi:type="uml:ExtensionPoint" xmi:id="_JhCFQK58EfC22ow3OkHjew" name="ExtensionPoint1"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="_E8bRoK58EfC22ow3OkHjew" name="Inviare notifiche di scadenza">
+        <extend xmi:type="uml:Extend" xmi:id="_JhAQEK58EfC22ow3OkHjew" extendedCase="_5eJ3gK57EfC22ow3OkHjew" extensionLocation="_JhCFQK58EfC22ow3OkHjew"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="_Y45nIK58EfC22ow3OkHjew" name="Aggiornare stato veicolo"/>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="_gs35wK58EfC22ow3OkHjew" name="Segnalare interventi straordinari di manutenzione">
+        <include xmi:type="uml:Include" xmi:id="_FHY5kK5-EfC22ow3OkHjew" addition="_Y45nIK58EfC22ow3OkHjew"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="_muCyAK58EfC22ow3OkHjew" name="Notificare il driver">
+        <include xmi:type="uml:Include" xmi:id="_x6l4EK5-EfC22ow3OkHjew" addition="_Y45nIK58EfC22ow3OkHjew"/>
       </packagedElement>
     </packagedElement>
     <packagedElement xmi:type="uml:Actor" xmi:id="_ZiEqUK5YEfCvLa-m8fHZ9g" name="&lt;&lt;sistema>>Sistema di notifiche"/>
-    <packagedElement xmi:type="uml:Actor" xmi:id="_tNXwQK5YEfCvLa-m8fHZ9g" name="Database H2"/>
     <packagedElement xmi:type="uml:Actor" xmi:id="_icwbcK5aEfCvLa-m8fHZ9g" name="Utente Autenticato"/>
     <packagedElement xmi:type="uml:Association" xmi:id="_6qa1IK5hEfChJNbIuAI2xA" memberEnd="_6qcDQK5hEfChJNbIuAI2xA _6qcDQa5hEfChJNbIuAI2xA">
       <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_6qbcMK5hEfChJNbIuAI2xA" source="org.eclipse.papyrus">
@@ -72,6 +90,34 @@
       </eAnnotations>
       <ownedEnd xmi:type="uml:Property" xmi:id="_6qcDQK5hEfChJNbIuAI2xA" name="gestire credenziali e autenticazione" type="_E0-eQK5aEfCvLa-m8fHZ9g" association="_6qa1IK5hEfChJNbIuAI2xA"/>
       <ownedEnd xmi:type="uml:Property" xmi:id="_6qcDQa5hEfChJNbIuAI2xA" name="dipendente" type="_icwbcK5aEfCvLa-m8fHZ9g" association="_6qa1IK5hEfChJNbIuAI2xA"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="__XfCYK57EfC22ow3OkHjew" memberEnd="__Xm-MK57EfC22ow3OkHjew __XnlQK57EfC22ow3OkHjew">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="__XlwEK57EfC22ow3OkHjew" source="org.eclipse.papyrus">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="__XmXIK57EfC22ow3OkHjew" key="nature" value="UML_Nature"/>
+      </eAnnotations>
+      <ownedEnd xmi:type="uml:Property" xmi:id="__Xm-MK57EfC22ow3OkHjew" name="controllare scadenze periodiche" type="_5eJ3gK57EfC22ow3OkHjew" association="__XfCYK57EfC22ow3OkHjew"/>
+      <ownedEnd xmi:type="uml:Property" xmi:id="__XnlQK57EfC22ow3OkHjew" name="&lt;&lt;sistema>>sistema di notifiche" type="_ZiEqUK5YEfCvLa-m8fHZ9g" association="__XfCYK57EfC22ow3OkHjew"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="_bc1jgK58EfC22ow3OkHjew" memberEnd="_bc3Ysa58EfC22ow3OkHjew _bc3Ysq58EfC22ow3OkHjew">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_bc2xoK58EfC22ow3OkHjew" source="org.eclipse.papyrus">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_bc3YsK58EfC22ow3OkHjew" key="nature" value="UML_Nature"/>
+      </eAnnotations>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_bc3Ysa58EfC22ow3OkHjew" name="aggiornare stato veicolo" type="_Y45nIK58EfC22ow3OkHjew" association="_bc1jgK58EfC22ow3OkHjew"/>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_bc3Ysq58EfC22ow3OkHjew" name="&lt;&lt;sistema>>sistema di notifiche" type="_ZiEqUK5YEfCvLa-m8fHZ9g" association="_bc1jgK58EfC22ow3OkHjew"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="_lTCzoK58EfC22ow3OkHjew" memberEnd="_lTEBwq58EfC22ow3OkHjew _lTEBw658EfC22ow3OkHjew">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_lTEBwK58EfC22ow3OkHjew" source="org.eclipse.papyrus">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_lTEBwa58EfC22ow3OkHjew" key="nature" value="UML_Nature"/>
+      </eAnnotations>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_lTEBwq58EfC22ow3OkHjew" name="segnalare interventi straordinari di manutenzione" type="_gs35wK58EfC22ow3OkHjew" association="_lTCzoK58EfC22ow3OkHjew"/>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_lTEBw658EfC22ow3OkHjew" name="&lt;&lt;sistema>>sistema di notifiche" type="_ZiEqUK5YEfCvLa-m8fHZ9g" association="_lTCzoK58EfC22ow3OkHjew"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="_q3JVYK58EfC22ow3OkHjew" memberEnd="_q3LKkK58EfC22ow3OkHjew _q3LKka58EfC22ow3OkHjew">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_q3KjgK58EfC22ow3OkHjew" source="org.eclipse.papyrus">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_q3Kjga58EfC22ow3OkHjew" key="nature" value="UML_Nature"/>
+      </eAnnotations>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_q3LKkK58EfC22ow3OkHjew" name="notificare il driver" type="_muCyAK58EfC22ow3OkHjew" association="_q3JVYK58EfC22ow3OkHjew"/>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_q3LKka58EfC22ow3OkHjew" name="&lt;&lt;sistema>>sistema di notifiche" type="_ZiEqUK5YEfCvLa-m8fHZ9g" association="_q3JVYK58EfC22ow3OkHjew"/>
     </packagedElement>
   </packagedElement>
 </uml:Model>
