@@ -29,7 +29,7 @@
         <extensionPoint xmi:type="uml:ExtensionPoint" xmi:id="_VY_0wK5bEfCvLa-m8fHZ9g" name="ExtensionPoint1"/>
         <include xmi:type="uml:Include" xmi:id="_YB8L8K5mEfCb9O4J4g0C9g" addition="_E0-eQK5aEfCvLa-m8fHZ9g"/>
       </packagedElement>
-      <packagedElement xmi:type="uml:UseCase" xmi:id="_WqiAAK5ZEfCvLa-m8fHZ9g" name="Gestire utenti (dipendenti)">
+      <packagedElement xmi:type="uml:UseCase" xmi:id="_WqiAAK5ZEfCvLa-m8fHZ9g" name="Gestire utenti">
         <include xmi:type="uml:Include" xmi:id="_XT72cK5mEfCb9O4J4g0C9g" addition="_E0-eQK5aEfCvLa-m8fHZ9g"/>
       </packagedElement>
       <packagedElement xmi:type="uml:UseCase" xmi:id="_dpTwAK5ZEfCvLa-m8fHZ9g" name="Gestire manutenzioni">
