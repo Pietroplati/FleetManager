@@ -1,10 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<uml:Model xmi:version="20131001" xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML" xmi:id="_EAP-4Kk6EfCy7Z6zNtdvTA" name="FleetManager">
+<uml:Model xmi:version="20131001" xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML" xmi:id="_EAP-4Kk6EfCy7Z6zNtdvTA" name="FleetManager">
   <packageImport xmi:type="uml:PackageImport" xmi:id="_EMYWYKk6EfCy7Z6zNtdvTA">
     <importedPackage xmi:type="uml:Model" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#_0"/>
   </packageImport>
   <packagedElement xmi:type="uml:Package" xmi:id="_rXbZkKk6EfCy7Z6zNtdvTA" name="PlaBas.FleetManager">
-    <packagedElement xmi:type="uml:Actor" xmi:id="_kk2AkKk8EfCHnsyOEWYR-Q" name="Driver"/>
-    <packagedElement xmi:type="uml:Actor" xmi:id="_lwvL8Kk8EfCHnsyOEWYR-Q" name="FleetManager"/>
+    <packagedElement xmi:type="uml:Actor" xmi:id="_kk2AkKk8EfCHnsyOEWYR-Q" name="Driver">
+      <generalization xmi:type="uml:Generalization" xmi:id="_nXrdUK5aEfCvLa-m8fHZ9g" general="_icwbcK5aEfCvLa-m8fHZ9g"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Actor" xmi:id="_lwvL8Kk8EfCHnsyOEWYR-Q" name="FleetManager">
+      <generalization xmi:type="uml:Generalization" xmi:id="_oPICsK5aEfCvLa-m8fHZ9g" general="_icwbcK5aEfCvLa-m8fHZ9g"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Package" xmi:id="_C1sZAK5YEfCvLa-m8fHZ9g" name="FleetManager">
+      <ownedComment xmi:type="uml:Comment" xmi:id="_7WQkQK5dEfCvLa-m8fHZ9g">
+        <body>Operazioni consentite ai FleetManager</body>
+      </ownedComment>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="_1FsXYK5YEfCvLa-m8fHZ9g" name="Gestire Veicoli">
+        <extensionPoint xmi:type="uml:ExtensionPoint" xmi:id="_VY_0wK5bEfCvLa-m8fHZ9g" name="ExtensionPoint1"/>
+        <include xmi:type="uml:Include" xmi:id="_1nxXcK5dEfCvLa-m8fHZ9g" addition="_E0-eQK5aEfCvLa-m8fHZ9g"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="_WqiAAK5ZEfCvLa-m8fHZ9g" name="Gestire utenti (dipendenti)">
+        <include xmi:type="uml:Include" xmi:id="_3E2ZcK5dEfCvLa-m8fHZ9g" addition="_E0-eQK5aEfCvLa-m8fHZ9g"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="_dpTwAK5ZEfCvLa-m8fHZ9g" name="Gestire manutenzioni">
+        <include xmi:type="uml:Include" xmi:id="_5vRYUK5dEfCvLa-m8fHZ9g" addition="_E0-eQK5aEfCvLa-m8fHZ9g"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="_2gsgUK5ZEfCvLa-m8fHZ9g" name="Gestire scadenze">
+        <include xmi:type="uml:Include" xmi:id="_cjr50K5bEfCvLa-m8fHZ9g" addition="_TdV10K5aEfCvLa-m8fHZ9g"/>
+        <include xmi:type="uml:Include" xmi:id="_6m2gkK5dEfCvLa-m8fHZ9g" addition="_E0-eQK5aEfCvLa-m8fHZ9g"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="_E0-eQK5aEfCvLa-m8fHZ9g" name="Gestire credenziali e autenticazione"/>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="_M6WC4K5aEfCvLa-m8fHZ9g" name="Viasulizzare report e dashboard">
+        <extend xmi:type="uml:Extend" xmi:id="_VY9_kK5bEfCvLa-m8fHZ9g" extendedCase="_1FsXYK5YEfCvLa-m8fHZ9g" extensionLocation="_VY_0wK5bEfCvLa-m8fHZ9g"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="_TdV10K5aEfCvLa-m8fHZ9g" name="Ricevere notifiche di scadenze"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Actor" xmi:id="_ZiEqUK5YEfCvLa-m8fHZ9g" name="&lt;&lt;sistema>>Sistema di notifiche"/>
+    <packagedElement xmi:type="uml:Actor" xmi:id="_tNXwQK5YEfCvLa-m8fHZ9g" name="Database H2"/>
+    <packagedElement xmi:type="uml:Actor" xmi:id="_icwbcK5aEfCvLa-m8fHZ9g" name="Dipendente"/>
+    <packagedElement xmi:type="uml:Association" xmi:id="_VLK-sK5cEfCvLa-m8fHZ9g" memberEnd="_VLMM0K5cEfCvLa-m8fHZ9g _VLMM0a5cEfCvLa-m8fHZ9g">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_VLLlwK5cEfCvLa-m8fHZ9g" source="org.eclipse.papyrus">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_VLLlwa5cEfCvLa-m8fHZ9g" key="nature" value="UML_Nature"/>
+      </eAnnotations>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_VLMM0K5cEfCvLa-m8fHZ9g" name="gestire credenziali e autenticazione" type="_E0-eQK5aEfCvLa-m8fHZ9g" association="_VLK-sK5cEfCvLa-m8fHZ9g"/>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_VLMM0a5cEfCvLa-m8fHZ9g" name="driver" type="_kk2AkKk8EfCHnsyOEWYR-Q" association="_VLK-sK5cEfCvLa-m8fHZ9g"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="_WKuXMK5cEfCvLa-m8fHZ9g" memberEnd="_WKwMYq5cEfCvLa-m8fHZ9g _WKwMY65cEfCvLa-m8fHZ9g">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_WKwMYK5cEfCvLa-m8fHZ9g" source="org.eclipse.papyrus">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_WKwMYa5cEfCvLa-m8fHZ9g" key="nature" value="UML_Nature"/>
+      </eAnnotations>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_WKwMYq5cEfCvLa-m8fHZ9g" name="gestire credenziali e autenticazione" type="_E0-eQK5aEfCvLa-m8fHZ9g" association="_WKuXMK5cEfCvLa-m8fHZ9g"/>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_WKwMY65cEfCvLa-m8fHZ9g" name="fleetmanager" type="_lwvL8Kk8EfCHnsyOEWYR-Q" association="_WKuXMK5cEfCvLa-m8fHZ9g"/>
+    </packagedElement>
   </packagedElement>
 </uml:Model>
