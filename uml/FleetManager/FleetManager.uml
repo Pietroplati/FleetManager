@@ -27,43 +27,27 @@
       </ownedComment>
       <packagedElement xmi:type="uml:UseCase" xmi:id="_1FsXYK5YEfCvLa-m8fHZ9g" name="Gestire Veicoli">
         <extensionPoint xmi:type="uml:ExtensionPoint" xmi:id="_VY_0wK5bEfCvLa-m8fHZ9g" name="ExtensionPoint1"/>
-        <include xmi:type="uml:Include" xmi:id="_YB8L8K5mEfCb9O4J4g0C9g" addition="_E0-eQK5aEfCvLa-m8fHZ9g"/>
       </packagedElement>
-      <packagedElement xmi:type="uml:UseCase" xmi:id="_WqiAAK5ZEfCvLa-m8fHZ9g" name="Gestire utenti">
-        <include xmi:type="uml:Include" xmi:id="_XT72cK5mEfCb9O4J4g0C9g" addition="_E0-eQK5aEfCvLa-m8fHZ9g"/>
-      </packagedElement>
-      <packagedElement xmi:type="uml:UseCase" xmi:id="_dpTwAK5ZEfCvLa-m8fHZ9g" name="Gestire manutenzioni">
-        <include xmi:type="uml:Include" xmi:id="_WimgIK5mEfCb9O4J4g0C9g" addition="_E0-eQK5aEfCvLa-m8fHZ9g"/>
-      </packagedElement>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="_WqiAAK5ZEfCvLa-m8fHZ9g" name="Gestire utenti"/>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="_dpTwAK5ZEfCvLa-m8fHZ9g" name="Gestire manutenzioni"/>
       <packagedElement xmi:type="uml:UseCase" xmi:id="_2gsgUK5ZEfCvLa-m8fHZ9g" name="Gestire scadenze">
-        <include xmi:type="uml:Include" xmi:id="_V0-lIK5mEfCb9O4J4g0C9g" addition="_E0-eQK5aEfCvLa-m8fHZ9g"/>
         <include xmi:type="uml:Include" xmi:id="_z0DmAK58EfC22ow3OkHjew" addition="_5eJ3gK57EfC22ow3OkHjew"/>
-      </packagedElement>
-      <packagedElement xmi:type="uml:UseCase" xmi:id="_E0-eQK5aEfCvLa-m8fHZ9g" name="Gestire credenziali e autenticazione">
-        <extensionPoint xmi:type="uml:ExtensionPoint" xmi:id="_fn8_QK5fEfChJNbIuAI2xA" name="ExtensionPoint1"/>
       </packagedElement>
       <packagedElement xmi:type="uml:UseCase" xmi:id="_M6WC4K5aEfCvLa-m8fHZ9g" name="Viasulizzare report e dashboard">
         <extend xmi:type="uml:Extend" xmi:id="_VY9_kK5bEfCvLa-m8fHZ9g" extendedCase="_1FsXYK5YEfCvLa-m8fHZ9g" extensionLocation="_VY_0wK5bEfCvLa-m8fHZ9g"/>
       </packagedElement>
-      <packagedElement xmi:type="uml:UseCase" xmi:id="_0mMJMK5eEfChJNbIuAI2xA" name="Visualizzare Veicoli">
-        <include xmi:type="uml:Include" xmi:id="_SPvj0K5mEfCb9O4J4g0C9g" addition="_E0-eQK5aEfCvLa-m8fHZ9g"/>
-      </packagedElement>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="_0mMJMK5eEfChJNbIuAI2xA" name="Visualizzare Veicoli"/>
       <packagedElement xmi:type="uml:UseCase" xmi:id="_DXnWIK5fEfChJNbIuAI2xA" name="Effettuare Prenotazione">
-        <include xmi:type="uml:Include" xmi:id="_RBcksK5mEfCb9O4J4g0C9g" addition="_E0-eQK5aEfCvLa-m8fHZ9g"/>
         <include xmi:type="uml:Include" xmi:id="_R39pEK5-EfC22ow3OkHjew" addition="_muCyAK58EfC22ow3OkHjew"/>
       </packagedElement>
       <packagedElement xmi:type="uml:UseCase" xmi:id="_MhDm4K5fEfChJNbIuAI2xA" name="Annullare Prenotazione">
-        <include xmi:type="uml:Include" xmi:id="_QM47QK5mEfCb9O4J4g0C9g" addition="_E0-eQK5aEfCvLa-m8fHZ9g"/>
         <include xmi:type="uml:Include" xmi:id="_TbM9cK5-EfC22ow3OkHjew" addition="_muCyAK58EfC22ow3OkHjew"/>
       </packagedElement>
       <packagedElement xmi:type="uml:UseCase" xmi:id="_QLTrEK5fEfChJNbIuAI2xA" name="Restituire Veicolo">
         <extensionPoint xmi:type="uml:ExtensionPoint" xmi:id="_Gzlb0a5hEfChJNbIuAI2xA" name="ExtensionPoint2"/>
-        <include xmi:type="uml:Include" xmi:id="_OhMOcK5mEfCb9O4J4g0C9g" addition="_E0-eQK5aEfCvLa-m8fHZ9g"/>
         <include xmi:type="uml:Include" xmi:id="_r4iPAK5-EfC22ow3OkHjew" addition="_muCyAK58EfC22ow3OkHjew"/>
       </packagedElement>
-      <packagedElement xmi:type="uml:UseCase" xmi:id="_WPdl4K5fEfChJNbIuAI2xA" name="Visualizza Storico Prenotazioni">
-        <include xmi:type="uml:Include" xmi:id="_PWYKAK5mEfCb9O4J4g0C9g" addition="_E0-eQK5aEfCvLa-m8fHZ9g"/>
-      </packagedElement>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="_WPdl4K5fEfChJNbIuAI2xA" name="Visualizza Storico Prenotazioni"/>
       <packagedElement xmi:type="uml:UseCase" xmi:id="_Y31WUK5fEfChJNbIuAI2xA" name="Segnalare Gusasto o Problema">
         <extend xmi:type="uml:Extend" xmi:id="_Gzlb0K5hEfChJNbIuAI2xA" extendedCase="_QLTrEK5fEfChJNbIuAI2xA" extensionLocation="_Gzlb0a5hEfChJNbIuAI2xA"/>
         <include xmi:type="uml:Include" xmi:id="_4wf1YK59EfC22ow3OkHjew" addition="_gs35wK58EfC22ow3OkHjew"/>
@@ -84,13 +68,6 @@
     </packagedElement>
     <packagedElement xmi:type="uml:Actor" xmi:id="_ZiEqUK5YEfCvLa-m8fHZ9g" name="&lt;&lt;sistema>>Sistema di notifiche"/>
     <packagedElement xmi:type="uml:Actor" xmi:id="_icwbcK5aEfCvLa-m8fHZ9g" name="Utente Autenticato"/>
-    <packagedElement xmi:type="uml:Association" xmi:id="_6qa1IK5hEfChJNbIuAI2xA" memberEnd="_6qcDQK5hEfChJNbIuAI2xA _6qcDQa5hEfChJNbIuAI2xA">
-      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_6qbcMK5hEfChJNbIuAI2xA" source="org.eclipse.papyrus">
-        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_6qbcMa5hEfChJNbIuAI2xA" key="nature" value="UML_Nature"/>
-      </eAnnotations>
-      <ownedEnd xmi:type="uml:Property" xmi:id="_6qcDQK5hEfChJNbIuAI2xA" name="gestire credenziali e autenticazione" type="_E0-eQK5aEfCvLa-m8fHZ9g" association="_6qa1IK5hEfChJNbIuAI2xA"/>
-      <ownedEnd xmi:type="uml:Property" xmi:id="_6qcDQa5hEfChJNbIuAI2xA" name="dipendente" type="_icwbcK5aEfCvLa-m8fHZ9g" association="_6qa1IK5hEfChJNbIuAI2xA"/>
-    </packagedElement>
     <packagedElement xmi:type="uml:Association" xmi:id="__XfCYK57EfC22ow3OkHjew" memberEnd="__Xm-MK57EfC22ow3OkHjew __XnlQK57EfC22ow3OkHjew">
       <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="__XlwEK57EfC22ow3OkHjew" source="org.eclipse.papyrus">
         <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="__XmXIK57EfC22ow3OkHjew" key="nature" value="UML_Nature"/>
@@ -118,6 +95,69 @@
       </eAnnotations>
       <ownedEnd xmi:type="uml:Property" xmi:id="_q3LKkK58EfC22ow3OkHjew" name="notificare il driver" type="_muCyAK58EfC22ow3OkHjew" association="_q3JVYK58EfC22ow3OkHjew"/>
       <ownedEnd xmi:type="uml:Property" xmi:id="_q3LKka58EfC22ow3OkHjew" name="&lt;&lt;sistema>>sistema di notifiche" type="_ZiEqUK5YEfCvLa-m8fHZ9g" association="_q3JVYK58EfC22ow3OkHjew"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="_d87icLGBEfCsW-pwn2EawA" memberEnd="_d9BpELGBEfCsW-pwn2EawA _d9CQILGBEfCsW-pwn2EawA">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_d9Aa8LGBEfCsW-pwn2EawA" source="org.eclipse.papyrus">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_d9BCALGBEfCsW-pwn2EawA" key="nature" value="UML_Nature"/>
+      </eAnnotations>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_d9BpELGBEfCsW-pwn2EawA" name="gestire veicoli" type="_1FsXYK5YEfCvLa-m8fHZ9g" association="_d87icLGBEfCsW-pwn2EawA"/>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_d9CQILGBEfCsW-pwn2EawA" name="fleetmanager" type="_hjgAgLGBEfCsW-pwn2EawA" association="_d87icLGBEfCsW-pwn2EawA"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="_glx0ALGBEfCsW-pwn2EawA" memberEnd="_gl0QQLGBEfCsW-pwn2EawA _gl0QQbGBEfCsW-pwn2EawA">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_glzpMLGBEfCsW-pwn2EawA" source="org.eclipse.papyrus">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_glzpMbGBEfCsW-pwn2EawA" key="nature" value="UML_Nature"/>
+      </eAnnotations>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_gl0QQLGBEfCsW-pwn2EawA" name="gestire utenti" type="_WqiAAK5ZEfCvLa-m8fHZ9g" association="_glx0ALGBEfCsW-pwn2EawA"/>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_gl0QQbGBEfCsW-pwn2EawA" name="fleetmanager" type="_lwvL8Kk8EfCHnsyOEWYR-Q" association="_glx0ALGBEfCsW-pwn2EawA"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="_hjgAgLGBEfCsW-pwn2EawA" memberEnd="_hjgnkrGBEfCsW-pwn2EawA _hjgnk7GBEfCsW-pwn2EawA">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_hjgnkLGBEfCsW-pwn2EawA" source="org.eclipse.papyrus">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_hjgnkbGBEfCsW-pwn2EawA" key="nature" value="UML_Nature"/>
+      </eAnnotations>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_hjgnkrGBEfCsW-pwn2EawA" name="gestire manutenzioni" type="_dpTwAK5ZEfCvLa-m8fHZ9g" association="_hjgAgLGBEfCsW-pwn2EawA"/>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_hjgnk7GBEfCsW-pwn2EawA" name="fleetmanager" type="_lwvL8Kk8EfCHnsyOEWYR-Q" association="_hjgAgLGBEfCsW-pwn2EawA"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="_iaHfcLGBEfCsW-pwn2EawA" memberEnd="_iaItkbGBEfCsW-pwn2EawA _iaItkrGBEfCsW-pwn2EawA">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_iaIGgLGBEfCsW-pwn2EawA" source="org.eclipse.papyrus">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_iaItkLGBEfCsW-pwn2EawA" key="nature" value="UML_Nature"/>
+      </eAnnotations>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_iaItkbGBEfCsW-pwn2EawA" name="gestire scadenze" type="_2gsgUK5ZEfCvLa-m8fHZ9g" association="_iaHfcLGBEfCsW-pwn2EawA"/>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_iaItkrGBEfCsW-pwn2EawA" type="_lwvL8Kk8EfCHnsyOEWYR-Q" association="_iaHfcLGBEfCsW-pwn2EawA"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="_m46mALGBEfCsW-pwn2EawA" memberEnd="_m470IrGBEfCsW-pwn2EawA _m470I7GBEfCsW-pwn2EawA">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_m470ILGBEfCsW-pwn2EawA" source="org.eclipse.papyrus">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_m470IbGBEfCsW-pwn2EawA" key="nature" value="UML_Nature"/>
+      </eAnnotations>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_m470IrGBEfCsW-pwn2EawA" name="visualizzare veicoli" type="_0mMJMK5eEfChJNbIuAI2xA" association="_m46mALGBEfCsW-pwn2EawA"/>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_m470I7GBEfCsW-pwn2EawA" name="driver" type="_kk2AkKk8EfCHnsyOEWYR-Q" association="_m46mALGBEfCsW-pwn2EawA"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="_nmgEwLGBEfCsW-pwn2EawA" memberEnd="_nmhS4rGBEfCsW-pwn2EawA _nmh58LGBEfCsW-pwn2EawA">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_nmhS4LGBEfCsW-pwn2EawA" source="org.eclipse.papyrus">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_nmhS4bGBEfCsW-pwn2EawA" key="nature" value="UML_Nature"/>
+      </eAnnotations>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_nmhS4rGBEfCsW-pwn2EawA" name="effettuare prenotazione" type="_DXnWIK5fEfChJNbIuAI2xA" association="_nmgEwLGBEfCsW-pwn2EawA"/>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_nmh58LGBEfCsW-pwn2EawA" name="driver" type="_kk2AkKk8EfCHnsyOEWYR-Q" association="_nmgEwLGBEfCsW-pwn2EawA"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="_oalNELGBEfCsW-pwn2EawA" memberEnd="_oanCQLGBEfCsW-pwn2EawA _oanpULGBEfCsW-pwn2EawA">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_oambMLGBEfCsW-pwn2EawA" source="org.eclipse.papyrus">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_oambMbGBEfCsW-pwn2EawA" key="nature" value="UML_Nature"/>
+      </eAnnotations>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_oanCQLGBEfCsW-pwn2EawA" name="annullare prenotazione" type="_MhDm4K5fEfChJNbIuAI2xA" association="_oalNELGBEfCsW-pwn2EawA"/>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_oanpULGBEfCsW-pwn2EawA" name="driver" type="_nmgEwLGBEfCsW-pwn2EawA" association="_oalNELGBEfCsW-pwn2EawA"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="_pTcuwLGBEfCsW-pwn2EawA" memberEnd="_pTej8LGBEfCsW-pwn2EawA _pTej8bGBEfCsW-pwn2EawA">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_pTd84LGBEfCsW-pwn2EawA" source="org.eclipse.papyrus">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_pTd84bGBEfCsW-pwn2EawA" key="nature" value="UML_Nature"/>
+      </eAnnotations>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_pTej8LGBEfCsW-pwn2EawA" name="visualizza storico prenotazioni" type="_WPdl4K5fEfChJNbIuAI2xA" association="_pTcuwLGBEfCsW-pwn2EawA"/>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_pTej8bGBEfCsW-pwn2EawA" name="driver" type="_kk2AkKk8EfCHnsyOEWYR-Q" association="_pTcuwLGBEfCsW-pwn2EawA"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="_qTSbILGBEfCsW-pwn2EawA" memberEnd="_qTTpQrGBEfCsW-pwn2EawA _qTUQULGBEfCsW-pwn2EawA">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_qTTpQLGBEfCsW-pwn2EawA" source="org.eclipse.papyrus">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_qTTpQbGBEfCsW-pwn2EawA" key="nature" value="UML_Nature"/>
+      </eAnnotations>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_qTTpQrGBEfCsW-pwn2EawA" name="restituire veicolo" type="_QLTrEK5fEfChJNbIuAI2xA" association="_qTSbILGBEfCsW-pwn2EawA"/>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_qTUQULGBEfCsW-pwn2EawA" type="_kk2AkKk8EfCHnsyOEWYR-Q" association="_qTSbILGBEfCsW-pwn2EawA"/>
     </packagedElement>
   </packagedElement>
 </uml:Model>
