@@ -7,7 +7,7 @@
     <packagedElement xmi:type="uml:Actor" xmi:id="_kk2AkKk8EfCHnsyOEWYR-Q" name="Driver">
       <generalization xmi:type="uml:Generalization" xmi:id="_nXrdUK5aEfCvLa-m8fHZ9g" general="_icwbcK5aEfCvLa-m8fHZ9g"/>
     </packagedElement>
-    <packagedElement xmi:type="uml:Actor" xmi:id="_lwvL8Kk8EfCHnsyOEWYR-Q" name="FleetManager">
+    <packagedElement xmi:type="uml:Actor" xmi:id="_lwvL8Kk8EfCHnsyOEWYR-Q" name="Manager">
       <generalization xmi:type="uml:Generalization" xmi:id="_oPICsK5aEfCvLa-m8fHZ9g" general="_icwbcK5aEfCvLa-m8fHZ9g"/>
     </packagedElement>
     <packagedElement xmi:type="uml:Package" xmi:id="_C1sZAK5YEfCvLa-m8fHZ9g" name="FleetManager">
@@ -65,6 +65,7 @@
       <packagedElement xmi:type="uml:UseCase" xmi:id="_muCyAK58EfC22ow3OkHjew" name="Notificare il driver">
         <include xmi:type="uml:Include" xmi:id="_x6l4EK5-EfC22ow3OkHjew" addition="_Y45nIK58EfC22ow3OkHjew"/>
       </packagedElement>
+      <packagedElement xmi:type="uml:UseCase" xmi:id="_QPO1oLjPEfCSZNJju2Ydyg" name="Gestire prentotazioni"/>
     </packagedElement>
     <packagedElement xmi:type="uml:Actor" xmi:id="_ZiEqUK5YEfCvLa-m8fHZ9g" name="&lt;&lt;sistema>>Sistema di notifiche"/>
     <packagedElement xmi:type="uml:Actor" xmi:id="_icwbcK5aEfCvLa-m8fHZ9g" name="Utente Autenticato"/>
@@ -282,6 +283,7 @@
         <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_r4CKMLi6EfCB54CkmTiEfw" name="SCADENZA"/>
         <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_tXg_8Li6EfCB54CkmTiEfw" name="MANUTENZIONE"/>
         <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_vdxh0Li6EfCB54CkmTiEfw" name="PRENOTAZIONE"/>
+        <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_7V0WwLjOEfCSZNJju2Ydyg" name="SEGNALAZIONE"/>
       </packagedElement>
       <packagedElement xmi:type="uml:Enumeration" xmi:id="_TBIQILi8EfCB54CkmTiEfw" name="TipoVeicolo">
         <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_UzzHoLi8EfCB54CkmTiEfw" name="AUTO"/>
@@ -289,6 +291,13 @@
         <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_XKerILi8EfCB54CkmTiEfw" name="FURGONE"/>
         <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_c_ogoLi8EfCB54CkmTiEfw" name="CAMION"/>
       </packagedElement>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="_WoO_ELjPEfCSZNJju2Ydyg" memberEnd="_WoTQgLjPEfCSZNJju2Ydyg _WoTQgbjPEfCSZNJju2Ydyg">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_WoSCYLjPEfCSZNJju2Ydyg" source="org.eclipse.papyrus">
+        <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_WoSpcLjPEfCSZNJju2Ydyg" key="nature" value="UML_Nature"/>
+      </eAnnotations>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_WoTQgLjPEfCSZNJju2Ydyg" name="gestire prentotazioni" type="_QPO1oLjPEfCSZNJju2Ydyg" association="_WoO_ELjPEfCSZNJju2Ydyg"/>
+      <ownedEnd xmi:type="uml:Property" xmi:id="_WoTQgbjPEfCSZNJju2Ydyg" name="manager" type="_lwvL8Kk8EfCHnsyOEWYR-Q" association="_WoO_ELjPEfCSZNJju2Ydyg"/>
     </packagedElement>
   </packagedElement>
 </uml:Model>
