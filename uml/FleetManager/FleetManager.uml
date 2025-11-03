@@ -188,16 +188,17 @@
         <ownedAttribute xmi:type="uml:Property" xmi:id="_m9NucLiYEfCDhMtBXAAUPg" name="targa" visibility="private">
           <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
         </ownedAttribute>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_j3AoILi8EfCB54CkmTiEfw" name="tipo" visibility="private" type="_TBIQILi8EfCB54CkmTiEfw" isUnique="false"/>
         <ownedAttribute xmi:type="uml:Property" xmi:id="_sAGZgLiYEfCDhMtBXAAUPg" name="marca" visibility="private" isUnique="false">
           <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
         </ownedAttribute>
         <ownedAttribute xmi:type="uml:Property" xmi:id="_yYs6ULiYEfCDhMtBXAAUPg" name="modello" visibility="private" isUnique="false">
           <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
         </ownedAttribute>
-        <ownedAttribute xmi:type="uml:Property" xmi:id="_3gIHILiYEfCDhMtBXAAUPg" name="anno" visibility="private" isUnique="false">
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_3gIHILiYEfCDhMtBXAAUPg" name="annoImmatricolazione" visibility="private" isUnique="false">
           <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
         </ownedAttribute>
-        <ownedAttribute xmi:type="uml:Property" xmi:id="_-b-CcLiZEfCDhMtBXAAUPg" name="statoVeicolo" visibility="private" type="_8mN3MLiYEfCDhMtBXAAUPg" isUnique="false"/>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_-b-CcLiZEfCDhMtBXAAUPg" name="stato" visibility="private" type="_8mN3MLiYEfCDhMtBXAAUPg" isUnique="false"/>
         <ownedAttribute xmi:type="uml:Property" xmi:id="_FLDwoLiaEfCDhMtBXAAUPg" name="km" visibility="private" isUnique="false">
           <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
         </ownedAttribute>
@@ -207,7 +208,7 @@
           <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
         </ownedAttribute>
         <ownedAttribute xmi:type="uml:Property" xmi:id="_eyJqILibEfCDhMtBXAAUPg" name="dataInizio" visibility="private" type="_4BT2sLiaEfCDhMtBXAAUPg" isUnique="false"/>
-        <ownedAttribute xmi:type="uml:Property" xmi:id="_jMPP0LibEfCDhMtBXAAUPg" name="Property1" visibility="private" type="_4BT2sLiaEfCDhMtBXAAUPg" isUnique="false"/>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_jMPP0LibEfCDhMtBXAAUPg" name="dataFine" visibility="private" type="_4BT2sLiaEfCDhMtBXAAUPg" isUnique="false"/>
         <ownedAttribute xmi:type="uml:Property" xmi:id="_m9Q08LicEfCDhMtBXAAUPg" name="stato" visibility="private" type="_Wsq7ULicEfCDhMtBXAAUPg" isUnique="false"/>
       </packagedElement>
       <packagedElement xmi:type="uml:Class" xmi:id="_I8HOILifEfCDhMtBXAAUPg" name="Manutenzione">
@@ -222,6 +223,29 @@
           <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
         </ownedAttribute>
         <ownedAttribute xmi:type="uml:Property" xmi:id="_fHGCkLifEfCDhMtBXAAUPg" name="straordinaria" visibility="private" isUnique="false">
+          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
+        </ownedAttribute>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Class" xmi:id="_nxQ0ALi4EfCB54CkmTiEfw" name="Scadenza">
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_tNxgALi4EfCB54CkmTiEfw" name="idScadenza" visibility="private">
+          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_3PWdMLi5EfCB54CkmTiEfw" name="tipo" visibility="private" type="_sJuMkLi5EfCB54CkmTiEfw" isUnique="false"/>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_7RwisLi5EfCB54CkmTiEfw" name="data" visibility="private" type="_4BT2sLiaEfCDhMtBXAAUPg" isUnique="false"/>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_AJmbYLi6EfCB54CkmTiEfw" name="notificata" visibility="private" isUnique="false">
+          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
+        </ownedAttribute>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Class" xmi:id="_KIfGYLi6EfCB54CkmTiEfw" name="Notifica">
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_Mx4KgLi6EfCB54CkmTiEfw" name="idNotifica" visibility="private">
+          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_yW9VcLi6EfCB54CkmTiEfw" name="tipo" visibility="private" type="_o7HGELi6EfCB54CkmTiEfw" isUnique="false"/>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_2YhtcLi6EfCB54CkmTiEfw" name="messaggio" visibility="private" isUnique="false">
+          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_CjJQMLi7EfCB54CkmTiEfw" name="dataInvio" visibility="private" type="_cRiukLibEfCDhMtBXAAUPg" isUnique="false"/>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_GoIvoLi7EfCB54CkmTiEfw" name="letta" visibility="private" isUnique="false">
           <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
         </ownedAttribute>
       </packagedElement>
@@ -247,6 +271,23 @@
         <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_ejqFsLicEfCDhMtBXAAUPg" name="ATTIVA"/>
         <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_g4pnILicEfCDhMtBXAAUPg" name="ANNULLATA"/>
         <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_kApS0LicEfCDhMtBXAAUPg" name="COMPLETATA"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Enumeration" xmi:id="_sJuMkLi5EfCB54CkmTiEfw" name="TipoScadenza">
+        <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_utxdsLi5EfCB54CkmTiEfw" name="BOLLO"/>
+        <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_wPnD4Li5EfCB54CkmTiEfw" name="ASSICURAZIONE"/>
+        <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_yXsxwLi5EfCB54CkmTiEfw" name="REVISIONE"/>
+        <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_zaMJgLi5EfCB54CkmTiEfw" name="TAGLIANDO"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Enumeration" xmi:id="_o7HGELi6EfCB54CkmTiEfw" name="TipoNotifica">
+        <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_r4CKMLi6EfCB54CkmTiEfw" name="SCADENZA"/>
+        <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_tXg_8Li6EfCB54CkmTiEfw" name="MANUTENZIONE"/>
+        <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_vdxh0Li6EfCB54CkmTiEfw" name="PRENOTAZIONE"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Enumeration" xmi:id="_TBIQILi8EfCB54CkmTiEfw" name="TipoVeicolo">
+        <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_UzzHoLi8EfCB54CkmTiEfw" name="AUTO"/>
+        <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_V74KALi8EfCB54CkmTiEfw" name="MOTO"/>
+        <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_XKerILi8EfCB54CkmTiEfw" name="FURGONE"/>
+        <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_c_ogoLi8EfCB54CkmTiEfw" name="CAMION"/>
       </packagedElement>
     </packagedElement>
   </packagedElement>
