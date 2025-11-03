@@ -159,5 +159,95 @@
       <ownedEnd xmi:type="uml:Property" xmi:id="_qTTpQrGBEfCsW-pwn2EawA" name="restituire veicolo" type="_QLTrEK5fEfChJNbIuAI2xA" association="_qTSbILGBEfCsW-pwn2EawA"/>
       <ownedEnd xmi:type="uml:Property" xmi:id="_qTUQULGBEfCsW-pwn2EawA" type="_kk2AkKk8EfCHnsyOEWYR-Q" association="_qTSbILGBEfCsW-pwn2EawA"/>
     </packagedElement>
+    <packagedElement xmi:type="uml:Package" xmi:id="_PZTm8LiSEfCDhMtBXAAUPg" name="it.fleetmanager.model&#xA;it.fleetmanager.model&#xA;it.fleetmanager.model&#xA;it.fleetmanager.model&#xA;it.fleetmanager.model&#xA;it.fleetmanager.model&#xA;it.fleetmanager.model&#xA;it.fleetmanager.model&#xA;it.fleetmanager.model&#xA;it.fleetmanager.model&#xA;it.">
+      <packagedElement xmi:type="uml:Class" xmi:id="_6hBUALiSEfCDhMtBXAAUPg" name="Utente" isAbstract="true">
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_HZxvILiTEfCDhMtBXAAUPg" name="idUtente" visibility="private">
+          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_MFug4LiTEfCDhMtBXAAUPg" name="nome" visibility="private" isUnique="false">
+          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="__iTVMLiVEfCDhMtBXAAUPg" name="cognome" visibility="private" isUnique="false">
+          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_bpu58LiWEfCDhMtBXAAUPg" name="email" visibility="private">
+          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_hHzFILiWEfCDhMtBXAAUPg" name="password" visibility="private" isUnique="false">
+          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_uKmXoLiXEfCDhMtBXAAUPg" name="ruolo" visibility="private" type="_Ny2NMLiXEfCDhMtBXAAUPg" isUnique="false"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Class" xmi:id="_5aVmgLiXEfCDhMtBXAAUPg" name="Driver">
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_8GMIwLiXEfCDhMtBXAAUPg" name="patente" visibility="private">
+          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        </ownedAttribute>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Class" xmi:id="_U7TBILiYEfCDhMtBXAAUPg" name="Manager"/>
+      <packagedElement xmi:type="uml:Class" xmi:id="_hyBb8LiYEfCDhMtBXAAUPg" name="Veicolo">
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_m9NucLiYEfCDhMtBXAAUPg" name="targa" visibility="private">
+          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_sAGZgLiYEfCDhMtBXAAUPg" name="marca" visibility="private" isUnique="false">
+          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_yYs6ULiYEfCDhMtBXAAUPg" name="modello" visibility="private" isUnique="false">
+          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_3gIHILiYEfCDhMtBXAAUPg" name="anno" visibility="private" isUnique="false">
+          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_-b-CcLiZEfCDhMtBXAAUPg" name="statoVeicolo" visibility="private" type="_8mN3MLiYEfCDhMtBXAAUPg" isUnique="false"/>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_FLDwoLiaEfCDhMtBXAAUPg" name="km" visibility="private" isUnique="false">
+          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+        </ownedAttribute>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Class" xmi:id="_RTb3sLiaEfCDhMtBXAAUPg" name="Prenotazione">
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_VTOHALiaEfCDhMtBXAAUPg" name="idPrenotazione" visibility="private">
+          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_eyJqILibEfCDhMtBXAAUPg" name="dataInizio" visibility="private" type="_4BT2sLiaEfCDhMtBXAAUPg" isUnique="false"/>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_jMPP0LibEfCDhMtBXAAUPg" name="Property1" visibility="private" type="_4BT2sLiaEfCDhMtBXAAUPg" isUnique="false"/>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_m9Q08LicEfCDhMtBXAAUPg" name="stato" visibility="private" type="_Wsq7ULicEfCDhMtBXAAUPg" isUnique="false"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Class" xmi:id="_I8HOILifEfCDhMtBXAAUPg" name="Manutenzione">
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_N8G9QLifEfCDhMtBXAAUPg" name="idManutenzione" visibility="private">
+          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_UMWMQLifEfCDhMtBXAAUPg" name="data" visibility="private" type="_4BT2sLiaEfCDhMtBXAAUPg" isUnique="false"/>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_Yl5mcLifEfCDhMtBXAAUPg" name="tipo" visibility="private" isUnique="false">
+          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_bSERwLifEfCDhMtBXAAUPg" name="descrizione" visibility="private" isUnique="false">
+          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        </ownedAttribute>
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_fHGCkLifEfCDhMtBXAAUPg" name="straordinaria" visibility="private" isUnique="false">
+          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
+        </ownedAttribute>
+      </packagedElement>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Package" xmi:id="_YYXzsLiSEfCDhMtBXAAUPg" name="it.fleetmanager.service&#xA;"/>
+    <packagedElement xmi:type="uml:Package" xmi:id="_bOTfALiSEfCDhMtBXAAUPg" name="it.fleetmanager.repository&#xA;"/>
+    <packagedElement xmi:type="uml:Package" xmi:id="_dZqjULiSEfCDhMtBXAAUPg" name="it.fleetmanager.util&#xA;">
+      <packagedElement xmi:type="uml:Enumeration" xmi:id="_Ny2NMLiXEfCDhMtBXAAUPg" name="RuoloUtente">
+        <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_m1dWELiXEfCDhMtBXAAUPg" name="DRIVER"/>
+        <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_pEKpULiXEfCDhMtBXAAUPg" name="MANAGER"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Enumeration" xmi:id="_8mN3MLiYEfCDhMtBXAAUPg" name="StatoVeicolo">
+        <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_EcYiMLiZEfCDhMtBXAAUPg" name="DISPONIBILE"/>
+        <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_sbzBkLiZEfCDhMtBXAAUPg" name="PRENOTATO"/>
+        <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_vPNkYLiZEfCDhMtBXAAUPg" name="IN_MANUTENZIONE"/>
+        <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_63lVsLiZEfCDhMtBXAAUPg" name="NON_DISPONIBILE"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_4BT2sLiaEfCDhMtBXAAUPg" name="LocalDate"/>
+      <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_cRiukLibEfCDhMtBXAAUPg" name="LocalDateTime"/>
+      <packagedElement xmi:type="uml:Enumeration" xmi:id="_Wsq7ULicEfCDhMtBXAAUPg" name="StatoPrenotazione">
+        <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_aCUogLicEfCDhMtBXAAUPg" name="RICHIESTA"/>
+        <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_caMe0LicEfCDhMtBXAAUPg" name="CONFERMATA"/>
+        <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_ejqFsLicEfCDhMtBXAAUPg" name="ATTIVA"/>
+        <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_g4pnILicEfCDhMtBXAAUPg" name="ANNULLATA"/>
+        <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_kApS0LicEfCDhMtBXAAUPg" name="COMPLETATA"/>
+      </packagedElement>
+    </packagedElement>
   </packagedElement>
 </uml:Model>
