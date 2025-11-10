@@ -246,9 +246,6 @@
         <ownedAttribute xmi:type="uml:Property" xmi:id="_bSERwLifEfCDhMtBXAAUPg" name="descrizione" visibility="private" isUnique="false">
           <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
         </ownedAttribute>
-        <ownedAttribute xmi:type="uml:Property" xmi:id="_fHGCkLifEfCDhMtBXAAUPg" name="straordinaria" visibility="private" isUnique="false">
-          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
-        </ownedAttribute>
         <ownedOperation xmi:type="uml:Operation" xmi:id="_ib8GcLprEfC__uMEWcgpBw" name="getIdManutenzione">
           <ownedParameter xmi:type="uml:Parameter" xmi:id="_j95ocLprEfC__uMEWcgpBw" name="return" isUnique="false" direction="return">
             <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
@@ -563,47 +560,6 @@
       </packagedElement>
     </packagedElement>
     <packagedElement xmi:type="uml:Package" xmi:id="_Yw6jsLpMEfCZ9qt19jY5LA" name="service">
-      <packagedElement xmi:type="uml:Class" xmi:id="_c2M2sLpPEfCZ9qt19jY5LA" name="GestoreLogin">
-        <ownedAttribute xmi:type="uml:Property" xmi:id="_t2XzILpPEfCZ9qt19jY5LA" name="utenteDAO" visibility="private" type="_XMVrMLpPEfCZ9qt19jY5LA" isUnique="false"/>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_Je-G0LpQEfCZ9qt19jY5LA" name="login">
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_iKHK4LpQEfCZ9qt19jY5LA" name="return" type="_6hBUALiSEfCDhMtBXAAUPg" isUnique="false" direction="return"/>
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_zdO4gLpQEfCZ9qt19jY5LA" name="email" isUnique="false">
-            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
-          </ownedParameter>
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_369BALpQEfCZ9qt19jY5LA" name="password" isUnique="false">
-            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
-          </ownedParameter>
-        </ownedOperation>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_G9yHALpREfCZ9qt19jY5LA" name="creaUtente">
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_J3rFQLpREfCZ9qt19jY5LA" name="return" isUnique="false" direction="return">
-            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
-          </ownedParameter>
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_RV4jQLpREfCZ9qt19jY5LA" name="utente" type="_6hBUALiSEfCDhMtBXAAUPg" isUnique="false"/>
-        </ownedOperation>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_WnMr4LpREfCZ9qt19jY5LA" name="aggiornaProfilo">
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_gZDngLpREfCZ9qt19jY5LA" name="utente" type="_6hBUALiSEfCDhMtBXAAUPg" isUnique="false"/>
-        </ownedOperation>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_28QusLpREfCZ9qt19jY5LA" name="eliminaUtente">
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_5BDQ8LpREfCZ9qt19jY5LA" name="idUtente" isUnique="false">
-            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
-          </ownedParameter>
-        </ownedOperation>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="__dQfYLpREfCZ9qt19jY5LA" name="getUtenteByEmail">
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_CaMKkLpSEfCZ9qt19jY5LA" name="return" type="_6hBUALiSEfCDhMtBXAAUPg" isUnique="false" direction="return"/>
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_MFubwLpSEfCZ9qt19jY5LA" name="email" isUnique="false">
-            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
-          </ownedParameter>
-        </ownedOperation>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_OJMvYLpSEfCZ9qt19jY5LA" name="getTuttiUtenti">
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_R80yALpSEfCZ9qt19jY5LA" name="return" type="_6hBUALiSEfCDhMtBXAAUPg" isUnique="false" direction="return">
-            <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_bzkNoLpSEfCZ9qt19jY5LA" name="LiteralInteger1"/>
-            <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_bzptMLpSEfCZ9qt19jY5LA" name="LiteralUnlimitedNatural1" value="*"/>
-          </ownedParameter>
-        </ownedOperation>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_weFd8L4NEfCDAPpuTtXI2g" name="logout">
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_yiTYcL4NEfCDAPpuTtXI2g" name="utente" type="_6hBUALiSEfCDhMtBXAAUPg" isUnique="false"/>
-        </ownedOperation>
-      </packagedElement>
       <packagedElement xmi:type="uml:Class" xmi:id="_eTIHsLpPEfCZ9qt19jY5LA" name="GestorePrenotazioni">
         <ownedAttribute xmi:type="uml:Property" xmi:id="_Ei3a4L4OEfCDAPpuTtXI2g" name="prenotazioneDAO" visibility="private" type="_o5xB8LyOEfC8rbOYHjaw_Q" isUnique="false"/>
         <ownedAttribute xmi:type="uml:Property" xmi:id="_MNvb4L4OEfCDAPpuTtXI2g" name="veicoloDAO" visibility="private" type="_hayu8LyOEfC8rbOYHjaw_Q" isUnique="false"/>
@@ -726,8 +682,49 @@
         </ownedOperation>
         <ownedOperation xmi:type="uml:Operation" xmi:id="_k5vpUL4TEfCDAPpuTtXI2g" name="eseguiControlloPeriodico"/>
       </packagedElement>
-      <packagedElement xmi:type="uml:Dependency" xmi:id="_abuV0L4UEfCDAPpuTtXI2g" client="_Yw6jsLpMEfCZ9qt19jY5LA" supplier="_OIP0gLpPEfCZ9qt19jY5LA"/>
+      <packagedElement xmi:type="uml:Dependency" xmi:id="_abuV0L4UEfCDAPpuTtXI2g" client="_rXbZkKk6EfCy7Z6zNtdvTA" supplier="_OIP0gLpPEfCZ9qt19jY5LA"/>
       <packagedElement xmi:type="uml:Dependency" xmi:id="_qA3esL4UEfCDAPpuTtXI2g" client="_Yw6jsLpMEfCZ9qt19jY5LA" supplier="_6AkRYLpKEfCZ9qt19jY5LA"/>
+      <packagedElement xmi:type="uml:Class" xmi:id="_zlX6AL5EEfCiTtRuZ237iQ" name="GestoreLogin">
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_t2XzILpPEfCZ9qt19jY5LA" name="utenteDAO" visibility="private" type="_XMVrMLpPEfCZ9qt19jY5LA" isUnique="false"/>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_Je-G0LpQEfCZ9qt19jY5LA" name="login">
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_iKHK4LpQEfCZ9qt19jY5LA" name="return" type="_6hBUALiSEfCDhMtBXAAUPg" isUnique="false" direction="return"/>
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_zdO4gLpQEfCZ9qt19jY5LA" name="email" isUnique="false">
+            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+          </ownedParameter>
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_369BALpQEfCZ9qt19jY5LA" name="password" isUnique="false">
+            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+          </ownedParameter>
+        </ownedOperation>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_G9yHALpREfCZ9qt19jY5LA" name="creaUtente">
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_J3rFQLpREfCZ9qt19jY5LA" name="return" isUnique="false" direction="return">
+            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
+          </ownedParameter>
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_RV4jQLpREfCZ9qt19jY5LA" name="utente" type="_6hBUALiSEfCDhMtBXAAUPg" isUnique="false"/>
+        </ownedOperation>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_weFd8L4NEfCDAPpuTtXI2g" name="logout">
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_yiTYcL4NEfCDAPpuTtXI2g" name="utente" type="_6hBUALiSEfCDhMtBXAAUPg" isUnique="false"/>
+        </ownedOperation>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_WnMr4LpREfCZ9qt19jY5LA" name="aggiornaProfilo">
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_gZDngLpREfCZ9qt19jY5LA" name="utente" type="_6hBUALiSEfCDhMtBXAAUPg" isUnique="false"/>
+        </ownedOperation>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_28QusLpREfCZ9qt19jY5LA" name="eliminaUtente">
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_5BDQ8LpREfCZ9qt19jY5LA" name="idUtente" isUnique="false">
+            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+          </ownedParameter>
+        </ownedOperation>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="__dQfYLpREfCZ9qt19jY5LA" name="getUtenteByEmail">
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_CaMKkLpSEfCZ9qt19jY5LA" name="return" type="_6hBUALiSEfCDhMtBXAAUPg" isUnique="false" direction="return"/>
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_MFubwLpSEfCZ9qt19jY5LA" name="email" isUnique="false">
+            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+          </ownedParameter>
+        </ownedOperation>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_OJMvYLpSEfCZ9qt19jY5LA" name="getTuttiUtenti">
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_R80yALpSEfCZ9qt19jY5LA" name="return" type="_6hBUALiSEfCDhMtBXAAUPg" isUnique="false" direction="return">
+            <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_bzkNoLpSEfCZ9qt19jY5LA" name="LiteralInteger1"/>
+            <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_bzptMLpSEfCZ9qt19jY5LA" name="LiteralUnlimitedNatural1" value="*"/>
+          </ownedParameter>
+        </ownedOperation>
+      </packagedElement>
     </packagedElement>
     <packagedElement xmi:type="uml:Package" xmi:id="_OIP0gLpPEfCZ9qt19jY5LA" name="repository">
       <packagedElement xmi:type="uml:Class" xmi:id="_XMVrMLpPEfCZ9qt19jY5LA" name="UtenteDAO">

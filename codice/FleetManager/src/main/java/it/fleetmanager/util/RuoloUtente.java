@@ -1,5 +1,6 @@
 package it.fleetmanager.util;
 
-public class RuoloUtente {
-
+public enum RuoloUtente {
+	DRIVER,
+	MANAGER
 }
