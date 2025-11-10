@@ -1,4 +1,4 @@
-package PlaBas.FleetManager;
+package it.fleetmanager;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
