@@ -9,7 +9,6 @@ import java.sql.SQLException;
 
 public class CreateDB {
 
-    // File del database H2 (verrà creato in /db/fleetmanager.mv.db)
     private static final String DB_REL_FILE = "./data/fleetdb";
     private static final String DB_URL = "jdbc:h2:" + DB_REL_FILE;
 

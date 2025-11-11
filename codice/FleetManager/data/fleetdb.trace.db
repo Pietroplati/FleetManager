@@ -1,29 +1,41 @@
-2025-11-11 12:19:45.747295+01:00 jdbc[3]: exception
-org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "CREATE TABLE Veicolo (\000a    targa VARCHAR(10) PRIMARY KEY,\000a    tipoVeicolo ENUM ('AUTO', 'MOTO' , 'FURGONE', 'CAMION'),\000a    marca VARCHAR(50) NOT NULL,\000a    modello VARCHAR(50) NOT NULL,\000a    annoImmatricolazione INT CHECK (annoImmatricolazione > 1900),\000a    statoVeicolo ENUM ('DISPONIBILE', 'PRENOTATO', 'IN_MANUTENZIONE', 'NON_DISPONIBILE'),\000a    km INT CHECK (km >= 0)\000a);\000a[*]˙\000a"; SQL statement:
-CREATE TABLE Veicolo (
-    targa VARCHAR(10) PRIMARY KEY,
-    tipoVeicolo ENUM ('AUTO', 'MOTO' , 'FURGONE', 'CAMION'),
-    marca VARCHAR(50) NOT NULL,
-    modello VARCHAR(50) NOT NULL,
-    annoImmatricolazione INT CHECK (annoImmatricolazione > 1900),
-    statoVeicolo ENUM ('DISPONIBILE', 'PRENOTATO', 'IN_MANUTENZIONE', 'NON_DISPONIBILE'),
-    km INT CHECK (km >= 0)
+2025-11-11 15:39:01.258894+01:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "[*]);\000a"; SQL statement:
 );
-˙
  [42000-224]
-2025-11-11 12:23:46.907026+01:00 jdbc[3]: exception
-org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "CREATE TYPE tipo_veicolo AS ENUM('AUTO', 'MOTO' , 'FURGONE', 'CAMION');\000aCREATE TYPE stato_veicolo AS ENUM('DISPONIBILE', 'PRENOTATO', 'IN_MANUTENZIONE', 'NON_DISPONIBILE');\000a\000aCREATE TABLE Veicolo (\000a    targa VARCHAR(10) PRIMARY KEY,\000a    tipoVeicolo tipo_veicolo NOT NULL,\000a    marca VARCHAR(50) NOT NULL,\000a    modello VARCHAR(50) NOT NULL,\000a    annoImmatricolazione INT CHECK (annoImmatricolazione > 1900),\000a    statoVeicolo stato_veicolo NOT NULL,\000a    km INT CHECK (km >= 0)\000a);\000a[*]˙\000a"; SQL statement:
-CREATE TYPE tipo_veicolo AS ENUM('AUTO', 'MOTO' , 'FURGONE', 'CAMION');
-CREATE TYPE stato_veicolo AS ENUM('DISPONIBILE', 'PRENOTATO', 'IN_MANUTENZIONE', 'NON_DISPONIBILE');
+2025-11-11 15:39:39.381854+01:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Domain "RUOLO_UTENTE" already exists; SQL statement:
+					CREATE TYPE ruolo_utente AS ENUM('MANAGER', 'DRIVER') [90119-224]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:644)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
+	at org.h2.message.DbException.get(DbException.java:223)
+	at org.h2.message.DbException.get(DbException.java:199)
+	at org.h2.command.ddl.CreateDomain.update(CreateDomain.java:82)
+	at org.h2.command.ddl.SchemaOwnerCommand.update(SchemaOwnerCommand.java:33)
+	at org.h2.command.CommandContainer.update(CommandContainer.java:169)
+	at org.h2.command.Command.executeUpdate(Command.java:256)
+	at org.h2.command.CommandList.update(CommandList.java:65)
+	at org.h2.command.Command.executeUpdate(Command.java:256)
+	at org.h2.jdbc.JdbcStatement.executeUpdateInternal(JdbcStatement.java:196)
+	at org.h2.jdbc.JdbcStatement.executeUpdate(JdbcStatement.java:147)
+	at it.fleetmanager.repository.CreateTable.main(CreateTable.java:28)
+2025-11-11 15:41:22.089241+01:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "UTENTE" already exists; SQL statement:
 
-CREATE TABLE Veicolo (
-    targa VARCHAR(10) PRIMARY KEY,
-    tipoVeicolo tipo_veicolo NOT NULL,
-    marca VARCHAR(50) NOT NULL,
-    modello VARCHAR(50) NOT NULL,
-    annoImmatricolazione INT CHECK (annoImmatricolazione > 1900),
-    statoVeicolo stato_veicolo NOT NULL,
-    km INT CHECK (km >= 0)
-);
-˙
- [42000-224]
+CREATE TYPE stato_prenotazione AS ENUM('RICHIESTA', 'CONFERMATA', 'ATTIVA', 'ANNULLATA', 'COMPLETATA') [42101-224]
+2025-11-11 15:41:34.676394+01:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Domain "STATO_PRENOTAZIONE" already exists; SQL statement:
+
+CREATE TYPE stato_prenotazione AS ENUM('RICHIESTA', 'CONFERMATA', 'ATTIVA', 'ANNULLATA', 'COMPLETATA') [90119-224]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:644)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
+	at org.h2.message.DbException.get(DbException.java:223)
+	at org.h2.message.DbException.get(DbException.java:199)
+	at org.h2.command.ddl.CreateDomain.update(CreateDomain.java:82)
+	at org.h2.command.ddl.SchemaOwnerCommand.update(SchemaOwnerCommand.java:33)
+	at org.h2.command.CommandContainer.update(CommandContainer.java:169)
+	at org.h2.command.Command.executeUpdate(Command.java:256)
+	at org.h2.command.CommandList.update(CommandList.java:65)
+	at org.h2.command.Command.executeUpdate(Command.java:256)
+	at org.h2.jdbc.JdbcStatement.executeUpdateInternal(JdbcStatement.java:196)
+	at org.h2.jdbc.JdbcStatement.executeUpdate(JdbcStatement.java:147)
+	at it.fleetmanager.repository.CreateTable.main(CreateTable.java:26)
