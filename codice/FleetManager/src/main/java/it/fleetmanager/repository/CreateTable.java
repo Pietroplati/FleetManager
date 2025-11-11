@@ -14,19 +14,16 @@ public class CreateTable {
 		try (Connection conn = DriverManager.getConnection(DB_URL); Statement stmt = conn.createStatement()) {
 			String sql = """
 
-					CREATE TYPE tipo_notifica AS ENUM('SCADENZA', 'MANUTENZIONE', 'PRENOTAZIONE', 'SEGNALAZIONE');
+					
+					ALTER TABLE Prenotazione
+ADD CONSTRAINT FK_Prenotazione_Veicolo
+FOREIGN KEY (targa)
+REFERENCES Veicolo(targa);
 
-					CREATE TABLE Notifica(
-						idNotifica INT PRIMARY KEY,
-						tipoNotifica tipo_notifica NOT NULL,
-						messaggio VARCHAR(255) NOT NULL,
-						dataInvio TIMESTAMP NOT NULL,
-						letta BOOLEAN NOT NULL DEFAULT FALSE
-					);
 
-											""";
+																""";
 			stmt.executeUpdate(sql);
-			System.out.println("Tabella Notifica creata");
+			System.out.println("FK Aggiunta");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
