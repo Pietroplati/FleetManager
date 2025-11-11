@@ -1,0 +1,29 @@
+2025-11-11 12:19:45.747295+01:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "CREATE TABLE Veicolo (\000a    targa VARCHAR(10) PRIMARY KEY,\000a    tipoVeicolo ENUM ('AUTO', 'MOTO' , 'FURGONE', 'CAMION'),\000a    marca VARCHAR(50) NOT NULL,\000a    modello VARCHAR(50) NOT NULL,\000a    annoImmatricolazione INT CHECK (annoImmatricolazione > 1900),\000a    statoVeicolo ENUM ('DISPONIBILE', 'PRENOTATO', 'IN_MANUTENZIONE', 'NON_DISPONIBILE'),\000a    km INT CHECK (km >= 0)\000a);\000a[*]˙\000a"; SQL statement:
+CREATE TABLE Veicolo (
+    targa VARCHAR(10) PRIMARY KEY,
+    tipoVeicolo ENUM ('AUTO', 'MOTO' , 'FURGONE', 'CAMION'),
+    marca VARCHAR(50) NOT NULL,
+    modello VARCHAR(50) NOT NULL,
+    annoImmatricolazione INT CHECK (annoImmatricolazione > 1900),
+    statoVeicolo ENUM ('DISPONIBILE', 'PRENOTATO', 'IN_MANUTENZIONE', 'NON_DISPONIBILE'),
+    km INT CHECK (km >= 0)
+);
+˙
+ [42000-224]
+2025-11-11 12:23:46.907026+01:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "CREATE TYPE tipo_veicolo AS ENUM('AUTO', 'MOTO' , 'FURGONE', 'CAMION');\000aCREATE TYPE stato_veicolo AS ENUM('DISPONIBILE', 'PRENOTATO', 'IN_MANUTENZIONE', 'NON_DISPONIBILE');\000a\000aCREATE TABLE Veicolo (\000a    targa VARCHAR(10) PRIMARY KEY,\000a    tipoVeicolo tipo_veicolo NOT NULL,\000a    marca VARCHAR(50) NOT NULL,\000a    modello VARCHAR(50) NOT NULL,\000a    annoImmatricolazione INT CHECK (annoImmatricolazione > 1900),\000a    statoVeicolo stato_veicolo NOT NULL,\000a    km INT CHECK (km >= 0)\000a);\000a[*]˙\000a"; SQL statement:
+CREATE TYPE tipo_veicolo AS ENUM('AUTO', 'MOTO' , 'FURGONE', 'CAMION');
+CREATE TYPE stato_veicolo AS ENUM('DISPONIBILE', 'PRENOTATO', 'IN_MANUTENZIONE', 'NON_DISPONIBILE');
+
+CREATE TABLE Veicolo (
+    targa VARCHAR(10) PRIMARY KEY,
+    tipoVeicolo tipo_veicolo NOT NULL,
+    marca VARCHAR(50) NOT NULL,
+    modello VARCHAR(50) NOT NULL,
+    annoImmatricolazione INT CHECK (annoImmatricolazione > 1900),
+    statoVeicolo stato_veicolo NOT NULL,
+    km INT CHECK (km >= 0)
+);
+˙
+ [42000-224]
