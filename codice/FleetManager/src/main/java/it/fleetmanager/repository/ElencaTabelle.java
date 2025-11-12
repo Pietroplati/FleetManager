@@ -17,7 +17,7 @@ public class ElencaTabelle {
 			DatabaseMetaData meta = conn.getMetaData();
 
 			try (ResultSet rsTables = meta.getTables(null, "PUBLIC", "%", new String[] { "TABLE" })) {
-				System.out.println("📘 SCHEMA DATABASE: " + DB_URL);
+				System.out.println("SCHEMA DATABASE: " + DB_URL);
 
 				while (rsTables.next()) {
 					String schema = rsTables.getString("TABLE_SCHEM");

@@ -16,14 +16,15 @@ public class CreateTable {
 
 					
 					ALTER TABLE Prenotazione
-ADD CONSTRAINT FK_Prenotazione_Veicolo
-FOREIGN KEY (targa)
-REFERENCES Veicolo(targa);
+					ADD COLUMN idUtente INT;
+					
+					
+					
 
 
 																""";
 			stmt.executeUpdate(sql);
-			System.out.println("FK Aggiunta");
+			System.out.println("Aggiunta");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
