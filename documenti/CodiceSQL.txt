@@ -2,11 +2,13 @@ Creazione tabella Manutenzione--------------------------------------------------
 
 CREATE TYPE tipo_manutenzione AS ENUM('ORDINARIA', 'STRAORDINARIA' , 'REVISIONE');
 					
-CREATE TABLE Manutenzione (
+CREATE TABLE IF NOT EXISTS Manutenzione (
 	idManutenzione INT PRIMARY KEY,
 	data TIMESTAMP NOT NULL,
 	tipoManutenzione tipo_manutenzione NOT NULL,
-	descrizione VARCHAR(255) NOT NULL
+	descrizione VARCHAR(255) NOT NULL,
+	targa VARCHAR(10) NOT NULL,
+	FOREIGN KEY (targa) REFERENCES Veicolo(targa) ON DELETE CASCADE
 );
 
 ------------------------------------------------------------------------------------------------------
@@ -15,7 +17,7 @@ Creazione tabella Veicolo-------------------------------------------------------
 CREATE TYPE tipo_veicolo AS ENUM('AUTO', 'MOTO' , 'FURGONE', 'CAMION');
 CREATE TYPE stato_veicolo AS ENUM('DISPONIBILE', 'PRENOTATO', 'IN_MANUTENZIONE', 'NON_DISPONIBILE');
 					
-CREATE TABLE Manutenzione (
+CREATE TABLE IF NOT EXISTS Veicolo (
 	targa VARCHAR(10) PRIMARY KEY,
 	tipoVeicolo tipo_veicolo NOT NULL,
 	marca VARCHAR(50) NOT NULL,
@@ -30,7 +32,7 @@ Creazione tabella Utente--------------------------------------------------------
 
 CREATE TYPE ruolo_utente AS ENUM('MANAGER', 'DRIVER');
 
-CREATE TABLE Utente (
+CREATE TABLE IF NOT EXISTS Utente (
 	idUtente INT PRIMARY KEY,
 	nome VARCHAR(50) NOT NULL,
 	cognome VARCHAR(50) NOT NULL,
@@ -45,11 +47,15 @@ Creazione tabella Prenotazione--------------------------------------------------
 
 CREATE TYPE stato_prenotazione AS ENUM('RICHIESTA', 'CONFERMATA', 'ATTIVA', 'ANNULLATA', 'COMPLETATA');
 
-CREATE TABLE Prenotazione (
+CREATE TABLE IF NOT EXISTS Prenotazione (
 	idPrenotazione INT PRIMARY KEY,
 	dataInizio TIMESTAMP NOT NULL,
 	dataFine TIMESTAMP NOT NULL,
-	statoPrenotazione stato_prenotazione NOT NULL
+	statoPrenotazione stato_prenotazione NOT NULL,
+	idUtente INT NOT NULL,
+	targa VARCHAR(10) NOT NULL,
+	FOREIGN KEY (idUtente) REFERENCES Utente(idUtente) ON DELETE CASCADE,
+    	FOREIGN KEY (targa) REFERENCES Veicolo(targa) ON DELETE CASCADE
 );
 
 ------------------------------------------------------------------------------------------------------
@@ -57,11 +63,13 @@ Creazione tabella Scadenza------------------------------------------------------
 
 CREATE TYPE tipo_scadenza AS ENUM('BOLLO', 'ASSICURAZIONE', 'REVISIONE', 'TAGLIANDO');
 
-CREATE TABLE Scadenza (
+CREATE TABLE IF NOT EXISTS Scadenza (
 	idScadenza INT PRIMARY KEY,
 	tipoScadenza tipo_scadenza NOT NULL,
 	data DATE NOT NULL,
 	notificata BOOLEAN NOT NULL DEFAULT FALSE
+	targa VARCHAR(10) NOT NULL,
+	FOREIGN KEY (targa) REFERENCES Veicolo(targa) ON DELETE CASCADE
 );
 
 ------------------------------------------------------------------------------------------------------
@@ -69,12 +77,16 @@ Creazione tabella Notifica------------------------------------------------------
 
 CREATE TYPE tipo_notifica AS ENUM('SCADENZA', 'MANUTENZIONE', 'PRENOTAZIONE', 'SEGNALAZIONE');
 
-CREATE TABLE Notifica(
+CREATE TABLE IF NOT EXISTS Notifica(
 	idNotifica INT PRIMARY KEY,
 	tipoNotifica tipo_notifica NOT NULL,
 	messaggio VARCHAR(255) NOT NULL,
 	dataInvio TIMESTAMP NOT NULL,
 	letta BOOLEAN NOT NULL DEFAULT FALSE
+	idUtente INT NOT NULL,
+	targa VARCHAR(10),
+	FOREIGN KEY (idUtente) REFERENCES Utente(idUtente) ON DELETE CASCADE,
+    	FOREIGN KEY (targa) REFERENCES Veicolo(targa) ON DELETE CASCADE
 );
 
 

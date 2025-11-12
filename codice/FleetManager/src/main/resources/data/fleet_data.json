@@ -1,85 +1,49 @@
 {
-  "utenti": [
-    {
-      "idUtente": 1,
-      "nome": "Mario",
-      "cognome": "Rossi",
-      "email": "mario.rossi@example.com",
-      "password": "pwd123",
-      "ruoloUtente": "MANAGER",
-      "patente": null
-    },
-    {
-      "idUtente": 2,
-      "nome": "Luca",
-      "cognome": "Bianchi",
-      "email": "luca.bianchi@example.com",
-      "password": "pwd456",
-      "ruoloUtente": "DRIVER",
-      "patente": "B"
-    }
-  ],
-  "veicoli": [
-    {
-      "targa": "FZ320YT",
-      "tipoVeicolo": "AUTO",
-      "marca": "Fiat",
-      "modello": "Panda",
-      "annoImmatricolazione": 2020,
-      "statoVeicolo": "DISPONIBILE",
-      "km": 45000
-    },
-	{
-	      "targa": "BW426ZT",
-	      "tipoVeicolo": "AUTO",
-	      "marca": "Fiat",
-	      "modello": "Punto",
-	      "annoImmatricolazione": 2001,
-	      "statoVeicolo": "DISPONIBILE",
-	      "km": 288500
-	},
-    {
-      "targa": "XY987ZT",
-      "tipoVeicolo": "FURGONE",
-      "marca": "Ford",
-      "modello": "Transit",
-      "annoImmatricolazione": 2022,
-      "statoVeicolo": "DISPONIBILE",
-      "km": 20000
-    }
-  ],
-  "scadenze": [
-    { "idScadenza": 1, "tipoScadenza": "BOLLO", "data": "2025-12-30", "notificata": false, "targa": "AB123CD" },
-    { "idScadenza": 2, "tipoScadenza": "ASSICURAZIONE", "data": "2025-10-10", "notificata": true,  "targa": "XY987ZT" }
-  ],
-  "manutenzioni": [
-    {
-      "idManutenzione": 1,
-      "data": "2025-11-10T09:30:00",
-      "tipoManutenzione": "ORDINARIA",
-      "descrizione": "Cambio olio",
-      "targa": "AB123CD"
-    }
-  ],
-  "prenotazioni": [
-    {
-      "idPrenotazione": 1,
-      "dataInizio": "2025-11-10T08:00:00",
-      "dataFine":   "2025-11-10T18:00:00",
-      "statoPrenotazione": "CONFERMATA",
-      "idUtente": 2,
-      "targa": "AB123CD"
-    }
-  ],
-  "notifiche": [
-    {
-      "idNotifica": 1,
-      "tipoNotifica": "SCADENZA",
-      "messaggio": "Scadenza bollo in arrivo",
-      "dataInvio": "2025-11-01T10:00:00",
-      "letta": false,
-      "idScadenza": 1,
-      "idUtente": 1
-    }
-  ]
+	"veicoli": [
+		{
+			"targa": "FZ320YT",
+			"tipoVeicolo": "AUTO",
+			"marca": "Fiat",
+			"modello": "Panda",
+			"annoImmatricolazione": 2020,
+			"statoVeicolo": "DISPONIBILE",
+			"km": 45000
+		},
+		{
+			"targa": "BW426ZT",
+			"tipoVeicolo": "AUTO",
+			"marca": "Fiat",
+			"modello": "Punto",
+			"annoImmatricolazione": 2001,
+			"statoVeicolo": "DISPONIBILE",
+			"km": 288500
+		},
+		{
+			"targa": "GS630PN",
+			"tipoVeicolo": "FURGONE",
+			"marca": "Ford",
+			"modello": "Transit",
+			"annoImmatricolazione": 2024,
+			"statoVeicolo": "DISPONIBILE",
+			"km": 35000
+		},
+		{
+			"targa": "GH819RJ",
+			"tipoVeicolo": "FURGONE",
+			"marca": "Fiat",
+			"modello": "Doblò",
+			"annoImmatricolazione": 2022,
+			"statoVeicolo": "DISPONIBILE",
+			"km": 41000
+		}
+	],
+	"scadenze": [
+		{
+			"idScadenza": 1,
+			"tipoScadenza": "BOLLO",
+			"data": "2026-04-01",
+			"notificata": false,
+			"targa": "GH819RJ"
+		}
+	]
 }

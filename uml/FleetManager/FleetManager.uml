@@ -222,8 +222,8 @@
         <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_yZWFYLlaEfCGR57sucB5Dg" name="LiteralUnlimitedNatural1" value="*"/>
       </ownedEnd>
       <ownedEnd xmi:type="uml:Property" xmi:id="_ry7yErlaEfCGR57sucB5Dg" name="scadenza" type="_nxQ0ALi4EfCB54CkmTiEfw" association="_ry6j8LlaEfCGR57sucB5Dg">
-        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_wLOoALlaEfCGR57sucB5Dg" name="LiteralInteger1" value="1"/>
-        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_wLOoAblaEfCGR57sucB5Dg" name="LiteralUnlimitedNatural1" value="1"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_anOUEL_pEfCt4cYluXe7Jg" name="LiteralInteger1"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_anUasL_pEfCt4cYluXe7Jg" name="LiteralUnlimitedNatural1" value="1"/>
       </ownedEnd>
     </packagedElement>
     <packagedElement xmi:type="uml:Association" xmi:id="_dGgvALlcEfCGR57sucB5Dg" memberEnd="_dGikMrlcEfCGR57sucB5Dg _dGjyUrlcEfCGR57sucB5Dg">
