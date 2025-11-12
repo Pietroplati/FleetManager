@@ -221,3 +221,42 @@ ADD COLUMN idUtente INT [42121-224]
 	at org.h2.jdbc.JdbcStatement.executeUpdateInternal(JdbcStatement.java:196)
 	at org.h2.jdbc.JdbcStatement.executeUpdate(JdbcStatement.java:147)
 	at it.fleetmanager.repository.CreateTable.main(CreateTable.java:26)
+2025-11-12 14:55:06.942132+01:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000a\000aALTER TABLE Veicolo\000a[*]DELETE *\000aWHERE targa='AB123CD';\000a\000a\000a\000a\000a\000a"; expected "., ADD, SET, RENAME, DROP, ALTER"; SQL statement:
+
+
+ALTER TABLE Veicolo
+DELETE *
+WHERE targa='AB123CD';
+
+
+
+
+
+ [42001-224]
+2025-11-12 14:55:37.619222+01:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000a\000aALTER TABLE Veicolo\000aDROP [*]*\000aWHERE targa='AB123CD';\000a\000a\000a\000a\000a\000a"; expected "identifier"; SQL statement:
+
+
+ALTER TABLE Veicolo
+DROP *
+WHERE targa='AB123CD';
+
+
+
+
+
+ [42001-224]
+2025-11-12 14:55:58.807956+01:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "\000a\000aALTER TABLE Veicolo\000aDROP [*]*\000aWHERE targa=""AB123CD"";\000a\000a\000a\000a\000a\000a"; expected "identifier"; SQL statement:
+
+
+ALTER TABLE Veicolo
+DROP *
+WHERE targa="AB123CD";
+
+
+
+
+
+ [42001-224]

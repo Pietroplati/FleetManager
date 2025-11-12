@@ -76,7 +76,16 @@
       <version>${h2.version}</version>
       <scope>runtime</scope>
     </dependency>
+    
+   <dependency>
+ 	 <groupId>com.fasterxml.jackson.core</groupId>
+ 	 <artifactId>jackson-databind</artifactId>
+ 	 <version>2.17.0</version>
+	</dependency>
+
   </dependencies>
+  
+  
 
   <build>
     
@@ -121,14 +130,14 @@
       </plugins>
     </pluginManagement>
 
-    <!-- plugin effettivamente usati in build -->
+		<!-- plugin effettivamente usati in build -->
     <plugins>
-      <!-- Surefire configurato per JUnit 5 -->
+			<!-- Surefire configurato per JUnit 5 -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <!-- evita problemi con il module path su JDK 17 -->
+					<!-- evita problemi con il module path su JDK 17 -->
           <useModulePath>false</useModulePath>
           <includes>
             <include>**/*Test.java</include>
@@ -137,14 +146,14 @@
         </configuration>
       </plugin>
 
-      <!-- JavaDoc (utile per documentazione finale) -->
+			<!-- JavaDoc (utile per documentazione finale) -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>3.6.3</version>
       </plugin>
 
-      <!-- PMD per qualità del codice (report sotto target/site) -->
+			<!-- PMD per qualità del codice (report sotto target/site) -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>

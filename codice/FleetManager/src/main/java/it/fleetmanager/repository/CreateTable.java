@@ -15,11 +15,8 @@ public class CreateTable {
 			String sql = """
 
 					
-					ALTER TABLE Prenotazione
-					ADD COLUMN idUtente INT;
-					
-					
-					
+					DELETE FROM Veicolo
+WHERE targa = 'FZ320YT';
 
 
 																""";
