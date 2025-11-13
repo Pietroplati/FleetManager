@@ -26,9 +26,9 @@ public class JSONoperator {
         boolean removed = veicoli.removeIf(v -> v.getTarga().equals("GH819RJ"));
 
         if (removed) {
-            System.out.println("✅ Veicolo GH819RJ rimosso dalla lista.");
+            System.out.println("Veicolo GH819RJ rimosso dalla lista.");
         } else {
-            System.out.println("ℹ️ Nessun veicolo GH819RJ trovato.");
+            System.out.println("Nessun veicolo GH819RJ trovato.");
         }
 
         //️Aggiorna il nodo "veicoli" dentro al root
@@ -37,6 +37,6 @@ public class JSONoperator {
         //️Sovrascrivi il file con il JSON aggiornato (mantenendo anche "scadenze")
         mapper.writerWithDefaultPrettyPrinter().writeValue(file, root);
 
-        System.out.println("💾 File JSON aggiornato correttamente.");
+        System.out.println("File JSON aggiornato correttamente.");
     }
 }
