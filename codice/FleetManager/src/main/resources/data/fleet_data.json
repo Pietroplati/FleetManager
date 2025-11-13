@@ -35,6 +35,24 @@
 			"annoImmatricolazione": 2022,
 			"statoVeicolo": "DISPONIBILE",
 			"km": 41000
+		},
+		{
+			"targa": "GS254DA",
+			"tipoVeicolo": "AUTO",
+			"marca": "Tesla",
+			"modello": "Model 3",
+			"annoImmatricolazione": 2024,
+			"statoVeicolo": "DISPONIBILE",
+			"km": 19000
+		},
+		{
+			"targa": "GV779WE",
+			"tipoVeicolo": "AUTO",
+			"marca": "BMW",
+			"modello": "M5",
+			"annoImmatricolazione": 2024,
+			"statoVeicolo": "DISPONIBILE",
+			"km": 16000
 		}
 	],
 	"scadenze": [

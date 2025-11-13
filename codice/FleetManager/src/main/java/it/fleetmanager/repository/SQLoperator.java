@@ -5,6 +5,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+/**
+ * Classe creata per eseguire le operazioni sul database tramite codice SQL
+ */
 public class SQLoperator {
 
 	private static final String DB_REL_FILE = "./data/fleetdb";
