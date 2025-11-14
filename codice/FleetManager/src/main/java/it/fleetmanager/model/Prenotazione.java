@@ -1,20 +1,30 @@
 package it.fleetmanager.model;
 
 import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import it.fleetmanager.util.StatoPrenotazione;
 
 public class Prenotazione {
 	private int idPrenotazione;
-    private LocalDateTime dataInizio;
-    private LocalDateTime dataFine;
-    private StatoPrenotazione stato;
+	private LocalDateTime dataInizio;
+	private LocalDateTime dataFine;
+	private StatoPrenotazione stato;
+	private int idUtente;
+	private String targa;
 
-    public Prenotazione(Integer idPrenotazione, LocalDateTime dataInizio, LocalDateTime dataFine, StatoPrenotazione stato) {
-        this.idPrenotazione = idPrenotazione;
-        this.dataInizio = dataInizio;
-        this.dataFine = dataFine;
-        this.stato = stato;
-    }
+	public Prenotazione(@JsonProperty("idPrenotazione") Integer idPrenotazione,
+			@JsonProperty("dataInizio") LocalDateTime dataInizio, @JsonProperty("dataFine") LocalDateTime dataFine,
+			@JsonProperty("statoPrenotazione") StatoPrenotazione stato, @JsonProperty("idUtente") int idUtente,
+			@JsonProperty("targa") String targa) {
+		this.idPrenotazione = idPrenotazione;
+		this.dataInizio = dataInizio;
+		this.dataFine = dataFine;
+		this.stato = stato;
+		this.idUtente = idUtente;
+		this.targa = targa;
+	}
 
 	public int getIdPrenotazione() {
 		return idPrenotazione;
@@ -44,4 +54,11 @@ public class Prenotazione {
 		this.stato = stato;
 	}
 
+	public int getIdUtente() {
+		return idUtente;
+	}
+	
+	public String getTarga() {
+		return targa;
+	}
 }

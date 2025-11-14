@@ -283,3 +283,63 @@ MERGE INTO notifica (idnotifica, tiponotifica, messaggio, datainvio, letta, idsc
 	at org.h2.jdbc.JdbcConnection.prepareStatement(JdbcConnection.java:316)
 	at it.fleetmanager.repository.DatabaseSeeder.seedFromJson(DatabaseSeeder.java:137)
 	at it.fleetmanager.repository.DatabaseSeeder.main(DatabaseSeeder.java:27)
+2025-11-14 17:07:35.247994+01:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Column "IDSCADENZA" not found; SQL statement:
+MERGE INTO notifica (idnotifica, tiponotifica, messaggio, datainvio, letta, idscadenza, idutente) KEY(idnotifica) VALUES (?,?,?,?,?,?,?) [42122-224]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:514)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
+	at org.h2.message.DbException.get(DbException.java:223)
+	at org.h2.message.DbException.get(DbException.java:199)
+	at org.h2.table.Table.getColumn(Table.java:759)
+	at org.h2.command.Parser.parseColumn(Parser.java:1190)
+	at org.h2.command.Parser.parseColumnList(Parser.java:1175)
+	at org.h2.command.Parser.parseMergeInto(Parser.java:1455)
+	at org.h2.command.Parser.parseMerge(Parser.java:1441)
+	at org.h2.command.Parser.parsePrepared(Parser.java:724)
+	at org.h2.command.Parser.parse(Parser.java:592)
+	at org.h2.command.Parser.parse(Parser.java:564)
+	at org.h2.command.Parser.prepareCommand(Parser.java:483)
+	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:639)
+	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:559)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1166)
+	at org.h2.jdbc.JdbcPreparedStatement.<init>(JdbcPreparedStatement.java:93)
+	at org.h2.jdbc.JdbcConnection.prepareStatement(JdbcConnection.java:316)
+	at it.fleetmanager.repository.DatabaseSeeder.seedFromJson(DatabaseSeeder.java:137)
+	at it.fleetmanager.repository.DatabaseSeeder.main(DatabaseSeeder.java:27)
+2025-11-14 17:08:26.588530+01:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Column "IDSCADENZA" not found; SQL statement:
+MERGE INTO notifica (idnotifica, tiponotifica, messaggio, datainvio, letta, idscadenza, idutente) KEY(idnotifica) VALUES (?,?,?,?,?,?,?) [42122-224]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:514)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
+	at org.h2.message.DbException.get(DbException.java:223)
+	at org.h2.message.DbException.get(DbException.java:199)
+	at org.h2.table.Table.getColumn(Table.java:759)
+	at org.h2.command.Parser.parseColumn(Parser.java:1190)
+	at org.h2.command.Parser.parseColumnList(Parser.java:1175)
+	at org.h2.command.Parser.parseMergeInto(Parser.java:1455)
+	at org.h2.command.Parser.parseMerge(Parser.java:1441)
+	at org.h2.command.Parser.parsePrepared(Parser.java:724)
+	at org.h2.command.Parser.parse(Parser.java:592)
+	at org.h2.command.Parser.parse(Parser.java:564)
+	at org.h2.command.Parser.prepareCommand(Parser.java:483)
+	at org.h2.engine.SessionLocal.prepareLocal(SessionLocal.java:639)
+	at org.h2.engine.SessionLocal.prepareCommand(SessionLocal.java:559)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1166)
+	at org.h2.jdbc.JdbcPreparedStatement.<init>(JdbcPreparedStatement.java:93)
+	at org.h2.jdbc.JdbcConnection.prepareStatement(JdbcConnection.java:316)
+	at it.fleetmanager.repository.DatabaseSeeder.seedFromJson(DatabaseSeeder.java:137)
+	at it.fleetmanager.repository.DatabaseSeeder.main(DatabaseSeeder.java:27)
+2025-11-14 17:13:19.505461+01:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "CREATE TABLE IF NOT EXISTS Notifica(\000a\0009idNotifica INT PRIMARY KEY,\000a\0009tipoNotifica tipo_notifica NOT NULL,\000a\0009messaggio VARCHAR(255) NOT NULL,\000a\0009dataInvio TIMESTAMP NOT NULL,\000a\0009letta BOOLEAN NOT NULL DEFAULT FALSE\000a\0009[*]idUtente INT NOT NULL,\000a\0009idScadenza INT,\000a\0009FOREIGN KEY (idUtente) REFERENCES Utente(idUtente) ON DELETE CASCADE,\000a    FOREIGN KEY (idScadenza) REFERENCES Scadenza(idScadenza) ON DELETE CASCADE\000a);\000a"; expected "[, ., ::, AT, FORMAT, *, /, %, +, -, ||, NOT, IS, ILIKE, REGEXP, AND, OR, ON UPDATE, DEFAULT ON NULL, SEQUENCE, SELECTIVITY, COMMENT, CONSTRAINT, COMMENT, PRIMARY KEY, UNIQUE, NOT NULL, CHECK, REFERENCES, ,, )"; SQL statement:
+CREATE TABLE IF NOT EXISTS Notifica(
+	idNotifica INT PRIMARY KEY,
+	tipoNotifica tipo_notifica NOT NULL,
+	messaggio VARCHAR(255) NOT NULL,
+	dataInvio TIMESTAMP NOT NULL,
+	letta BOOLEAN NOT NULL DEFAULT FALSE
+	idUtente INT NOT NULL,
+	idScadenza INT,
+	FOREIGN KEY (idUtente) REFERENCES Utente(idUtente) ON DELETE CASCADE,
+    FOREIGN KEY (idScadenza) REFERENCES Scadenza(idScadenza) ON DELETE CASCADE
+);
+ [42001-224]

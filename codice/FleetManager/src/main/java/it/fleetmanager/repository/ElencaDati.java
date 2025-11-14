@@ -9,17 +9,20 @@ import java.sql.Statement;
 
 public class ElencaDati {
 
-    
     private static final String SCHEMA = "PUBLIC";
 
     // Se vuoi limitare le righe stampate per tabella, imposta un valore > 0
     private static final int MAX_ROWS_PER_TABLE = 0; // 0 = tutte
 
+    // Larghezze personalizzate
+    private static final int DEFAULT_COL_WIDTH = 25;
+    private static final int MESSAGE_COL_WIDTH = 60; // ← più spazio per il messaggio
+
     public static void main(String[] args) {
         try (Connection conn = DatabaseManager.getInstance().getConnection()) {
             DatabaseMetaData meta = conn.getMetaData();
 
-            try (ResultSet rsTables = meta.getTables(null, SCHEMA, "%", new String[] { "TABLE" })) {
+            try (ResultSet rsTables = meta.getTables(null, SCHEMA, "%", new String[]{"TABLE"})) {
                 while (rsTables.next()) {
                     String table = rsTables.getString("TABLE_NAME");
                     printLine();
@@ -54,7 +57,8 @@ public class ElencaDati {
             // Intestazioni di colonna
             StringBuilder header = new StringBuilder();
             for (int i = 1; i <= colCount; i++) {
-                header.append(padRight(md.getColumnName(i), 25));
+                String colName = md.getColumnName(i);
+                header.append(padRight(colName, getWidthForColumn(colName)));
             }
             System.out.println(header.toString());
 
@@ -62,14 +66,24 @@ public class ElencaDati {
             while (rs.next()) {
                 StringBuilder row = new StringBuilder();
                 for (int i = 1; i <= colCount; i++) {
+                    String colName = md.getColumnName(i);
                     Object val = rs.getObject(i);
-                    row.append(padRight(val != null ? String.valueOf(val) : "NULL", 25));
+                    row.append(padRight(val != null ? String.valueOf(val) : "NULL",
+                            getWidthForColumn(colName)));
                 }
                 System.out.println(row.toString());
             }
         } catch (SQLException e) {
             System.out.println("Errore leggendo i dati da " + table + ": " + e.getMessage());
         }
+    }
+
+    // LARGHEZZA PERSONALIZZATA PER COLONNA "MESSAGGIO"
+    private static int getWidthForColumn(String colName) {
+        if (colName.equalsIgnoreCase("MESSAGGIO")) {
+            return MESSAGE_COL_WIDTH;
+        }
+        return DEFAULT_COL_WIDTH;
     }
 
     private static String padRight(String s, int n) {

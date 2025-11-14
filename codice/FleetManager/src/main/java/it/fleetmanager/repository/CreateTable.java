@@ -73,15 +73,15 @@ public class CreateTable {
 					CREATE TYPE IF NOT EXISTS tipo_notifica AS ENUM('SCADENZA', 'MANUTENZIONE', 'PRENOTAZIONE', 'SEGNALAZIONE');
 
 					CREATE TABLE IF NOT EXISTS Notifica(
-					    idNotifica INT PRIMARY KEY,
-					    tipoNotifica tipo_notifica NOT NULL,
-					    messaggio VARCHAR(255) NOT NULL,
-					    dataInvio TIMESTAMP NOT NULL,
-					    letta BOOLEAN NOT NULL DEFAULT FALSE,
-					    idUtente INT NOT NULL,
-					    targa VARCHAR(10),
-					    FOREIGN KEY (idUtente) REFERENCES Utente(idUtente) ON DELETE CASCADE,
-					    FOREIGN KEY (targa) REFERENCES Veicolo(targa) ON DELETE CASCADE
+						idNotifica INT PRIMARY KEY,
+						tipoNotifica tipo_notifica NOT NULL,
+						messaggio VARCHAR(255) NOT NULL,
+						dataInvio TIMESTAMP NOT NULL,
+						letta BOOLEAN NOT NULL DEFAULT FALSE,
+						idUtente INT NOT NULL,
+						idScadenza INT,
+						FOREIGN KEY (idUtente) REFERENCES Utente(idUtente) ON DELETE CASCADE,
+					    FOREIGN KEY (idScadenza) REFERENCES Scadenza(idScadenza) ON DELETE CASCADE
 					);
 					""";
 

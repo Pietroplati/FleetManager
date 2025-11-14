@@ -1,42 +1,75 @@
 package it.fleetmanager.repository;
 
-import com.fasterxml.jackson.core.type.TypeReference;
+import java.io.File;
+import java.io.IOException;
+import java.util.Scanner;
+
+import com.fasterxml.jackson.core.exc.StreamWriteException;
+import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.File;
-import java.util.List;
-
-import it.fleetmanager.model.Veicolo;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class JSONoperator {
-    public static void main(String[] args) throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-        File file = new File("src/main/resources/data/fleet_data.json"); 
 
-        // Leggi tutto l'oggetto JSON radice
-        JsonNode root = mapper.readTree(file);
+	public static void main(String[] args) throws Exception {
+		System.out.println("Classe Avviata");
+		System.out.println("Inserire id dell'utente da eliminare: ");
 
-        // Prendi il nodo "veicoli"
-        JsonNode veicoliNode = root.get("veicoli");
+		try (Scanner scanner = new Scanner(System.in)) {
+			int id = scanner.nextInt();
 
-        // Converti il nodo in una lista di oggetti Veicolo
-        List<Veicolo> veicoli = mapper.convertValue(veicoliNode, new TypeReference<>() {});
+			rimuoviUtente(id);
+		}
 
-        // Rimuovi il veicolo con targa GH819RJ
-        boolean removed = veicoli.removeIf(v -> v.getTarga().equals("GH819RJ"));
+	}
 
-        if (removed) {
-            System.out.println("Veicolo GH819RJ rimosso dalla lista.");
-        } else {
-            System.out.println("Nessun veicolo GH819RJ trovato.");
-        }
+	public static void rimuoviUtente(int idTarget) throws StreamWriteException, DatabindException, IOException {
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.findAndRegisterModules();
 
-        //️Aggiorna il nodo "veicoli" dentro al root
-        ((com.fasterxml.jackson.databind.node.ObjectNode) root).set("veicoli", mapper.valueToTree(veicoli));
+		File file = new File("./src/main/resources/data/fleet_data.json");
 
-        //️Sovrascrivi il file con il JSON aggiornato (mantenendo anche "scadenze")
-        mapper.writerWithDefaultPrettyPrinter().writeValue(file, root);
+		ObjectNode root = (ObjectNode) mapper.readTree(file);
 
-        System.out.println("File JSON aggiornato correttamente.");
-    }
+		ArrayNode utenti = (ArrayNode) root.get("utenti");
+		ArrayNode prenotazioni = (ArrayNode) root.get("prenotazioni");
+		ArrayNode notifiche = (ArrayNode) root.get("notifiche");
+
+		// UTENTI
+		ArrayNode nuoviUtenti = mapper.createArrayNode();
+		for (JsonNode u : utenti) {
+			if (u.get("idUtente").asInt() != idTarget) {
+				nuoviUtenti.add(u);
+			}
+		}
+
+		// PRENOTAZIONI
+		ArrayNode nuovePrenotazioni = mapper.createArrayNode();
+		for (JsonNode p : prenotazioni) {
+			if (p.get("idUtente").asInt() != idTarget) {
+				nuovePrenotazioni.add(p);
+			}
+		}
+
+		// NOTIFICHE
+		ArrayNode nuoveNotifiche = mapper.createArrayNode();
+		for (JsonNode n : notifiche) {
+			JsonNode idUt = n.get("idUtente");
+			if (idUt == null || idUt.isNull() || idUt.asInt() != idTarget) {
+				nuoveNotifiche.add(n);
+			}
+		}
+
+		root.set("utenti", nuoviUtenti);
+		root.set("prenotazioni", nuovePrenotazioni);
+		root.set("notifiche", nuoveNotifiche);
+
+		// Scrivi il file
+		mapper.writerWithDefaultPrettyPrinter().writeValue(file, root);
+
+		System.out.println("Rimozione utente " + idTarget + " completata.");
+	}
+
 }
