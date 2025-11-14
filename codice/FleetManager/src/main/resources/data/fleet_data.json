@@ -1,827 +1,722 @@
 {
-	"utenti": [
-		{
-			"idUtente": 1,
-			"nome": "Mario",
-			"cognome": "Rossi",
-			"email": "mario.rossi@example.com",
-			"password": "pwd123",
-			"ruoloUtente": "DRIVER",
-			"patente": "U1446G487U"
-		},
-		{
-			"idUtente": 2,
-			"nome": "Luca",
-			"cognome": "Rossi",
-			"email": "mario.rossi@example.com",
-			"password": "pwd123",
-			"ruoloUtente": "DRIVER",
-			"patente": "U1446G487U"
-		},
-		{
-			"idUtente": 3,
-			"nome": "Paolo",
-			"cognome": "Foresti",
-			"email": "mario.rossi@example.com",
-			"password": "pwd123",
-			"ruoloUtente": "DRIVER",
-			"patente": "U1446G487U"
-		}
-	],
-	"prenotazioni": [
-		{
-			"idPrenotazione": 1,
-			"dataInizio": "2025-11-10T08:00:00",
-			"dataFine": "2025-11-10T18:00:00",
-			"statoPrenotazione": "CONFERMATA",
-			"idUtente": 1,
-			"targa": "FD490LF"
-		},
-		{
-			"idPrenotazione": 2,
-			"dataInizio": "2025-11-11T09:00:00",
-			"dataFine": "2025-11-11T17:30:00",
-			"statoPrenotazione": "ATTIVA",
-			"idUtente": 2,
-			"targa": "GH819RJ"
-		},
-		{
-			"idPrenotazione": 3,
-			"dataInizio": "2025-11-13T07:30:00",
-			"dataFine": "2025-11-13T19:00:00",
-			"statoPrenotazione": "RICHIESTA",
-			"idUtente": 3,
-			"targa": "GV779WE"
-		},
-		{
-			"idPrenotazione": 4,
-			"dataInizio": "2025-11-08T08:30:00",
-			"dataFine": "2025-11-08T12:30:00",
-			"statoPrenotazione": "COMPLETATA",
-			"idUtente": 1,
-			"targa": "FZ320YT"
-		},
-		{
-			"idPrenotazione": 5,
-			"dataInizio": "2025-11-15T10:00:00",
-			"dataFine": "2025-11-15T16:00:00",
-			"statoPrenotazione": "ANNULLATA",
-			"idUtente": 2,
-			"targa": "GB476FG"
-		}
-	],
-	"notifiche": [
-		{
-			"idNotifica": 1,
-			"tipoNotifica": "SCADENZA",
-			"messaggio": "Scadenza assicurazione veicolo FD490LF in arrivo",
-			"dataInvio": "2025-11-01T10:00:00",
-			"letta": false,
-			"idScadenza": 1,
-			"idUtente": 1
-		},
-		{
-			"idNotifica": 2,
-			"tipoNotifica": "PRENOTAZIONE",
-			"messaggio": "La prenotazione del veicolo GH819RJ è confermata",
-			"dataInvio": "2025-11-09T09:30:00",
-			"letta": true,
-			"idScadenza": null,
-			"idUtente": 2
-		},
-		{
-			"idNotifica": 3,
-			"tipoNotifica": "SCADENZA",
-			"messaggio": "Revisione veicolo GV779WE prevista entro fine mese",
-			"dataInvio": "2025-11-05T14:00:00",
-			"letta": false,
-			"idScadenza": 2,
-			"idUtente": 3
-		},
-		{
-			"idNotifica": 4,
-			"tipoNotifica": "MANUTENZIONE",
-			"messaggio": "Il veicolo FZ320YT ha completato la manutenzione ordinaria",
-			"dataInvio": "2025-11-08T15:00:00",
-			"letta": true,
-			"idScadenza": null,
-			"idUtente": 1
-		},
-		{
-			"idNotifica": 5,
-			"tipoNotifica": "PRENOTAZIONE",
-			"messaggio": "Prenotazione del veicolo GB476FG annullata correttamente",
-			"dataInvio": "2025-11-15T16:30:00",
-			"letta": false,
-			"idScadenza": null,
-			"idUtente": 2
-		}
-	],
-	"veicoli": [
-		{
-			"targa": "FZ320YT",
-			"tipoVeicolo": "AUTO",
-			"marca": "Fiat",
-			"modello": "Panda",
-			"annoImmatricolazione": 2020,
-			"statoVeicolo": "DISPONIBILE",
-			"km": 45000
-		},
-		{
-			"targa": "BW426ZT",
-			"tipoVeicolo": "AUTO",
-			"marca": "Fiat",
-			"modello": "Punto",
-			"annoImmatricolazione": 2001,
-			"statoVeicolo": "DISPONIBILE",
-			"km": 288500
-		},
-		{
-			"targa": "GS630PN",
-			"tipoVeicolo": "FURGONE",
-			"marca": "Ford",
-			"modello": "Transit",
-			"annoImmatricolazione": 2024,
-			"statoVeicolo": "DISPONIBILE",
-			"km": 35000
-		},
-		{
-			"targa": "GH819RJ",
-			"tipoVeicolo": "FURGONE",
-			"marca": "Fiat",
-			"modello": "Doblò",
-			"annoImmatricolazione": 2022,
-			"statoVeicolo": "DISPONIBILE",
-			"km": 41000
-		},
-		{
-			"targa": "GS254DA",
-			"tipoVeicolo": "AUTO",
-			"marca": "Tesla",
-			"modello": "Model 3",
-			"annoImmatricolazione": 2024,
-			"statoVeicolo": "DISPONIBILE",
-			"km": 19000
-		},
-		{
-			"targa": "FE223RG",
-			"tipoVeicolo": "AUTO",
-			"marca": "Volkswagen",
-			"modello": "Passat",
-			"annoImmatricolazione": 2016,
-			"statoVeicolo": "DISPONIBILE",
-			"km": 240000
-		},
-		{
-			"targa": "X8672V",
-			"tipoVeicolo": "MOTO",
-			"marca": "Piaggio",
-			"modello": "Vespa LX 50",
-			"annoImmatricolazione": 2008,
-			"statoVeicolo": "DISPONIBILE",
-			"km": 28000
-		},
-		{
-			"targa": "HA011AC",
-			"tipoVeicolo": "AUTO",
-			"marca": "Toyota",
-			"modello": "Yaris",
-			"annoImmatricolazione": 2025,
-			"statoVeicolo": "DISPONIBILE",
-			"km": 8000
-		},
-		{
-			"targa": "GK834SB",
-			"tipoVeicolo": "AUTO",
-			"marca": "Land Rover",
-			"modello": "Defender",
-			"annoImmatricolazione": 2022,
-			"statoVeicolo": "DISPONIBILE",
-			"km": 48000
-		},
-		{
-			"targa": "GH912FA",
-			"tipoVeicolo": "AUTO",
-			"marca": "Porsche",
-			"modello": "Cayenne",
-			"annoImmatricolazione": 2022,
-			"statoVeicolo": "DISPONIBILE",
-			"km": 54000
-		},
-		{
-			"targa": "FD490LF",
-			"tipoVeicolo": "AUTO",
-			"marca": "BMW",
-			"modello": "Serie 1",
-			"annoImmatricolazione": 2015,
-			"statoVeicolo": "DISPONIBILE",
-			"km": 80000
-		},
-		{
-			"targa": "GW524YR",
-			"tipoVeicolo": "AUTO",
-			"marca": "Opel",
-			"modello": "Astra",
-			"annoImmatricolazione": 2024,
-			"statoVeicolo": "DISPONIBILE",
-			"km": 19000
-		},
-		{
-			"targa": "GF584WS",
-			"tipoVeicolo": "AUTO",
-			"marca": "Mercedes-Benz",
-			"modello": "Classe a",
-			"annoImmatricolazione": 2021,
-			"statoVeicolo": "DISPONIBILE",
-			"km": 40000
-		},
-		{
-			"targa": "GH218FD",
-			"tipoVeicolo": "AUTO",
-			"marca": "Audi",
-			"modello": "Q2",
-			"annoImmatricolazione": 2021,
-			"statoVeicolo": "DISPONIBILE",
-			"km": 70000
-		},
-		{
-			"targa": "GB476FG",
-			"tipoVeicolo": "AUTO",
-			"marca": "Peugeot",
-			"modello": "3008",
-			"annoImmatricolazione": 2020,
-			"statoVeicolo": "DISPONIBILE",
-			"km": 85000
-		},
-		{
-			"targa": "GL659GH",
-			"tipoVeicolo": "AUTO",
-			"marca": "Citroen",
-			"modello": "C3",
-			"annoImmatricolazione": 2022,
-			"statoVeicolo": "DISPONIBILE",
-			"km": 55000
-		},
-		{
-			"targa": "EL467HH",
-			"tipoVeicolo": "AUTO",
-			"marca": "BMW",
-			"modello": "Serie 5",
-			"annoImmatricolazione": 2011,
-			"statoVeicolo": "DISPONIBILE",
-			"km": 185000
-		},
-		{
-			"targa": "FC628HD",
-			"tipoVeicolo": "AUTO",
-			"marca": "Mercedes-Benz",
-			"modello": "GLA",
-			"annoImmatricolazione": 2016,
-			"statoVeicolo": "DISPONIBILE",
-			"km": 82000
-		},
-		{
-			"targa": "GV779WE",
-			"tipoVeicolo": "AUTO",
-			"marca": "BMW",
-			"modello": "M5",
-			"annoImmatricolazione": 2024,
-			"statoVeicolo": "DISPONIBILE",
-			"km": 16000
-		}
-	],
-	"scadenze": [
-		{
-			"idScadenza": 1,
-			"tipoScadenza": "BOLLO",
-			"data": "2025-06-30",
-			"notificata": false,
-			"targa": "FZ320YT"
-		},
-		{
-			"idScadenza": 2,
-			"tipoScadenza": "ASSICURAZIONE",
-			"data": "2025-04-12",
-			"notificata": true,
-			"targa": "FZ320YT"
-		},
-		{
-			"idScadenza": 3,
-			"tipoScadenza": "REVISIONE",
-			"data": "2026-06-30",
-			"notificata": false,
-			"targa": "FZ320YT"
-		},
-		{
-			"idScadenza": 4,
-			"tipoScadenza": "TAGLIANDO",
-			"data": "2025-08-20",
-			"notificata": true,
-			"targa": "FZ320YT"
-		},
-		{
-			"idScadenza": 5,
-			"tipoScadenza": "BOLLO",
-			"data": "2025-03-31",
-			"notificata": false,
-			"targa": "BW426ZT"
-		},
-		{
-			"idScadenza": 6,
-			"tipoScadenza": "ASSICURAZIONE",
-			"data": "2025-02-20",
-			"notificata": true,
-			"targa": "BW426ZT"
-		},
-		{
-			"idScadenza": 7,
-			"tipoScadenza": "REVISIONE",
-			"data": "2026-02-28",
-			"notificata": false,
-			"targa": "BW426ZT"
-		},
-		{
-			"idScadenza": 8,
-			"tipoScadenza": "TAGLIANDO",
-			"data": "2025-05-10",
-			"notificata": true,
-			"targa": "BW426ZT"
-		},
-		{
-			"idScadenza": 9,
-			"tipoScadenza": "BOLLO",
-			"data": "2025-09-30",
-			"notificata": false,
-			"targa": "GS630PN"
-		},
-		{
-			"idScadenza": 10,
-			"tipoScadenza": "ASSICURAZIONE",
-			"data": "2025-05-01",
-			"notificata": true,
-			"targa": "GS630PN"
-		},
-		{
-			"idScadenza": 11,
-			"tipoScadenza": "REVISIONE",
-			"data": "2028-04-30",
-			"notificata": false,
-			"targa": "GS630PN"
-		},
-		{
-			"idScadenza": 12,
-			"tipoScadenza": "TAGLIANDO",
-			"data": "2025-09-15",
-			"notificata": true,
-			"targa": "GS630PN"
-		},
-		{
-			"idScadenza": 13,
-			"tipoScadenza": "BOLLO",
-			"data": "2025-10-31",
-			"notificata": false,
-			"targa": "GH819RJ"
-		},
-		{
-			"idScadenza": 14,
-			"tipoScadenza": "ASSICURAZIONE",
-			"data": "2025-04-10",
-			"notificata": true,
-			"targa": "GH819RJ"
-		},
-		{
-			"idScadenza": 15,
-			"tipoScadenza": "REVISIONE",
-			"data": "2026-10-31",
-			"notificata": false,
-			"targa": "GH819RJ"
-		},
-		{
-			"idScadenza": 16,
-			"tipoScadenza": "TAGLIANDO",
-			"data": "2025-06-25",
-			"notificata": true,
-			"targa": "GH819RJ"
-		},
-		{
-			"idScadenza": 17,
-			"tipoScadenza": "BOLLO",
-			"data": "2025-09-30",
-			"notificata": false,
-			"targa": "GS254DA"
-		},
-		{
-			"idScadenza": 18,
-			"tipoScadenza": "ASSICURAZIONE",
-			"data": "2025-03-18",
-			"notificata": true,
-			"targa": "GS254DA"
-		},
-		{
-			"idScadenza": 19,
-			"tipoScadenza": "REVISIONE",
-			"data": "2028-09-30",
-			"notificata": false,
-			"targa": "GS254DA"
-		},
-		{
-			"idScadenza": 20,
-			"tipoScadenza": "TAGLIANDO",
-			"data": "2025-07-10",
-			"notificata": true,
-			"targa": "GS254DA"
-		},
-		{
-			"idScadenza": 21,
-			"tipoScadenza": "BOLLO",
-			"data": "2025-04-30",
-			"notificata": false,
-			"targa": "FE223RG"
-		},
-		{
-			"idScadenza": 22,
-			"tipoScadenza": "ASSICURAZIONE",
-			"data": "2025-03-05",
-			"notificata": true,
-			"targa": "FE223RG"
-		},
-		{
-			"idScadenza": 23,
-			"tipoScadenza": "REVISIONE",
-			"data": "2026-04-30",
-			"notificata": false,
-			"targa": "FE223RG"
-		},
-		{
-			"idScadenza": 24,
-			"tipoScadenza": "TAGLIANDO",
-			"data": "2025-08-25",
-			"notificata": true,
-			"targa": "FE223RG"
-		},
-		{
-			"idScadenza": 25,
-			"tipoScadenza": "BOLLO",
-			"data": "2025-06-30",
-			"notificata": false,
-			"targa": "X8672V"
-		},
-		{
-			"idScadenza": 26,
-			"tipoScadenza": "ASSICURAZIONE",
-			"data": "2025-04-05",
-			"notificata": true,
-			"targa": "X8672V"
-		},
-		{
-			"idScadenza": 27,
-			"tipoScadenza": "REVISIONE",
-			"data": "2026-06-30",
-			"notificata": false,
-			"targa": "X8672V"
-		},
-		{
-			"idScadenza": 28,
-			"tipoScadenza": "TAGLIANDO",
-			"data": "2025-05-15",
-			"notificata": true,
-			"targa": "X8672V"
-		},
-		{
-			"idScadenza": 29,
-			"tipoScadenza": "BOLLO",
-			"data": "2025-07-31",
-			"notificata": false,
-			"targa": "HA011AC"
-		},
-		{
-			"idScadenza": 30,
-			"tipoScadenza": "ASSICURAZIONE",
-			"data": "2025-05-10",
-			"notificata": true,
-			"targa": "HA011AC"
-		},
-		{
-			"idScadenza": 31,
-			"tipoScadenza": "REVISIONE",
-			"data": "2029-06-30",
-			"notificata": false,
-			"targa": "HA011AC"
-		},
-		{
-			"idScadenza": 32,
-			"tipoScadenza": "TAGLIANDO",
-			"data": "2025-01-20",
-			"notificata": true,
-			"targa": "HA011AC"
-		},
-		{
-			"idScadenza": 33,
-			"tipoScadenza": "BOLLO",
-			"data": "2025-08-31",
-			"notificata": false,
-			"targa": "GK834SB"
-		},
-		{
-			"idScadenza": 34,
-			"tipoScadenza": "ASSICURAZIONE",
-			"data": "2025-06-14",
-			"notificata": false,
-			"targa": "GK834SB"
-		},
-		{
-			"idScadenza": 35,
-			"tipoScadenza": "REVISIONE",
-			"data": "2026-08-31",
-			"notificata": false,
-			"targa": "GK834SB"
-		},
-		{
-			"idScadenza": 36,
-			"tipoScadenza": "TAGLIANDO",
-			"data": "2025-06-10",
-			"notificata": true,
-			"targa": "GK834SB"
-		},
-		{
-			"idScadenza": 37,
-			"tipoScadenza": "BOLLO",
-			"data": "2025-09-30",
-			"notificata": false,
-			"targa": "GH912FA"
-		},
-		{
-			"idScadenza": 38,
-			"tipoScadenza": "ASSICURAZIONE",
-			"data": "2025-07-01",
-			"notificata": false,
-			"targa": "GH912FA"
-		},
-		{
-			"idScadenza": 39,
-			"tipoScadenza": "REVISIONE",
-			"data": "2026-09-30",
-			"notificata": false,
-			"targa": "GH912FA"
-		},
-		{
-			"idScadenza": 40,
-			"tipoScadenza": "TAGLIANDO",
-			"data": "2025-09-05",
-			"notificata": false,
-			"targa": "GH912FA"
-		},
-		{
-			"idScadenza": 41,
-			"tipoScadenza": "BOLLO",
-			"data": "2025-04-30",
-			"notificata": false,
-			"targa": "FD490LF"
-		},
-		{
-			"idScadenza": 42,
-			"tipoScadenza": "ASSICURAZIONE",
-			"data": "2025-03-10",
-			"notificata": true,
-			"targa": "FD490LF"
-		},
-		{
-			"idScadenza": 43,
-			"tipoScadenza": "REVISIONE",
-			"data": "2026-04-30",
-			"notificata": false,
-			"targa": "FD490LF"
-		},
-		{
-			"idScadenza": 44,
-			"tipoScadenza": "TAGLIANDO",
-			"data": "2025-09-01",
-			"notificata": true,
-			"targa": "FD490LF"
-		},
-		{
-			"idScadenza": 45,
-			"tipoScadenza": "BOLLO",
-			"data": "2025-06-30",
-			"notificata": false,
-			"targa": "GW524YR"
-		},
-		{
-			"idScadenza": 46,
-			"tipoScadenza": "ASSICURAZIONE",
-			"data": "2025-05-20",
-			"notificata": true,
-			"targa": "GW524YR"
-		},
-		{
-			"idScadenza": 47,
-			"tipoScadenza": "REVISIONE",
-			"data": "2028-06-30",
-			"notificata": false,
-			"targa": "GW524YR"
-		},
-		{
-			"idScadenza": 48,
-			"tipoScadenza": "TAGLIANDO",
-			"data": "2025-10-15",
-			"notificata": false,
-			"targa": "GW524YR"
-		},
-		{
-			"idScadenza": 49,
-			"tipoScadenza": "BOLLO",
-			"data": "2025-07-31",
-			"notificata": false,
-			"targa": "GF584WS"
-		},
-		{
-			"idScadenza": 50,
-			"tipoScadenza": "ASSICURAZIONE",
-			"data": "2025-03-22",
-			"notificata": true,
-			"targa": "GF584WS"
-		},
-		{
-			"idScadenza": 51,
-			"tipoScadenza": "REVISIONE",
-			"data": "2027-07-31",
-			"notificata": false,
-			"targa": "GF584WS"
-		},
-		{
-			"idScadenza": 52,
-			"tipoScadenza": "TAGLIANDO",
-			"data": "2025-07-20",
-			"notificata": true,
-			"targa": "GF584WS"
-		},
-		{
-			"idScadenza": 53,
-			"tipoScadenza": "BOLLO",
-			"data": "2025-03-31",
-			"notificata": false,
-			"targa": "GH218FD"
-		},
-		{
-			"idScadenza": 54,
-			"tipoScadenza": "ASSICURAZIONE",
-			"data": "2025-02-15",
-			"notificata": true,
-			"targa": "GH218FD"
-		},
-		{
-			"idScadenza": 55,
-			"tipoScadenza": "REVISIONE",
-			"data": "2027-03-31",
-			"notificata": false,
-			"targa": "GH218FD"
-		},
-		{
-			"idScadenza": 56,
-			"tipoScadenza": "TAGLIANDO",
-			"data": "2025-06-30",
-			"notificata": true,
-			"targa": "GH218FD"
-		},
-		{
-			"idScadenza": 57,
-			"tipoScadenza": "BOLLO",
-			"data": "2025-10-31",
-			"notificata": false,
-			"targa": "GB476FG"
-		},
-		{
-			"idScadenza": 58,
-			"tipoScadenza": "ASSICURAZIONE",
-			"data": "2025-09-10",
-			"notificata": false,
-			"targa": "GB476FG"
-		},
-		{
-			"idScadenza": 59,
-			"tipoScadenza": "REVISIONE",
-			"data": "2026-10-31",
-			"notificata": false,
-			"targa": "GB476FG"
-		},
-		{
-			"idScadenza": 60,
-			"tipoScadenza": "TAGLIANDO",
-			"data": "2025-11-01",
-			"notificata": true,
-			"targa": "GB476FG"
-		},
-		{
-			"idScadenza": 61,
-			"tipoScadenza": "BOLLO",
-			"data": "2025-05-31",
-			"notificata": false,
-			"targa": "GL659GH"
-		},
-		{
-			"idScadenza": 62,
-			"tipoScadenza": "ASSICURAZIONE",
-			"data": "2025-03-19",
-			"notificata": true,
-			"targa": "GL659GH"
-		},
-		{
-			"idScadenza": 63,
-			"tipoScadenza": "REVISIONE",
-			"data": "2026-05-31",
-			"notificata": false,
-			"targa": "GL659GH"
-		},
-		{
-			"idScadenza": 64,
-			"tipoScadenza": "TAGLIANDO",
-			"data": "2025-09-20",
-			"notificata": false,
-			"targa": "GL659GH"
-		},
-		{
-			"idScadenza": 65,
-			"tipoScadenza": "BOLLO",
-			"data": "2025-11-30",
-			"notificata": false,
-			"targa": "EL467HH"
-		},
-		{
-			"idScadenza": 66,
-			"tipoScadenza": "ASSICURAZIONE",
-			"data": "2025-09-25",
-			"notificata": false,
-			"targa": "EL467HH"
-		},
-		{
-			"idScadenza": 67,
-			"tipoScadenza": "REVISIONE",
-			"data": "2026-11-30",
-			"notificata": false,
-			"targa": "EL467HH"
-		},
-		{
-			"idScadenza": 68,
-			"tipoScadenza": "TAGLIANDO",
-			"data": "2025-06-10",
-			"notificata": true,
-			"targa": "EL467HH"
-		},
-		{
-			"idScadenza": 69,
-			"tipoScadenza": "BOLLO",
-			"data": "2025-04-30",
-			"notificata": false,
-			"targa": "FC628HD"
-		},
-		{
-			"idScadenza": 70,
-			"tipoScadenza": "ASSICURAZIONE",
-			"data": "2025-02-27",
-			"notificata": true,
-			"targa": "FC628HD"
-		},
-		{
-			"idScadenza": 71,
-			"tipoScadenza": "REVISIONE",
-			"data": "2026-04-30",
-			"notificata": false,
-			"targa": "FC628HD"
-		},
-		{
-			"idScadenza": 72,
-			"tipoScadenza": "TAGLIANDO",
-			"data": "2025-08-15",
-			"notificata": true,
-			"targa": "FC628HD"
-		},
-		{
-			"idScadenza": 73,
-			"tipoScadenza": "BOLLO",
-			"data": "2025-09-30",
-			"notificata": false,
-			"targa": "GV779WE"
-		},
-		{
-			"idScadenza": 74,
-			"tipoScadenza": "ASSICURAZIONE",
-			"data": "2025-07-22",
-			"notificata": false,
-			"targa": "GV779WE"
-		},
-		{
-			"idScadenza": 75,
-			"tipoScadenza": "REVISIONE",
-			"data": "2027-09-30",
-			"notificata": false,
-			"targa": "GV779WE"
-		},
-		{
-			"idScadenza": 76,
-			"tipoScadenza": "TAGLIANDO",
-			"data": "2025-10-20",
-			"notificata": false,
-			"targa": "GV779WE"
-		}
-	]
+  "utenti" : [ {
+    "idUtente" : 1,
+    "nome" : "Mario",
+    "cognome" : "Rossi",
+    "email" : "mario.rossi@example.com",
+    "password" : "pwd123",
+    "ruoloUtente" : "DRIVER",
+    "patente" : "U1446G487U"
+  }, {
+    "idUtente" : 2,
+    "nome" : "Luca",
+    "cognome" : "Rossi",
+    "email" : "mario.rossi@example.com",
+    "password" : "pwd123",
+    "ruoloUtente" : "DRIVER",
+    "patente" : "U1446G487U"
+  }, {
+    "idUtente" : 3,
+    "nome" : "Paolo",
+    "cognome" : "Foresti",
+    "email" : "mario.rossi@example.com",
+    "password" : "pwd123",
+    "ruoloUtente" : "DRIVER",
+    "patente" : "U1446G487U"
+  }, {
+    "idUtente" : 4,
+    "nome" : "Mauro",
+    "cognome" : "Zucchelli",
+    "email" : "mauro@gmail.com",
+    "password" : "Ciao1234",
+    "ruoloUtente" : "DRIVER",
+    "patente" : "U1446G487U"
+  } ],
+  "prenotazioni" : [ {
+    "idPrenotazione" : 1,
+    "dataInizio" : "2025-11-10T08:00:00",
+    "dataFine" : "2025-11-10T18:00:00",
+    "statoPrenotazione" : "CONFERMATA",
+    "idUtente" : 1,
+    "targa" : "FD490LF"
+  }, {
+    "idPrenotazione" : 2,
+    "dataInizio" : "2025-11-11T09:00:00",
+    "dataFine" : "2025-11-11T17:30:00",
+    "statoPrenotazione" : "ATTIVA",
+    "idUtente" : 2,
+    "targa" : "GH819RJ"
+  }, {
+    "idPrenotazione" : 3,
+    "dataInizio" : "2025-11-13T07:30:00",
+    "dataFine" : "2025-11-13T19:00:00",
+    "statoPrenotazione" : "RICHIESTA",
+    "idUtente" : 3,
+    "targa" : "GV779WE"
+  }, {
+    "idPrenotazione" : 4,
+    "dataInizio" : "2025-11-08T08:30:00",
+    "dataFine" : "2025-11-08T12:30:00",
+    "statoPrenotazione" : "COMPLETATA",
+    "idUtente" : 1,
+    "targa" : "FZ320YT"
+  }, {
+    "idPrenotazione" : 5,
+    "dataInizio" : "2025-11-15T10:00:00",
+    "dataFine" : "2025-11-15T16:00:00",
+    "statoPrenotazione" : "ANNULLATA",
+    "idUtente" : 2,
+    "targa" : "GB476FG"
+  } ],
+  "notifiche" : [ {
+    "idNotifica" : 1,
+    "tipoNotifica" : "SCADENZA",
+    "messaggio" : "Scadenza assicurazione veicolo FD490LF in arrivo",
+    "dataInvio" : "2025-11-01T10:00:00",
+    "letta" : false,
+    "idScadenza" : 1,
+    "idUtente" : 1
+  }, {
+    "idNotifica" : 2,
+    "tipoNotifica" : "PRENOTAZIONE",
+    "messaggio" : "La prenotazione del veicolo GH819RJ è confermata",
+    "dataInvio" : "2025-11-09T09:30:00",
+    "letta" : true,
+    "idScadenza" : null,
+    "idUtente" : 2
+  }, {
+    "idNotifica" : 3,
+    "tipoNotifica" : "SCADENZA",
+    "messaggio" : "Revisione veicolo GV779WE prevista entro fine mese",
+    "dataInvio" : "2025-11-05T14:00:00",
+    "letta" : false,
+    "idScadenza" : 2,
+    "idUtente" : 3
+  }, {
+    "idNotifica" : 4,
+    "tipoNotifica" : "MANUTENZIONE",
+    "messaggio" : "Il veicolo FZ320YT ha completato la manutenzione ordinaria",
+    "dataInvio" : "2025-11-08T15:00:00",
+    "letta" : true,
+    "idScadenza" : null,
+    "idUtente" : 1
+  }, {
+    "idNotifica" : 5,
+    "tipoNotifica" : "PRENOTAZIONE",
+    "messaggio" : "Prenotazione del veicolo GB476FG annullata correttamente",
+    "dataInvio" : "2025-11-15T16:30:00",
+    "letta" : false,
+    "idScadenza" : null,
+    "idUtente" : 2
+  } ],
+  "veicoli" : [ {
+    "targa" : "FZ320YT",
+    "tipoVeicolo" : "AUTO",
+    "marca" : "Fiat",
+    "modello" : "Panda",
+    "annoImmatricolazione" : 2020,
+    "statoVeicolo" : "DISPONIBILE",
+    "km" : 45000
+  }, {
+    "targa" : "BW426ZT",
+    "tipoVeicolo" : "AUTO",
+    "marca" : "Fiat",
+    "modello" : "Punto",
+    "annoImmatricolazione" : 2001,
+    "statoVeicolo" : "DISPONIBILE",
+    "km" : 288500
+  }, {
+    "targa" : "GS630PN",
+    "tipoVeicolo" : "FURGONE",
+    "marca" : "Ford",
+    "modello" : "Transit",
+    "annoImmatricolazione" : 2024,
+    "statoVeicolo" : "DISPONIBILE",
+    "km" : 35000
+  }, {
+    "targa" : "GH819RJ",
+    "tipoVeicolo" : "FURGONE",
+    "marca" : "Fiat",
+    "modello" : "Doblò",
+    "annoImmatricolazione" : 2022,
+    "statoVeicolo" : "DISPONIBILE",
+    "km" : 41000
+  }, {
+    "targa" : "GS254DA",
+    "tipoVeicolo" : "AUTO",
+    "marca" : "Tesla",
+    "modello" : "Model 3",
+    "annoImmatricolazione" : 2024,
+    "statoVeicolo" : "DISPONIBILE",
+    "km" : 19000
+  }, {
+    "targa" : "FE223RG",
+    "tipoVeicolo" : "AUTO",
+    "marca" : "Volkswagen",
+    "modello" : "Passat",
+    "annoImmatricolazione" : 2016,
+    "statoVeicolo" : "DISPONIBILE",
+    "km" : 240000
+  }, {
+    "targa" : "X8672V",
+    "tipoVeicolo" : "MOTO",
+    "marca" : "Piaggio",
+    "modello" : "Vespa LX 50",
+    "annoImmatricolazione" : 2008,
+    "statoVeicolo" : "DISPONIBILE",
+    "km" : 28000
+  }, {
+    "targa" : "HA011AC",
+    "tipoVeicolo" : "AUTO",
+    "marca" : "Toyota",
+    "modello" : "Yaris",
+    "annoImmatricolazione" : 2025,
+    "statoVeicolo" : "DISPONIBILE",
+    "km" : 8000
+  }, {
+    "targa" : "GK834SB",
+    "tipoVeicolo" : "AUTO",
+    "marca" : "Land Rover",
+    "modello" : "Defender",
+    "annoImmatricolazione" : 2022,
+    "statoVeicolo" : "DISPONIBILE",
+    "km" : 48000
+  }, {
+    "targa" : "GH912FA",
+    "tipoVeicolo" : "AUTO",
+    "marca" : "Porsche",
+    "modello" : "Cayenne",
+    "annoImmatricolazione" : 2022,
+    "statoVeicolo" : "DISPONIBILE",
+    "km" : 54000
+  }, {
+    "targa" : "FD490LF",
+    "tipoVeicolo" : "AUTO",
+    "marca" : "BMW",
+    "modello" : "Serie 1",
+    "annoImmatricolazione" : 2015,
+    "statoVeicolo" : "DISPONIBILE",
+    "km" : 80000
+  }, {
+    "targa" : "GW524YR",
+    "tipoVeicolo" : "AUTO",
+    "marca" : "Opel",
+    "modello" : "Astra",
+    "annoImmatricolazione" : 2024,
+    "statoVeicolo" : "DISPONIBILE",
+    "km" : 19000
+  }, {
+    "targa" : "GF584WS",
+    "tipoVeicolo" : "AUTO",
+    "marca" : "Mercedes-Benz",
+    "modello" : "Classe a",
+    "annoImmatricolazione" : 2021,
+    "statoVeicolo" : "DISPONIBILE",
+    "km" : 40000
+  }, {
+    "targa" : "GH218FD",
+    "tipoVeicolo" : "AUTO",
+    "marca" : "Audi",
+    "modello" : "Q2",
+    "annoImmatricolazione" : 2021,
+    "statoVeicolo" : "DISPONIBILE",
+    "km" : 70000
+  }, {
+    "targa" : "GB476FG",
+    "tipoVeicolo" : "AUTO",
+    "marca" : "Peugeot",
+    "modello" : "3008",
+    "annoImmatricolazione" : 2020,
+    "statoVeicolo" : "DISPONIBILE",
+    "km" : 85000
+  }, {
+    "targa" : "GL659GH",
+    "tipoVeicolo" : "AUTO",
+    "marca" : "Citroen",
+    "modello" : "C3",
+    "annoImmatricolazione" : 2022,
+    "statoVeicolo" : "DISPONIBILE",
+    "km" : 55000
+  }, {
+    "targa" : "EL467HH",
+    "tipoVeicolo" : "AUTO",
+    "marca" : "BMW",
+    "modello" : "Serie 5",
+    "annoImmatricolazione" : 2011,
+    "statoVeicolo" : "DISPONIBILE",
+    "km" : 185000
+  }, {
+    "targa" : "FC628HD",
+    "tipoVeicolo" : "AUTO",
+    "marca" : "Mercedes-Benz",
+    "modello" : "GLA",
+    "annoImmatricolazione" : 2016,
+    "statoVeicolo" : "DISPONIBILE",
+    "km" : 82000
+  }, {
+    "targa" : "GV779WE",
+    "tipoVeicolo" : "AUTO",
+    "marca" : "BMW",
+    "modello" : "M5",
+    "annoImmatricolazione" : 2024,
+    "statoVeicolo" : "DISPONIBILE",
+    "km" : 16000
+  } ],
+  "scadenze" : [ {
+    "idScadenza" : 1,
+    "tipoScadenza" : "BOLLO",
+    "data" : "2025-06-30",
+    "notificata" : false,
+    "targa" : "FZ320YT"
+  }, {
+    "idScadenza" : 2,
+    "tipoScadenza" : "ASSICURAZIONE",
+    "data" : "2025-04-12",
+    "notificata" : true,
+    "targa" : "FZ320YT"
+  }, {
+    "idScadenza" : 3,
+    "tipoScadenza" : "REVISIONE",
+    "data" : "2026-06-30",
+    "notificata" : false,
+    "targa" : "FZ320YT"
+  }, {
+    "idScadenza" : 4,
+    "tipoScadenza" : "TAGLIANDO",
+    "data" : "2025-08-20",
+    "notificata" : true,
+    "targa" : "FZ320YT"
+  }, {
+    "idScadenza" : 5,
+    "tipoScadenza" : "BOLLO",
+    "data" : "2025-03-31",
+    "notificata" : false,
+    "targa" : "BW426ZT"
+  }, {
+    "idScadenza" : 6,
+    "tipoScadenza" : "ASSICURAZIONE",
+    "data" : "2025-02-20",
+    "notificata" : true,
+    "targa" : "BW426ZT"
+  }, {
+    "idScadenza" : 7,
+    "tipoScadenza" : "REVISIONE",
+    "data" : "2026-02-28",
+    "notificata" : false,
+    "targa" : "BW426ZT"
+  }, {
+    "idScadenza" : 8,
+    "tipoScadenza" : "TAGLIANDO",
+    "data" : "2025-05-10",
+    "notificata" : true,
+    "targa" : "BW426ZT"
+  }, {
+    "idScadenza" : 9,
+    "tipoScadenza" : "BOLLO",
+    "data" : "2025-09-30",
+    "notificata" : false,
+    "targa" : "GS630PN"
+  }, {
+    "idScadenza" : 10,
+    "tipoScadenza" : "ASSICURAZIONE",
+    "data" : "2025-05-01",
+    "notificata" : true,
+    "targa" : "GS630PN"
+  }, {
+    "idScadenza" : 11,
+    "tipoScadenza" : "REVISIONE",
+    "data" : "2028-04-30",
+    "notificata" : false,
+    "targa" : "GS630PN"
+  }, {
+    "idScadenza" : 12,
+    "tipoScadenza" : "TAGLIANDO",
+    "data" : "2025-09-15",
+    "notificata" : true,
+    "targa" : "GS630PN"
+  }, {
+    "idScadenza" : 13,
+    "tipoScadenza" : "BOLLO",
+    "data" : "2025-10-31",
+    "notificata" : false,
+    "targa" : "GH819RJ"
+  }, {
+    "idScadenza" : 14,
+    "tipoScadenza" : "ASSICURAZIONE",
+    "data" : "2025-04-10",
+    "notificata" : true,
+    "targa" : "GH819RJ"
+  }, {
+    "idScadenza" : 15,
+    "tipoScadenza" : "REVISIONE",
+    "data" : "2026-10-31",
+    "notificata" : false,
+    "targa" : "GH819RJ"
+  }, {
+    "idScadenza" : 16,
+    "tipoScadenza" : "TAGLIANDO",
+    "data" : "2025-06-25",
+    "notificata" : true,
+    "targa" : "GH819RJ"
+  }, {
+    "idScadenza" : 17,
+    "tipoScadenza" : "BOLLO",
+    "data" : "2025-09-30",
+    "notificata" : false,
+    "targa" : "GS254DA"
+  }, {
+    "idScadenza" : 18,
+    "tipoScadenza" : "ASSICURAZIONE",
+    "data" : "2025-03-18",
+    "notificata" : true,
+    "targa" : "GS254DA"
+  }, {
+    "idScadenza" : 19,
+    "tipoScadenza" : "REVISIONE",
+    "data" : "2028-09-30",
+    "notificata" : false,
+    "targa" : "GS254DA"
+  }, {
+    "idScadenza" : 20,
+    "tipoScadenza" : "TAGLIANDO",
+    "data" : "2025-07-10",
+    "notificata" : true,
+    "targa" : "GS254DA"
+  }, {
+    "idScadenza" : 21,
+    "tipoScadenza" : "BOLLO",
+    "data" : "2025-04-30",
+    "notificata" : false,
+    "targa" : "FE223RG"
+  }, {
+    "idScadenza" : 22,
+    "tipoScadenza" : "ASSICURAZIONE",
+    "data" : "2025-03-05",
+    "notificata" : true,
+    "targa" : "FE223RG"
+  }, {
+    "idScadenza" : 23,
+    "tipoScadenza" : "REVISIONE",
+    "data" : "2026-04-30",
+    "notificata" : false,
+    "targa" : "FE223RG"
+  }, {
+    "idScadenza" : 24,
+    "tipoScadenza" : "TAGLIANDO",
+    "data" : "2025-08-25",
+    "notificata" : true,
+    "targa" : "FE223RG"
+  }, {
+    "idScadenza" : 25,
+    "tipoScadenza" : "BOLLO",
+    "data" : "2025-06-30",
+    "notificata" : false,
+    "targa" : "X8672V"
+  }, {
+    "idScadenza" : 26,
+    "tipoScadenza" : "ASSICURAZIONE",
+    "data" : "2025-04-05",
+    "notificata" : true,
+    "targa" : "X8672V"
+  }, {
+    "idScadenza" : 27,
+    "tipoScadenza" : "REVISIONE",
+    "data" : "2026-06-30",
+    "notificata" : false,
+    "targa" : "X8672V"
+  }, {
+    "idScadenza" : 28,
+    "tipoScadenza" : "TAGLIANDO",
+    "data" : "2025-05-15",
+    "notificata" : true,
+    "targa" : "X8672V"
+  }, {
+    "idScadenza" : 29,
+    "tipoScadenza" : "BOLLO",
+    "data" : "2025-07-31",
+    "notificata" : false,
+    "targa" : "HA011AC"
+  }, {
+    "idScadenza" : 30,
+    "tipoScadenza" : "ASSICURAZIONE",
+    "data" : "2025-05-10",
+    "notificata" : true,
+    "targa" : "HA011AC"
+  }, {
+    "idScadenza" : 31,
+    "tipoScadenza" : "REVISIONE",
+    "data" : "2029-06-30",
+    "notificata" : false,
+    "targa" : "HA011AC"
+  }, {
+    "idScadenza" : 32,
+    "tipoScadenza" : "TAGLIANDO",
+    "data" : "2025-01-20",
+    "notificata" : true,
+    "targa" : "HA011AC"
+  }, {
+    "idScadenza" : 33,
+    "tipoScadenza" : "BOLLO",
+    "data" : "2025-08-31",
+    "notificata" : false,
+    "targa" : "GK834SB"
+  }, {
+    "idScadenza" : 34,
+    "tipoScadenza" : "ASSICURAZIONE",
+    "data" : "2025-06-14",
+    "notificata" : false,
+    "targa" : "GK834SB"
+  }, {
+    "idScadenza" : 35,
+    "tipoScadenza" : "REVISIONE",
+    "data" : "2026-08-31",
+    "notificata" : false,
+    "targa" : "GK834SB"
+  }, {
+    "idScadenza" : 36,
+    "tipoScadenza" : "TAGLIANDO",
+    "data" : "2025-06-10",
+    "notificata" : true,
+    "targa" : "GK834SB"
+  }, {
+    "idScadenza" : 37,
+    "tipoScadenza" : "BOLLO",
+    "data" : "2025-09-30",
+    "notificata" : false,
+    "targa" : "GH912FA"
+  }, {
+    "idScadenza" : 38,
+    "tipoScadenza" : "ASSICURAZIONE",
+    "data" : "2025-07-01",
+    "notificata" : false,
+    "targa" : "GH912FA"
+  }, {
+    "idScadenza" : 39,
+    "tipoScadenza" : "REVISIONE",
+    "data" : "2026-09-30",
+    "notificata" : false,
+    "targa" : "GH912FA"
+  }, {
+    "idScadenza" : 40,
+    "tipoScadenza" : "TAGLIANDO",
+    "data" : "2025-09-05",
+    "notificata" : false,
+    "targa" : "GH912FA"
+  }, {
+    "idScadenza" : 41,
+    "tipoScadenza" : "BOLLO",
+    "data" : "2025-04-30",
+    "notificata" : false,
+    "targa" : "FD490LF"
+  }, {
+    "idScadenza" : 42,
+    "tipoScadenza" : "ASSICURAZIONE",
+    "data" : "2025-03-10",
+    "notificata" : true,
+    "targa" : "FD490LF"
+  }, {
+    "idScadenza" : 43,
+    "tipoScadenza" : "REVISIONE",
+    "data" : "2026-04-30",
+    "notificata" : false,
+    "targa" : "FD490LF"
+  }, {
+    "idScadenza" : 44,
+    "tipoScadenza" : "TAGLIANDO",
+    "data" : "2025-09-01",
+    "notificata" : true,
+    "targa" : "FD490LF"
+  }, {
+    "idScadenza" : 45,
+    "tipoScadenza" : "BOLLO",
+    "data" : "2025-06-30",
+    "notificata" : false,
+    "targa" : "GW524YR"
+  }, {
+    "idScadenza" : 46,
+    "tipoScadenza" : "ASSICURAZIONE",
+    "data" : "2025-05-20",
+    "notificata" : true,
+    "targa" : "GW524YR"
+  }, {
+    "idScadenza" : 47,
+    "tipoScadenza" : "REVISIONE",
+    "data" : "2028-06-30",
+    "notificata" : false,
+    "targa" : "GW524YR"
+  }, {
+    "idScadenza" : 48,
+    "tipoScadenza" : "TAGLIANDO",
+    "data" : "2025-10-15",
+    "notificata" : false,
+    "targa" : "GW524YR"
+  }, {
+    "idScadenza" : 49,
+    "tipoScadenza" : "BOLLO",
+    "data" : "2025-07-31",
+    "notificata" : false,
+    "targa" : "GF584WS"
+  }, {
+    "idScadenza" : 50,
+    "tipoScadenza" : "ASSICURAZIONE",
+    "data" : "2025-03-22",
+    "notificata" : true,
+    "targa" : "GF584WS"
+  }, {
+    "idScadenza" : 51,
+    "tipoScadenza" : "REVISIONE",
+    "data" : "2027-07-31",
+    "notificata" : false,
+    "targa" : "GF584WS"
+  }, {
+    "idScadenza" : 52,
+    "tipoScadenza" : "TAGLIANDO",
+    "data" : "2025-07-20",
+    "notificata" : true,
+    "targa" : "GF584WS"
+  }, {
+    "idScadenza" : 53,
+    "tipoScadenza" : "BOLLO",
+    "data" : "2025-03-31",
+    "notificata" : false,
+    "targa" : "GH218FD"
+  }, {
+    "idScadenza" : 54,
+    "tipoScadenza" : "ASSICURAZIONE",
+    "data" : "2025-02-15",
+    "notificata" : true,
+    "targa" : "GH218FD"
+  }, {
+    "idScadenza" : 55,
+    "tipoScadenza" : "REVISIONE",
+    "data" : "2027-03-31",
+    "notificata" : false,
+    "targa" : "GH218FD"
+  }, {
+    "idScadenza" : 56,
+    "tipoScadenza" : "TAGLIANDO",
+    "data" : "2025-06-30",
+    "notificata" : true,
+    "targa" : "GH218FD"
+  }, {
+    "idScadenza" : 57,
+    "tipoScadenza" : "BOLLO",
+    "data" : "2025-10-31",
+    "notificata" : false,
+    "targa" : "GB476FG"
+  }, {
+    "idScadenza" : 58,
+    "tipoScadenza" : "ASSICURAZIONE",
+    "data" : "2025-09-10",
+    "notificata" : false,
+    "targa" : "GB476FG"
+  }, {
+    "idScadenza" : 59,
+    "tipoScadenza" : "REVISIONE",
+    "data" : "2026-10-31",
+    "notificata" : false,
+    "targa" : "GB476FG"
+  }, {
+    "idScadenza" : 60,
+    "tipoScadenza" : "TAGLIANDO",
+    "data" : "2025-11-01",
+    "notificata" : true,
+    "targa" : "GB476FG"
+  }, {
+    "idScadenza" : 61,
+    "tipoScadenza" : "BOLLO",
+    "data" : "2025-05-31",
+    "notificata" : false,
+    "targa" : "GL659GH"
+  }, {
+    "idScadenza" : 62,
+    "tipoScadenza" : "ASSICURAZIONE",
+    "data" : "2025-03-19",
+    "notificata" : true,
+    "targa" : "GL659GH"
+  }, {
+    "idScadenza" : 63,
+    "tipoScadenza" : "REVISIONE",
+    "data" : "2026-05-31",
+    "notificata" : false,
+    "targa" : "GL659GH"
+  }, {
+    "idScadenza" : 64,
+    "tipoScadenza" : "TAGLIANDO",
+    "data" : "2025-09-20",
+    "notificata" : false,
+    "targa" : "GL659GH"
+  }, {
+    "idScadenza" : 65,
+    "tipoScadenza" : "BOLLO",
+    "data" : "2025-11-30",
+    "notificata" : false,
+    "targa" : "EL467HH"
+  }, {
+    "idScadenza" : 66,
+    "tipoScadenza" : "ASSICURAZIONE",
+    "data" : "2025-09-25",
+    "notificata" : false,
+    "targa" : "EL467HH"
+  }, {
+    "idScadenza" : 67,
+    "tipoScadenza" : "REVISIONE",
+    "data" : "2026-11-30",
+    "notificata" : false,
+    "targa" : "EL467HH"
+  }, {
+    "idScadenza" : 68,
+    "tipoScadenza" : "TAGLIANDO",
+    "data" : "2025-06-10",
+    "notificata" : true,
+    "targa" : "EL467HH"
+  }, {
+    "idScadenza" : 69,
+    "tipoScadenza" : "BOLLO",
+    "data" : "2025-04-30",
+    "notificata" : false,
+    "targa" : "FC628HD"
+  }, {
+    "idScadenza" : 70,
+    "tipoScadenza" : "ASSICURAZIONE",
+    "data" : "2025-02-27",
+    "notificata" : true,
+    "targa" : "FC628HD"
+  }, {
+    "idScadenza" : 71,
+    "tipoScadenza" : "REVISIONE",
+    "data" : "2026-04-30",
+    "notificata" : false,
+    "targa" : "FC628HD"
+  }, {
+    "idScadenza" : 72,
+    "tipoScadenza" : "TAGLIANDO",
+    "data" : "2025-08-15",
+    "notificata" : true,
+    "targa" : "FC628HD"
+  }, {
+    "idScadenza" : 73,
+    "tipoScadenza" : "BOLLO",
+    "data" : "2025-09-30",
+    "notificata" : false,
+    "targa" : "GV779WE"
+  }, {
+    "idScadenza" : 74,
+    "tipoScadenza" : "ASSICURAZIONE",
+    "data" : "2025-07-22",
+    "notificata" : false,
+    "targa" : "GV779WE"
+  }, {
+    "idScadenza" : 75,
+    "tipoScadenza" : "REVISIONE",
+    "data" : "2027-09-30",
+    "notificata" : false,
+    "targa" : "GV779WE"
+  }, {
+    "idScadenza" : 76,
+    "tipoScadenza" : "TAGLIANDO",
+    "data" : "2025-10-20",
+    "notificata" : false,
+    "targa" : "GV779WE"
+  } ]
 }

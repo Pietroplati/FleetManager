@@ -14,7 +14,7 @@ public class SQLoperator {
 		try (Connection conn = DatabaseManager.getInstance().getConnection(); Statement stmt = conn.createStatement()) {
 			String sql = """
 					DELETE FROM utente
-					WHERE idutente = 2;
+					WHERE idutente = 4;
 		
 					""";
 			stmt.executeUpdate(sql);
