@@ -2,7 +2,6 @@ package it.fleetmanager.repository;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -10,15 +9,14 @@ import java.sql.Statement;
 
 public class ElencaDati {
 
-    private static final String DB_REL_FILE = "./data/fleetdb";
-    private static final String DB_URL = "jdbc:h2:" + DB_REL_FILE;
+    
     private static final String SCHEMA = "PUBLIC";
 
     // Se vuoi limitare le righe stampate per tabella, imposta un valore > 0
     private static final int MAX_ROWS_PER_TABLE = 0; // 0 = tutte
 
     public static void main(String[] args) {
-        try (Connection conn = DriverManager.getConnection(DB_URL)) {
+        try (Connection conn = DatabaseManager.getInstance().getConnection()) {
             DatabaseMetaData meta = conn.getMetaData();
 
             try (ResultSet rsTables = meta.getTables(null, SCHEMA, "%", new String[] { "TABLE" })) {

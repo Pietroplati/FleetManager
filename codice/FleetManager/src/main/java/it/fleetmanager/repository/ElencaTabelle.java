@@ -2,22 +2,20 @@ package it.fleetmanager.repository;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
 public class ElencaTabelle {
-	private static final String DB_REL_FILE = "./data/fleetdb";
-	private static final String DB_URL = "jdbc:h2:" + DB_REL_FILE;
+
 
 	public static void main(String[] args) throws SQLException {
-		try (Connection conn = DriverManager.getConnection(DB_URL);) {
+		try (Connection conn = DatabaseManager.getInstance().getConnection();) {
 			DatabaseMetaData meta = conn.getMetaData();
 
 			try (ResultSet rsTables = meta.getTables(null, "PUBLIC", "%", new String[] { "TABLE" })) {
-				System.out.println("SCHEMA DATABASE: " + DB_URL);
+				System.out.println("SCHEMA DATABASE: " + DatabaseManager.getUrl());
 
 				while (rsTables.next()) {
 					String schema = rsTables.getString("TABLE_SCHEM");
