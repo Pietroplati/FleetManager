@@ -1,6 +1,7 @@
 package it.fleetmanager.repository.impl;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -226,14 +227,102 @@ public class UtenteDAOImpl implements UtenteDAO {
 
 	@Override
 	public void delete(Integer id) {
-		// TODO Auto-generated method stub
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.findAndRegisterModules();
 
+			File file = new File("./src/main/resources/data/fleet_data.json");
+
+			// 1) Leggo il JSON
+			ObjectNode root = (ObjectNode) mapper.readTree(file);
+			ArrayNode utentiNode = (ArrayNode) root.get("utenti");
+
+			if (utentiNode == null) {
+				System.err.println("ERRORE: nel JSON manca il nodo 'utenti'");
+				return;
+			}
+
+			boolean rimosso = false;
+
+			// 2) Cerco e rimuovo l'utente per ID
+			for (int i = 0; i < utentiNode.size(); i++) {
+				JsonNode u = utentiNode.get(i);
+
+				if (u.get("idUtente").asInt() == id) {
+					utentiNode.remove(i);
+					rimosso = true;
+					break;
+				}
+			}
+
+			if (!rimosso) {
+				System.err.println("ERRORE: utente con ID " + id + " non trovato. Nessuna rimozione eseguita.");
+				return;
+			}
+
+			// 3) Riscrivo il file aggiornato
+			mapper.writerWithDefaultPrettyPrinter().writeValue(file, root);
+			System.out.println("✔ Utente rimosso correttamente dal JSON!");
+
+			// ==========================================
+			// 4) Eliminazione anche nel DB H2
+			// ==========================================
+			try (Connection conn = DatabaseManager.getInstance().getConnection()) {
+
+				String sql = "DELETE FROM Utente WHERE idUtente = ?";
+
+				try (PreparedStatement ps = conn.prepareStatement(sql)) {
+					ps.setInt(1, id);
+					int rows = ps.executeUpdate();
+
+					if (rows > 0) {
+						System.out.println("✔ Utente eliminato correttamente anche dal database H2!");
+					} else {
+						System.err.println("ERRORE DB: utente non presente nel database H2.");
+					}
+				}
+
+			} catch (SQLException sqlEx) {
+				System.err.println("ERRORE SQL durante il DELETE: " + sqlEx.getMessage());
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public boolean existsByEmail(String email) {
-		// TODO Auto-generated method stub
-		return false;
+	    try {
+	        ObjectMapper mapper = new ObjectMapper();
+	        mapper.findAndRegisterModules();
+
+	        File file = new File("./src/main/resources/data/fleet_data.json");
+
+	        // 1) Leggo il JSON
+	        ObjectNode root = (ObjectNode) mapper.readTree(file);
+
+	        ArrayNode utentiNode = (ArrayNode) root.get("utenti");
+	        if (utentiNode == null) {
+	            System.err.println("ERRORE: manca il nodo 'utenti'");
+	            return false;
+	        }
+
+	        // 2) Scorro tutti gli utenti correttamente
+	        for (JsonNode u : utentiNode) {
+
+	            if (u.get("email").asText().equalsIgnoreCase(email)) {
+	                return true;
+	            }
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+
+	    // 3) Default: non trovato
+	    return false;
 	}
+
 
 }
