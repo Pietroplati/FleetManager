@@ -18,7 +18,39 @@ public class UtenteDAOImpl implements UtenteDAO {
 
 	@Override
 	public Optional<Utente> getUtenteByEmail(String email) {
-		// TODO Auto-generated method stub
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.findAndRegisterModules();
+
+			File file = new File("./src/main/resources/data/fleet_data.json");
+
+			// 1) Leggo il JSON come albero
+			ObjectNode root = (ObjectNode) mapper.readTree(file);
+
+			// 2) Ottengo il nodo "utenti"
+			ArrayNode utentiNode = (ArrayNode) root.get("utenti");
+
+			if (utentiNode == null) {
+				System.err.println("ERRORE: nel JSON manca il nodo 'utenti'");
+				return Optional.empty();
+			}
+
+			// 3) Scorro tutti gli utenti e cerco l'email
+			for (JsonNode u : utentiNode) {
+				if (u.get("email").asText().equalsIgnoreCase(email)) {
+
+					// 4) Converto il JsonNode → Utente
+					Utente trovato = mapper.treeToValue(u, Utente.class);
+
+					return Optional.of(trovato);
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		// 5) Se non trovato
 		return Optional.empty();
 	}
 
@@ -107,8 +139,89 @@ public class UtenteDAOImpl implements UtenteDAO {
 
 	@Override
 	public void update(Utente utente) {
-		// TODO Auto-generated method stub
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.findAndRegisterModules();
 
+			File file = new File("./src/main/resources/data/fleet_data.json");
+
+			// 1) Carico il JSON come albero
+			ObjectNode root = (ObjectNode) mapper.readTree(file);
+
+			// 2) Ottengo il nodo utenti
+			ArrayNode utentiNode = (ArrayNode) root.get("utenti");
+
+			if (utentiNode == null) {
+				System.err.println("ERRORE: nel JSON manca il nodo 'utenti'");
+				return;
+			}
+
+			boolean aggiornato = false;
+
+			// 3) Scorro tutti gli utenti e cerco quello da aggiornare
+			for (int i = 0; i < utentiNode.size(); i++) {
+
+				JsonNode u = utentiNode.get(i);
+
+				if (u.get("idUtente").asInt() == utente.getIdUtente()) {
+
+					// 4) converto il nuovo utente in JsonNode
+					JsonNode nuovoNodo = mapper.convertValue(utente, JsonNode.class);
+
+					// 5) sostituisco il nodo vecchio con quello nuovo
+					utentiNode.set(i, nuovoNodo);
+
+					aggiornato = true;
+					break;
+				}
+			}
+
+			if (!aggiornato) {
+				System.err.println(
+						"ERRORE: impossibile aggiornare, utente con ID " + utente.getIdUtente() + " non trovato.");
+				return;
+			}
+
+			// 6) Riscrivo il file JSON aggiornato
+			mapper.writerWithDefaultPrettyPrinter().writeValue(file, root);
+
+			System.out.println("✔ Utente aggiornato correttamente nel JSON!");
+
+			// ======================================
+			// 7) Aggiornamento anche nel DB H2
+			// ======================================
+
+			try (Connection conn = DatabaseManager.getInstance().getConnection()) {
+
+				String sql = "UPDATE Utente SET " + "nome=?, cognome=?, email=?, password=?, ruoloUtente=?, patente=? "
+						+ "WHERE idUtente=?";
+
+				try (PreparedStatement ps = conn.prepareStatement(sql)) {
+
+					ps.setString(1, utente.getNome());
+					ps.setString(2, utente.getCognome());
+					ps.setString(3, utente.getEmail());
+					ps.setString(4, utente.getPassword());
+					ps.setString(5, utente.getRuoloUtente().name());
+					ps.setString(6, utente.getPatente());
+					ps.setInt(7, utente.getIdUtente());
+
+					int rows = ps.executeUpdate();
+
+					if (rows > 0) {
+						System.out.println("✔ Utente aggiornato correttamente anche nel database H2!");
+					} else {
+						System.err.println("ERRORE DB: utente non trovato nel database H2.");
+					}
+				}
+
+			} catch (SQLException sqlEx) {
+				System.err.println("ERRORE durante l'UPDATE SQL: " + sqlEx.getMessage());
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override

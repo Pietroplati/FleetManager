@@ -21,6 +21,10 @@ public class App {
         UtenteDAOImpl UDI = new UtenteDAOImpl();
         
         UDI.save(utente);
+        utente.setNome("Giovanni");
+        utente.setCognome("Perini");
+        utente.setEmail("juan@gmail.com");
+        UDI.update(utente);
         DatabaseSeeder.main(null);
     }
 }
