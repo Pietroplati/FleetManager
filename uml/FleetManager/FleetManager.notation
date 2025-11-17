@@ -1790,7 +1790,6 @@
               <layoutConstraint xmi:type="notation:Location" xmi:id="_-mUjFbyQEfC8rbOYHjaw_Q"/>
             </children>
             <children xmi:type="notation:Shape" xmi:id="_-mVKILyQEfC8rbOYHjaw_Q" type="Operation_ClassOperationLabel">
-              <element xmi:type="uml:Operation" href="FleetManager.uml#_sW0FsLyQEfC8rbOYHjaw_Q"/>
               <layoutConstraint xmi:type="notation:Location" xmi:id="_-mVKIbyQEfC8rbOYHjaw_Q"/>
             </children>
             <children xmi:type="notation:Shape" xmi:id="_-mVKIryQEfC8rbOYHjaw_Q" type="Operation_ClassOperationLabel">
