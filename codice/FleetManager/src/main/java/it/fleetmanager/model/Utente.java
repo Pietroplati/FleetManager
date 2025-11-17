@@ -77,6 +77,10 @@ public class Utente {
 		return ruoloUtente;
 	}
 
+	public void setPatente(String patente) {
+		this.patente = patente;
+	}
+	
 	public String getPatente() {
 		return patente;
 	}

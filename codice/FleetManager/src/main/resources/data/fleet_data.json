@@ -16,13 +16,13 @@
     "ruoloUtente" : "DRIVER",
     "patente" : "U1446G487U"
   }, {
-    "idUtente" : 3,
-    "nome" : "Paolo",
-    "cognome" : "Foresti",
-    "email" : "marco.rossi@example.com",
-    "password" : "pwd123",
+    "idUtente" : 4,
+    "nome" : "PietroMod",
+    "cognome" : "Plati",
+    "email" : "pietro@test.com",
+    "password" : "xyz",
     "ruoloUtente" : "DRIVER",
-    "patente" : "U1446G487U"
+    "patente" : null
   } ],
   "prenotazioni" : [ {
     "idPrenotazione" : 1,

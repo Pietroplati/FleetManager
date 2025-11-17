@@ -5,7 +5,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Optional;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -18,337 +17,178 @@ import it.fleetmanager.util.RuoloUtente;
 
 public class UtenteDAOImpl implements UtenteDAO {
 
+	public static final Utente UTENTE_INESISTENTE = new Utente(-1, "N/A", "N/A", "N/A", "N/A", RuoloUtente.MANAGER) {
+		@Override
+		public String toString() {
+			return "Utente inesistente";
+		}
+	};
+
 	@Override
-	public Optional<Utente> getUtenteByEmail(String email) {
-	    String sql = "SELECT idUtente, nome, cognome, email, password, ruoloUtente, patente " +
-	                 "FROM Utente WHERE LOWER(email) = LOWER(?)";
+	public Utente getUtenteByEmail(String email) {
+		String sql = "SELECT idUtente, nome, cognome, email, password, ruoloUtente, patente "
+				+ "FROM Utente WHERE email = ?";
 
-	    try (Connection conn = DatabaseManager.getInstance().getConnection();
-	         PreparedStatement ps = conn.prepareStatement(sql)) {
+		try (Connection conn = DatabaseManager.getInstance().getConnection();
+				PreparedStatement ps = conn.prepareStatement(sql)) {
 
-	        ps.setString(1, email);
+			ps.setString(1, email);
 
-	        try (ResultSet rs = ps.executeQuery()) {
-	            if (rs.next()) {
-	                int id = rs.getInt("idUtente");
-	                String nome = rs.getString("nome");
-	                String cognome = rs.getString("cognome");
-	                String emailDb = rs.getString("email");
-	                String password = rs.getString("password");
-	                String ruoloStr = rs.getString("ruoloUtente");
-	                String patente = rs.getString("patente"); // può essere null
+			try (ResultSet rs = ps.executeQuery()) {
+				if (!rs.next()) {
+					return UTENTE_INESISTENTE;
+				}
 
-	                RuoloUtente ruolo = RuoloUtente.valueOf(ruoloStr);
+				int idUtente = rs.getInt("idUtente");
+				String nome = rs.getString("nome");
+				String cognome = rs.getString("cognome");
+				String password = rs.getString("password");
+				String ruoloDb = rs.getString("ruoloUtente");
+				String patente = rs.getString("patente");
 
-	                Utente utente = new Utente(id, nome, cognome, emailDb, password, ruolo, patente);
-	                return Optional.of(utente);
-	            }
-	        }
+				RuoloUtente ruolo = RuoloUtente.valueOf(ruoloDb);
 
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	    }
+				return (patente == null) ? new Utente(idUtente, nome, cognome, email, password, ruolo)
+						: new Utente(idUtente, nome, cognome, email, password, ruolo, patente);
+			}
 
-	    return Optional.empty();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return UTENTE_INESISTENTE;
+		}
 	}
 
+	@Override
+	public Utente getUtenteById(int id) {
+		String sql = "SELECT idUtente, nome, cognome, email, password, ruoloUtente, patente "
+				+ "FROM Utente WHERE idUtente = ?";
+
+		try (Connection conn = DatabaseManager.getInstance().getConnection();
+				PreparedStatement ps = conn.prepareStatement(sql)) {
+
+			ps.setInt(1, id);
+
+			try (ResultSet rs = ps.executeQuery()) {
+				if (!rs.next()) {
+					return UTENTE_INESISTENTE;
+				}
+
+				int idUtente = rs.getInt("idUtente");
+				String nome = rs.getString("nome");
+				String cognome = rs.getString("cognome");
+				String email = rs.getString("email");
+				String password = rs.getString("password");
+				String ruoloDb = rs.getString("ruoloUtente");
+				String patente = rs.getString("patente");
+
+				RuoloUtente ruolo = RuoloUtente.valueOf(ruoloDb);
+
+				return (patente == null) ? new Utente(idUtente, nome, cognome, email, password, ruolo)
+						: new Utente(idUtente, nome, cognome, email, password, ruolo, patente);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return UTENTE_INESISTENTE;
+		}
+	}
 
 	@Override
-	public Optional<Utente> getById(int id) {
-	    String sql = "SELECT idUtente, nome, cognome, email, password, ruoloUtente, patente " +
-	                 "FROM Utente WHERE idUtente = ?";
+	public void save(Utente utente) {
+
+		String sql = "INSERT INTO Utente " + "(idUtente, nome, cognome, email, password, ruoloUtente, patente) "
+				+ "VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+		try (Connection conn = DatabaseManager.getInstance().getConnection();
+				PreparedStatement ps = conn.prepareStatement(sql)) {
+
+			ps.setInt(1, utente.getIdUtente());
+			ps.setString(2, utente.getNome());
+			ps.setString(3, utente.getCognome());
+			ps.setString(4, utente.getEmail());
+			ps.setString(5, utente.getPassword());
+			ps.setString(6, utente.getRuoloUtente().name());
+			ps.setString(7, utente.getPatente());
+
+			ps.executeUpdate();
+			System.out.println("✔ Utente inserito correttamente nel database H2!");
+
+		} catch (SQLException e) {
+			System.err.println("ERRORE SQL durante l'inserimento dell'utente: " + e.getMessage());
+		}
+	}
+
+	@Override
+	public void update(Utente utente) {
+
+		String sql = "UPDATE Utente SET " + "nome=?, cognome=?, email=?, password=?, ruoloUtente=?, patente=? "
+				+ "WHERE idUtente=?";
+
+		try (Connection conn = DatabaseManager.getInstance().getConnection();
+				PreparedStatement ps = conn.prepareStatement(sql)) {
+
+			ps.setString(1, utente.getNome());
+			ps.setString(2, utente.getCognome());
+			ps.setString(3, utente.getEmail());
+			ps.setString(4, utente.getPassword());
+			ps.setString(5, utente.getRuoloUtente().name());
+			ps.setString(6, utente.getPatente());
+			ps.setInt(7, utente.getIdUtente());
+
+			int rows = ps.executeUpdate();
+
+			if (rows > 0) {
+				System.out.println("✔ Utente aggiornato correttamente nel database H2!");
+			} else {
+				System.err.println("ERRORE: utente con ID " + utente.getIdUtente() + " non trovato nel database H2.");
+			}
+
+		} catch (SQLException e) {
+			System.err.println("ERRORE SQL durante l'UPDATE dell'utente: " + e.getMessage());
+		}
+	}
+
+	@Override
+	public void delete(int id) {
+
+	    String sql = "DELETE FROM Utente WHERE idUtente = ?";
 
 	    try (Connection conn = DatabaseManager.getInstance().getConnection();
 	         PreparedStatement ps = conn.prepareStatement(sql)) {
 
 	        ps.setInt(1, id);
 
-	        try (ResultSet rs = ps.executeQuery()) {
-	            if (rs.next()) {
-	                int idDb = rs.getInt("idUtente");
-	                String nome = rs.getString("nome");
-	                String cognome = rs.getString("cognome");
-	                String emailDb = rs.getString("email");
-	                String password = rs.getString("password");
-	                String ruoloStr = rs.getString("ruoloUtente");
-	                String patente = rs.getString("patente");
+	        int rows = ps.executeUpdate();
 
-	                RuoloUtente ruolo = RuoloUtente.valueOf(ruoloStr);
-
-	                Utente utente = new Utente(idDb, nome, cognome, emailDb, password, ruolo, patente);
-	                return Optional.of(utente);
-	            }
+	        if (rows > 0) {
+	            System.out.println("✔ Utente eliminato correttamente dal database H2!");
+	        } else {
+	            System.err.println("ERRORE: utente con ID " + id + " non trovato nel database H2.");
 	        }
 
 	    } catch (SQLException e) {
-	        e.printStackTrace();
+	        System.err.println("ERRORE SQL durante l'eliminazione dell'utente: " + e.getMessage());
 	    }
-
-	    return Optional.empty();
 	}
 
-
-	@Override
-	public void save(Utente utente) {
-		try {
-			ObjectMapper mapper = new ObjectMapper();
-			mapper.findAndRegisterModules();
-
-			File file = new File("./src/main/resources/data/fleet_data.json");
-
-			// 1) Carico tutto il JSON come albero
-			ObjectNode root = (ObjectNode) mapper.readTree(file);
-
-			// 2) Ottengo il nodo utenti (è un ArrayNode)
-			ArrayNode utentiNode = (ArrayNode) root.get("utenti");
-
-			if (utentiNode == null) {
-				System.err.println("ERRORE: nel JSON manca il nodo 'utenti'");
-				return;
-			}
-
-			// 3) Controllo se esiste già un utente con quell'ID
-			boolean idEsistente = false;
-
-			for (JsonNode u : utentiNode) {
-				if (u.get("idUtente").asInt() == utente.getIdUtente()) {
-					idEsistente = true;
-					break;
-				}
-			}
-
-			if (idEsistente) {
-				System.err.println("ERRORE: l'ID " + utente.getIdUtente() + " è già presente!");
-				return;
-			}
-
-			// 4) Converto Utente Java -> JsonNode
-			JsonNode nuovoUtenteNode = mapper.convertValue(utente, JsonNode.class);
-
-			// 5) Aggiungo al JSON
-			utentiNode.add(nuovoUtenteNode);
-
-			// 6) Riscrivo il file
-			mapper.writerWithDefaultPrettyPrinter().writeValue(file, root);
-
-			System.out.println("✔ Utente aggiunto correttamente al JSON!");
-
-			// ======================================
-			// 7) Aggiunta anche nel DB H2 (via JDBC)
-			// ======================================
-			try (Connection conn = DatabaseManager.getInstance().getConnection()) {
-
-				String sql = "INSERT INTO Utente " + "(idUtente, nome, cognome, email, password, ruoloUtente, patente) "
-						+ "VALUES (?, ?, ?, ?, ?, ?, ?)";
-
-				try (PreparedStatement ps = conn.prepareStatement(sql)) {
-
-					ps.setInt(1, utente.getIdUtente());
-					ps.setString(2, utente.getNome());
-					ps.setString(3, utente.getCognome());
-					ps.setString(4, utente.getEmail());
-					ps.setString(5, utente.getPassword());
-					ps.setString(6, utente.getRuoloUtente().name());
-					ps.setString(7, utente.getPatente());
-
-					ps.executeUpdate();
-
-					System.out.println("Utente inserito correttamente anche nel database H2!");
-				}
-
-			} catch (SQLException sqlEx) {
-				System.err.println("ERRORE durante l'INSERT SQL: " + sqlEx.getMessage());
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Override
-	public void update(Utente utente) {
-		try {
-			ObjectMapper mapper = new ObjectMapper();
-			mapper.findAndRegisterModules();
-
-			File file = new File("./src/main/resources/data/fleet_data.json");
-
-			// 1) Carico il JSON come albero
-			ObjectNode root = (ObjectNode) mapper.readTree(file);
-
-			// 2) Ottengo il nodo utenti
-			ArrayNode utentiNode = (ArrayNode) root.get("utenti");
-
-			if (utentiNode == null) {
-				System.err.println("ERRORE: nel JSON manca il nodo 'utenti'");
-				return;
-			}
-
-			boolean aggiornato = false;
-
-			// 3) Scorro tutti gli utenti e cerco quello da aggiornare
-			for (int i = 0; i < utentiNode.size(); i++) {
-
-				JsonNode u = utentiNode.get(i);
-
-				if (u.get("idUtente").asInt() == utente.getIdUtente()) {
-
-					// 4) converto il nuovo utente in JsonNode
-					JsonNode nuovoNodo = mapper.convertValue(utente, JsonNode.class);
-
-					// 5) sostituisco il nodo vecchio con quello nuovo
-					utentiNode.set(i, nuovoNodo);
-
-					aggiornato = true;
-					break;
-				}
-			}
-
-			if (!aggiornato) {
-				System.err.println(
-						"ERRORE: impossibile aggiornare, utente con ID " + utente.getIdUtente() + " non trovato.");
-				return;
-			}
-
-			// 6) Riscrivo il file JSON aggiornato
-			mapper.writerWithDefaultPrettyPrinter().writeValue(file, root);
-
-			System.out.println("✔ Utente aggiornato correttamente nel JSON!");
-
-			// ======================================
-			// 7) Aggiornamento anche nel DB H2
-			// ======================================
-
-			try (Connection conn = DatabaseManager.getInstance().getConnection()) {
-
-				String sql = "UPDATE Utente SET " + "nome=?, cognome=?, email=?, password=?, ruoloUtente=?, patente=? "
-						+ "WHERE idUtente=?";
-
-				try (PreparedStatement ps = conn.prepareStatement(sql)) {
-
-					ps.setString(1, utente.getNome());
-					ps.setString(2, utente.getCognome());
-					ps.setString(3, utente.getEmail());
-					ps.setString(4, utente.getPassword());
-					ps.setString(5, utente.getRuoloUtente().name());
-					ps.setString(6, utente.getPatente());
-					ps.setInt(7, utente.getIdUtente());
-
-					int rows = ps.executeUpdate();
-
-					if (rows > 0) {
-						System.out.println("✔ Utente aggiornato correttamente anche nel database H2!");
-					} else {
-						System.err.println("ERRORE DB: utente non trovato nel database H2.");
-					}
-				}
-
-			} catch (SQLException sqlEx) {
-				System.err.println("ERRORE durante l'UPDATE SQL: " + sqlEx.getMessage());
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Override
-	public void delete(int id) {
-		try {
-			ObjectMapper mapper = new ObjectMapper();
-			mapper.findAndRegisterModules();
-
-			File file = new File("./src/main/resources/data/fleet_data.json");
-
-			// 1) Leggo il JSON
-			ObjectNode root = (ObjectNode) mapper.readTree(file);
-			ArrayNode utentiNode = (ArrayNode) root.get("utenti");
-
-			if (utentiNode == null) {
-				System.err.println("ERRORE: nel JSON manca il nodo 'utenti'");
-				return;
-			}
-
-			boolean rimosso = false;
-
-			// 2) Cerco e rimuovo l'utente per ID
-			for (int i = 0; i < utentiNode.size(); i++) {
-				JsonNode u = utentiNode.get(i);
-
-				if (u.get("idUtente").asInt() == id) {
-					utentiNode.remove(i);
-					rimosso = true;
-					break;
-				}
-			}
-
-			if (!rimosso) {
-				System.err.println("ERRORE: utente con ID " + id + " non trovato. Nessuna rimozione eseguita.");
-				return;
-			}
-
-			// 3) Riscrivo il file aggiornato
-			mapper.writerWithDefaultPrettyPrinter().writeValue(file, root);
-			System.out.println("✔ Utente rimosso correttamente dal JSON!");
-
-			// ==========================================
-			// 4) Eliminazione anche nel DB H2
-			// ==========================================
-			try (Connection conn = DatabaseManager.getInstance().getConnection()) {
-
-				String sql = "DELETE FROM Utente WHERE idUtente = ?";
-
-				try (PreparedStatement ps = conn.prepareStatement(sql)) {
-					ps.setInt(1, id);
-					int rows = ps.executeUpdate();
-
-					if (rows > 0) {
-						System.out.println("✔ Utente eliminato correttamente anche dal database H2!");
-					} else {
-						System.err.println("ERRORE DB: utente non presente nel database H2.");
-					}
-				}
-
-			} catch (SQLException sqlEx) {
-				System.err.println("ERRORE SQL durante il DELETE: " + sqlEx.getMessage());
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 
 	@Override
 	public boolean existsByEmail(String email) {
-		try {
-			ObjectMapper mapper = new ObjectMapper();
-			mapper.findAndRegisterModules();
+		String sql = "SELECT 1 FROM Utente WHERE email = ?";
 
-			File file = new File("./src/main/resources/data/fleet_data.json");
+		try (Connection conn = DatabaseManager.getInstance().getConnection();
+				PreparedStatement ps = conn.prepareStatement(sql)) {
 
-			// 1) Leggo il JSON
-			ObjectNode root = (ObjectNode) mapper.readTree(file);
+			ps.setString(1, email);
 
-			ArrayNode utentiNode = (ArrayNode) root.get("utenti");
-			if (utentiNode == null) {
-				System.err.println("ERRORE: manca il nodo 'utenti'");
-				return false;
-			}
-
-			// 2) Scorro tutti gli utenti correttamente
-			for (JsonNode u : utentiNode) {
-
-				if (u.get("email").asText().equalsIgnoreCase(email)) {
-					return true;
-				}
+			try (ResultSet rs = ps.executeQuery()) {
+				return rs.next();
 			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
+			return false;
 		}
-
-		// 3) Default: non trovato
-		return false;
 	}
 
 }

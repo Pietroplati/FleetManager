@@ -9,12 +9,12 @@ public interface UtenteDAO {
     /**
      * Restituisce l'utente con l'email indicata, se presente.
      */
-    public Optional<Utente> getUtenteByEmail(String email);
+    public Utente getUtenteByEmail(String email);
 
     /**
      * Restituisce l'utente identificato dall'id, se presente.
      */
-    public Optional<Utente> getById(int id);
+    public Utente getUtenteById(int id);
 
     /**
      * Inserisce un nuovo utente.
