@@ -14,7 +14,7 @@ public interface UtenteDAO {
     /**
      * Restituisce l'utente identificato dall'id, se presente.
      */
-    public Optional<Utente> getById(Integer id);
+    public Optional<Utente> getById(int id);
 
     /**
      * Inserisce un nuovo utente.
@@ -29,7 +29,7 @@ public interface UtenteDAO {
     /**
      * Cancella l'utente con id indicato.
      */
-    public void delete(Integer id);
+    public void delete(int id);
 
     /**
      * @return true se esiste già un utente con quella email.

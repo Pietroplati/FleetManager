@@ -19,16 +19,8 @@
     "idUtente" : 3,
     "nome" : "Paolo",
     "cognome" : "Foresti",
-    "email" : "mario.rossi@example.com",
+    "email" : "marco.rossi@example.com",
     "password" : "pwd123",
-    "ruoloUtente" : "DRIVER",
-    "patente" : "U1446G487U"
-  }, {
-    "idUtente" : 4,
-    "nome" : "Giovanni",
-    "cognome" : "Perini",
-    "email" : "juan@gmail.com",
-    "password" : "Ciao1234",
     "ruoloUtente" : "DRIVER",
     "patente" : "U1446G487U"
   } ],

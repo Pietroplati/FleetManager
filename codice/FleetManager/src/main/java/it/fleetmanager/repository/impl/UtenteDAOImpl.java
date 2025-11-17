@@ -1,9 +1,9 @@
 package it.fleetmanager.repository.impl;
 
 import java.io.File;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Optional;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -14,52 +14,79 @@ import it.fleetmanager.model.Utente;
 import it.fleetmanager.repository.DatabaseManager;
 
 import it.fleetmanager.repository.UtenteDAO;
+import it.fleetmanager.util.RuoloUtente;
 
 public class UtenteDAOImpl implements UtenteDAO {
 
 	@Override
 	public Optional<Utente> getUtenteByEmail(String email) {
-		try {
-			ObjectMapper mapper = new ObjectMapper();
-			mapper.findAndRegisterModules();
+	    String sql = "SELECT idUtente, nome, cognome, email, password, ruoloUtente, patente " +
+	                 "FROM Utente WHERE LOWER(email) = LOWER(?)";
 
-			File file = new File("./src/main/resources/data/fleet_data.json");
+	    try (Connection conn = DatabaseManager.getInstance().getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql)) {
 
-			// 1) Leggo il JSON come albero
-			ObjectNode root = (ObjectNode) mapper.readTree(file);
+	        ps.setString(1, email);
 
-			// 2) Ottengo il nodo "utenti"
-			ArrayNode utentiNode = (ArrayNode) root.get("utenti");
+	        try (ResultSet rs = ps.executeQuery()) {
+	            if (rs.next()) {
+	                int id = rs.getInt("idUtente");
+	                String nome = rs.getString("nome");
+	                String cognome = rs.getString("cognome");
+	                String emailDb = rs.getString("email");
+	                String password = rs.getString("password");
+	                String ruoloStr = rs.getString("ruoloUtente");
+	                String patente = rs.getString("patente"); // può essere null
 
-			if (utentiNode == null) {
-				System.err.println("ERRORE: nel JSON manca il nodo 'utenti'");
-				return Optional.empty();
-			}
+	                RuoloUtente ruolo = RuoloUtente.valueOf(ruoloStr);
 
-			// 3) Scorro tutti gli utenti e cerco l'email
-			for (JsonNode u : utentiNode) {
-				if (u.get("email").asText().equalsIgnoreCase(email)) {
+	                Utente utente = new Utente(id, nome, cognome, emailDb, password, ruolo, patente);
+	                return Optional.of(utente);
+	            }
+	        }
 
-					// 4) Converto il JsonNode → Utente
-					Utente trovato = mapper.treeToValue(u, Utente.class);
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
 
-					return Optional.of(trovato);
-				}
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		// 5) Se non trovato
-		return Optional.empty();
+	    return Optional.empty();
 	}
+
 
 	@Override
-	public Optional<Utente> getById(Integer id) {
-		// TODO Auto-generated method stub
-		return Optional.empty();
+	public Optional<Utente> getById(int id) {
+	    String sql = "SELECT idUtente, nome, cognome, email, password, ruoloUtente, patente " +
+	                 "FROM Utente WHERE idUtente = ?";
+
+	    try (Connection conn = DatabaseManager.getInstance().getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+	        ps.setInt(1, id);
+
+	        try (ResultSet rs = ps.executeQuery()) {
+	            if (rs.next()) {
+	                int idDb = rs.getInt("idUtente");
+	                String nome = rs.getString("nome");
+	                String cognome = rs.getString("cognome");
+	                String emailDb = rs.getString("email");
+	                String password = rs.getString("password");
+	                String ruoloStr = rs.getString("ruoloUtente");
+	                String patente = rs.getString("patente");
+
+	                RuoloUtente ruolo = RuoloUtente.valueOf(ruoloStr);
+
+	                Utente utente = new Utente(idDb, nome, cognome, emailDb, password, ruolo, patente);
+	                return Optional.of(utente);
+	            }
+	        }
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    return Optional.empty();
 	}
+
 
 	@Override
 	public void save(Utente utente) {
@@ -226,7 +253,7 @@ public class UtenteDAOImpl implements UtenteDAO {
 	}
 
 	@Override
-	public void delete(Integer id) {
+	public void delete(int id) {
 		try {
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.findAndRegisterModules();
@@ -293,36 +320,35 @@ public class UtenteDAOImpl implements UtenteDAO {
 
 	@Override
 	public boolean existsByEmail(String email) {
-	    try {
-	        ObjectMapper mapper = new ObjectMapper();
-	        mapper.findAndRegisterModules();
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.findAndRegisterModules();
 
-	        File file = new File("./src/main/resources/data/fleet_data.json");
+			File file = new File("./src/main/resources/data/fleet_data.json");
 
-	        // 1) Leggo il JSON
-	        ObjectNode root = (ObjectNode) mapper.readTree(file);
+			// 1) Leggo il JSON
+			ObjectNode root = (ObjectNode) mapper.readTree(file);
 
-	        ArrayNode utentiNode = (ArrayNode) root.get("utenti");
-	        if (utentiNode == null) {
-	            System.err.println("ERRORE: manca il nodo 'utenti'");
-	            return false;
-	        }
+			ArrayNode utentiNode = (ArrayNode) root.get("utenti");
+			if (utentiNode == null) {
+				System.err.println("ERRORE: manca il nodo 'utenti'");
+				return false;
+			}
 
-	        // 2) Scorro tutti gli utenti correttamente
-	        for (JsonNode u : utentiNode) {
+			// 2) Scorro tutti gli utenti correttamente
+			for (JsonNode u : utentiNode) {
 
-	            if (u.get("email").asText().equalsIgnoreCase(email)) {
-	                return true;
-	            }
-	        }
+				if (u.get("email").asText().equalsIgnoreCase(email)) {
+					return true;
+				}
+			}
 
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-	    // 3) Default: non trovato
-	    return false;
+		// 3) Default: non trovato
+		return false;
 	}
-
 
 }

@@ -80,4 +80,16 @@ public class Utente {
 	public String getPatente() {
 		return patente;
 	}
+	@Override
+	public String toString() {
+	    return "Utente {" +
+	           "id=" + idUtente +
+	           ", nome='" + nome + '\'' +
+	           ", cognome='" + cognome + '\'' +
+	           ", email='" + email + '\'' +
+	           ", ruolo=" + ruoloUtente +
+	           ", patente='" + patente + '\'' +
+	           '}';
+	}
+
 }
