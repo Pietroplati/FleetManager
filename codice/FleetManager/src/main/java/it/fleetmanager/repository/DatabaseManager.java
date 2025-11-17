@@ -6,7 +6,9 @@ import java.sql.SQLException;
 
 public class DatabaseManager {
 
-	private static final String URL = "jdbc:h2:./data/fleetdb";
+	private static final String DEFAULT_URL = "jdbc:h2:./data/fleetdb";
+
+	private static String testUrl = null;
 
 	private static DatabaseManager instance;
 
@@ -20,10 +22,20 @@ public class DatabaseManager {
 		return instance;
 	}
 
-	public Connection getConnection() throws SQLException {
-		return DriverManager.getConnection(URL);
+	public static void setTestUrl(String url) {
+		testUrl = url;
 	}
+
+	public Connection getConnection() throws SQLException {
+
+		if (testUrl != null) {
+			return DriverManager.getConnection(testUrl);
+		}
+
+		return DriverManager.getConnection(DEFAULT_URL);
+	}
+
 	public static String getUrl() {
-		return URL;
+		return (testUrl != null) ? testUrl : DEFAULT_URL;
 	}
 }

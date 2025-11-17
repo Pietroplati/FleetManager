@@ -1,14 +1,9 @@
 package it.fleetmanager.repository.impl;
 
-import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import it.fleetmanager.model.Utente;
 import it.fleetmanager.repository.DatabaseManager;
 
@@ -151,26 +146,25 @@ public class UtenteDAOImpl implements UtenteDAO {
 	@Override
 	public void delete(int id) {
 
-	    String sql = "DELETE FROM Utente WHERE idUtente = ?";
+		String sql = "DELETE FROM Utente WHERE idUtente = ?";
 
-	    try (Connection conn = DatabaseManager.getInstance().getConnection();
-	         PreparedStatement ps = conn.prepareStatement(sql)) {
+		try (Connection conn = DatabaseManager.getInstance().getConnection();
+				PreparedStatement ps = conn.prepareStatement(sql)) {
 
-	        ps.setInt(1, id);
+			ps.setInt(1, id);
 
-	        int rows = ps.executeUpdate();
+			int rows = ps.executeUpdate();
 
-	        if (rows > 0) {
-	            System.out.println("✔ Utente eliminato correttamente dal database H2!");
-	        } else {
-	            System.err.println("ERRORE: utente con ID " + id + " non trovato nel database H2.");
-	        }
+			if (rows > 0) {
+				System.out.println("✔ Utente eliminato correttamente dal database H2!");
+			} else {
+				System.err.println("ERRORE: utente con ID " + id + " non trovato nel database H2.");
+			}
 
-	    } catch (SQLException e) {
-	        System.err.println("ERRORE SQL durante l'eliminazione dell'utente: " + e.getMessage());
-	    }
+		} catch (SQLException e) {
+			System.err.println("ERRORE SQL durante l'eliminazione dell'utente: " + e.getMessage());
+		}
 	}
-
 
 	@Override
 	public boolean existsByEmail(String email) {

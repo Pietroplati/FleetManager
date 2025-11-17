@@ -1,9 +1,6 @@
 package it.fleetmanager.model;
 
 import java.time.LocalDateTime;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import it.fleetmanager.util.TipoNotifica;
 
 public class Notifica {
@@ -15,16 +12,14 @@ public class Notifica {
 	private int idUtente;
 	private int idScadenza;
 
-	public Notifica(@JsonProperty("idNotifica") int idNotifica, @JsonProperty("tipoNotifica") TipoNotifica tipoNotifica,
-			@JsonProperty("messaggio") String messaggio, @JsonProperty("dataInvio") LocalDateTime dataInvio,
-			@JsonProperty("letta") boolean letta, @JsonProperty("idUtente") int idUtente,
-			@JsonProperty("idScadenza") int idScadenza) {
+	public Notifica(int idNotifica, TipoNotifica tipoNotifica, String messaggio, LocalDateTime dataInvio, boolean letta,
+			int idUtente, int idScadenza) {
 		this.idNotifica = idNotifica;
 		this.tipoNotifica = tipoNotifica;
 		this.messaggio = messaggio;
 		this.dataInvio = dataInvio;
 		this.letta = letta;
-		
+
 	}
 
 	public int getIdNotifica() {
@@ -50,11 +45,11 @@ public class Notifica {
 	public void setLetta(boolean letta) {
 		this.letta = letta;
 	}
-	
+
 	public int getIdUtente() {
 		return idUtente;
 	}
-	
+
 	public int getIdScadenza() {
 		return idScadenza;
 	}

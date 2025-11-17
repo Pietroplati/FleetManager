@@ -1,7 +1,5 @@
 package it.fleetmanager.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import it.fleetmanager.util.RuoloUtente;
 
 public class Utente {
@@ -13,9 +11,7 @@ public class Utente {
 	private RuoloUtente ruoloUtente;
 	private String patente;
 
-	public Utente(@JsonProperty("idUtente") Integer idUtente, @JsonProperty("nome") String nome,
-			@JsonProperty("cognome") String cognome, @JsonProperty("email") String email,
-			@JsonProperty("password") String password, @JsonProperty("ruoloUtente") RuoloUtente ruoloUtente) {
+	public Utente(int idUtente, String nome, String cognome, String email, String password, RuoloUtente ruoloUtente) {
 		this.idUtente = idUtente;
 		this.nome = nome;
 		this.cognome = cognome;
@@ -24,10 +20,8 @@ public class Utente {
 		this.ruoloUtente = ruoloUtente;
 	}
 
-	public Utente(@JsonProperty("idUtente") Integer idUtente, @JsonProperty("nome") String nome,
-			@JsonProperty("cognome") String cognome, @JsonProperty("email") String email,
-			@JsonProperty("password") String password, @JsonProperty("ruoloUtente") RuoloUtente ruoloUtente,
-			@JsonProperty("patente") String patente) {
+	public Utente(int idUtente, String nome, String cognome, String email, String password, RuoloUtente ruoloUtente,
+			String patente) {
 		this.idUtente = idUtente;
 		this.nome = nome;
 		this.cognome = cognome;
@@ -80,20 +74,15 @@ public class Utente {
 	public void setPatente(String patente) {
 		this.patente = patente;
 	}
-	
+
 	public String getPatente() {
 		return patente;
 	}
+
 	@Override
 	public String toString() {
-	    return "Utente {" +
-	           "id=" + idUtente +
-	           ", nome='" + nome + '\'' +
-	           ", cognome='" + cognome + '\'' +
-	           ", email='" + email + '\'' +
-	           ", ruolo=" + ruoloUtente +
-	           ", patente='" + patente + '\'' +
-	           '}';
+		return "Utente {" + "id=" + idUtente + ", nome='" + nome + '\'' + ", cognome='" + cognome + '\'' + ", email='"
+				+ email + '\'' + ", ruolo=" + ruoloUtente + ", patente='" + patente + '\'' + '}';
 	}
 
 }

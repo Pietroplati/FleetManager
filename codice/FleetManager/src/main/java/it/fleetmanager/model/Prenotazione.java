@@ -1,9 +1,6 @@
 package it.fleetmanager.model;
 
 import java.time.LocalDateTime;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import it.fleetmanager.util.StatoPrenotazione;
 
 public class Prenotazione {
@@ -14,10 +11,8 @@ public class Prenotazione {
 	private int idUtente;
 	private String targa;
 
-	public Prenotazione(@JsonProperty("idPrenotazione") Integer idPrenotazione,
-			@JsonProperty("dataInizio") LocalDateTime dataInizio, @JsonProperty("dataFine") LocalDateTime dataFine,
-			@JsonProperty("statoPrenotazione") StatoPrenotazione stato, @JsonProperty("idUtente") int idUtente,
-			@JsonProperty("targa") String targa) {
+	public Prenotazione(int idPrenotazione, LocalDateTime dataInizio, LocalDateTime dataFine, StatoPrenotazione stato,
+			int idUtente, String targa) {
 		this.idPrenotazione = idPrenotazione;
 		this.dataInizio = dataInizio;
 		this.dataFine = dataFine;
@@ -57,7 +52,7 @@ public class Prenotazione {
 	public int getIdUtente() {
 		return idUtente;
 	}
-	
+
 	public String getTarga() {
 		return targa;
 	}
