@@ -109,7 +109,7 @@ public class ScadenzaDAOImpl implements ScadenzaDAO {
 			try (ResultSet rs = ps.executeQuery()) {
 
 				if (!rs.next()) {
-					System.err.println("⚠ Nessuna scadenza trovata con ID " + idScadenza);
+					System.err.println("Nessuna scadenza trovata con ID " + idScadenza);
 					return SCADENZA_INESISTENTE;
 				}
 
@@ -126,7 +126,7 @@ public class ScadenzaDAOImpl implements ScadenzaDAO {
 			}
 
 		} catch (Exception e) {
-			System.err.println("❌ ERRORE SQL durante getScadenzaById: " + e.getMessage());
+			System.err.println("ERRORE SQL durante getScadenzaById: " + e.getMessage());
 			return SCADENZA_INESISTENTE;
 		}
 	}

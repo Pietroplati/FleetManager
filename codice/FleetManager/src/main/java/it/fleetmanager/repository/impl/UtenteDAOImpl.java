@@ -36,7 +36,7 @@ public class UtenteDAOImpl implements UtenteDAO {
 			ps.setString(7, utente.getPatente());
 
 			ps.executeUpdate();
-			System.out.println("✔ Utente inserito correttamente nel database H2!");
+			System.out.println("Utente inserito correttamente nel database H2");
 
 		} catch (SQLException e) {
 			System.err.println("ERRORE SQL durante l'inserimento dell'utente: " + e.getMessage());
@@ -86,7 +86,7 @@ public class UtenteDAOImpl implements UtenteDAO {
 			int rows = ps.executeUpdate();
 
 			if (rows > 0) {
-				System.out.println("✔ Utente eliminato correttamente dal database H2!");
+				System.out.println("Utente eliminato correttamente dal database H2");
 			} else {
 				System.err.println("ERRORE: utente con ID " + id + " non trovato nel database H2.");
 			}

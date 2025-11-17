@@ -62,9 +62,9 @@ public class Veicolo {
 
 	@Override
 	public String toString() {
-		return String.format("Veicolo { Targa='%s', Tipo='%s', Marca='%s', Modello='%s', Anno=%d, Stato='%s', Km=%d }",
-				targa, (tipoVeicolo != null ? tipoVeicolo.name() : "N/A"), marca, modello, annoImmatricolazione,
-				statoVeicolo, km);
+		return "Veicolo {" + "targa='" + targa + '\'' + ", tipoVeicolo=" + tipoVeicolo + ", marca='" + marca + '\''
+				+ ", modello='" + modello + '\'' + ", annoImmatricolazione=" + annoImmatricolazione + ", statoVeicolo="
+				+ statoVeicolo + ", km=" + km + '}';
 	}
 
 }
