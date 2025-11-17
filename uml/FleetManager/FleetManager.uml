@@ -830,21 +830,23 @@
             <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
           </ownedParameter>
         </ownedOperation>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_2ysuYLyTEfC8rbOYHjaw_Q" name="getById">
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_2ysuYLyTEfC8rbOYHjaw_Q" name="getManutenzioneById">
           <ownedParameter xmi:type="uml:Parameter" xmi:id="_3-QikLyTEfC8rbOYHjaw_Q" name="idManutenzione">
             <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
           </ownedParameter>
           <ownedParameter xmi:type="uml:Parameter" xmi:id="_7HrKkLyTEfC8rbOYHjaw_Q" name="" type="_I8HOILifEfCDhMtBXAAUPg" isUnique="false" direction="return"/>
         </ownedOperation>
         <ownedOperation xmi:type="uml:Operation" xmi:id="_-fXfILyTEfC8rbOYHjaw_Q" name="findByVeicolo">
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="__ymBkLyTEfC8rbOYHjaw_Q" name="veicolo" type="_hyBb8LiYEfCDhMtBXAAUPg" isUnique="false"/>
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="__ymBkLyTEfC8rbOYHjaw_Q" name="targa" isUnique="false">
+            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+          </ownedParameter>
           <ownedParameter xmi:type="uml:Parameter" xmi:id="_DdbUkLyUEfC8rbOYHjaw_Q" name="" type="_I8HOILifEfCDhMtBXAAUPg" isUnique="false" direction="return">
             <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_Fscw4LyUEfC8rbOYHjaw_Q" name="LiteralInteger1"/>
             <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_Fscw4byUEfC8rbOYHjaw_Q" name="LiteralUnlimitedNatural1" value="*"/>
           </ownedParameter>
         </ownedOperation>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_IWi_oLyUEfC8rbOYHjaw_Q" name="findAperteByVeicolo">
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_J2K_ULyUEfC8rbOYHjaw_Q" name="veicolo" type="_hyBb8LiYEfCDhMtBXAAUPg" isUnique="false"/>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_IWi_oLyUEfC8rbOYHjaw_Q" name="findByTipo">
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_J2K_ULyUEfC8rbOYHjaw_Q" name="tipoManutenzione" type="_HtAJMLpsEfC__uMEWcgpBw" isUnique="false"/>
           <ownedParameter xmi:type="uml:Parameter" xmi:id="_NVSKgLyUEfC8rbOYHjaw_Q" name="" type="_I8HOILifEfCDhMtBXAAUPg" isUnique="false" direction="return">
             <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_SGPYELyUEfC8rbOYHjaw_Q" name="LiteralInteger1"/>
             <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_SGU3oLyUEfC8rbOYHjaw_Q" name="LiteralUnlimitedNatural1" value="*"/>
