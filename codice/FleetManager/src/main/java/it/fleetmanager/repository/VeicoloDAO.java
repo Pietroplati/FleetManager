@@ -1,22 +1,22 @@
 package it.fleetmanager.repository;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import it.fleetmanager.model.Veicolo;
-import it.fleetmanager.util.StatoVeicolo;
 
 public interface VeicoloDAO {
 
-    Veicolo getVeicoloByTarga(String targa);
+	void save(Veicolo veicolo);
 
-    List<Veicolo> getTuttiVeicoli();
+	void update(Veicolo veicolo);
 
-    List<Veicolo> getDisponibili(LocalDate dataInizio, LocalDate dataFine);
+	void delete(String targa);
 
-    void save(Veicolo veicolo);
+	Veicolo getVeicoloByTarga(String targa);
 
-    void update(Veicolo veicolo);
+	List<Veicolo> getTuttiVeicoli();
 
-    void delete(String targa);
+	List<Veicolo> getDisponibili(LocalDateTime dataInizio, LocalDateTime dataFine);
+
 }

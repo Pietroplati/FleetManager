@@ -3,6 +3,7 @@ package it.fleetmanager.repository;
 import java.time.LocalDateTime;
 import java.util.List;
 import it.fleetmanager.model.Prenotazione;
+import it.fleetmanager.util.StatoPrenotazione;
 
 public interface PrenotazioneDAO {
 
@@ -18,7 +19,7 @@ public interface PrenotazioneDAO {
 
 	List<Prenotazione> findByVeicolo(String targa);
 
-	List<Prenotazione> findAttive();
+	List<Prenotazione> findByStato(StatoPrenotazione statoPrenotazione);
 
 	/**
 	 * Controlla se esiste una prenotazione che si sovrappone nell'intervallo

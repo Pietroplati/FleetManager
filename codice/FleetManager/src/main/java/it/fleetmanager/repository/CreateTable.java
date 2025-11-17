@@ -47,12 +47,14 @@ public class CreateTable {
 					);
 
 					CREATE TYPE IF NOT EXISTS stato_prenotazione AS ENUM('RICHIESTA', 'CONFERMATA', 'ATTIVA', 'ANNULLATA', 'COMPLETATA');
-
+					CREATE TYPE IF NOT EXISTS tipo_prenotazione AS ENUM('UTENTE','MANUTENZIONE');
+					
 					CREATE TABLE IF NOT EXISTS Prenotazione (
 					    idPrenotazione INT PRIMARY KEY,
 					    dataInizio TIMESTAMP NOT NULL,
 					    dataFine TIMESTAMP NOT NULL,
 					    statoPrenotazione stato_prenotazione NOT NULL,
+					    tipoPrenotazione tipo_prenotazione NOT NULL,
 					    idUtente INT NOT NULL,
 					    targa VARCHAR(10) NOT NULL,
 					    FOREIGN KEY (idUtente) REFERENCES Utente(idUtente) ON DELETE CASCADE,

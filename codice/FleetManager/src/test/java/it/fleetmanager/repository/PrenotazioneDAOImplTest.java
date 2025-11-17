@@ -1,195 +1,143 @@
 package it.fleetmanager.repository;
 
 import static org.junit.jupiter.api.Assertions.*;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.util.List;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import it.fleetmanager.model.Prenotazione;
 import it.fleetmanager.repository.impl.PrenotazioneDAOImpl;
 import it.fleetmanager.util.StatoPrenotazione;
+import it.fleetmanager.util.TipoPrenotazione;
 
 public class PrenotazioneDAOImplTest {
 
-    private PrenotazioneDAOImpl dao;
+	private PrenotazioneDAOImpl dao;
 
-    @BeforeEach
-    void setup() throws Exception {
+	@BeforeEach
+	void setup() throws Exception {
 
-        //======== Usa un database H2 in-memory separato ========
-        DatabaseManager.setTestUrl("jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1");
+		DatabaseManager.setTestUrl("jdbc:h2:mem:testPren;DB_CLOSE_DELAY=-1");
 
-        //======== Crea la tabella PRENOTAZIONE nel DB di test ========
-        try (Connection conn = DriverManager.getConnection("jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1");
-             Statement st = conn.createStatement()) {
+		try (Connection conn = DriverManager.getConnection("jdbc:h2:mem:testPren;DB_CLOSE_DELAY=-1");
+				Statement st = conn.createStatement()) {
 
-            st.execute("""
-                    CREATE TABLE IF NOT EXISTS Prenotazione (
-                        idPrenotazione INT PRIMARY KEY,
-                        dataInizio TIMESTAMP,
-                        dataFine TIMESTAMP,
-                        stato VARCHAR(50),
-                        idUtente INT,
-                        targa VARCHAR(20)
-                    );
-                """);
+			st.execute("""
+						CREATE TABLE IF NOT EXISTS Prenotazione (
+						    idPrenotazione INT PRIMARY KEY,
+						    dataInizio TIMESTAMP NOT NULL,
+						    dataFine TIMESTAMP NOT NULL,
+						    statoPrenotazione VARCHAR(20) NOT NULL,
+						    tipoPrenotazione VARCHAR(20) NOT NULL,
+						    idUtente INT NOT NULL,
+						    targa VARCHAR(10) NOT NULL
+						);
+					""");
 
-            // Pulisce la tabella prima di ogni test
-            st.execute("DELETE FROM Prenotazione");
-        }
+			st.execute("DELETE FROM Prenotazione");
+		}
 
-        dao = new PrenotazioneDAOImpl();
-    }
+		dao = new PrenotazioneDAOImpl();
+	}
 
-    // ======================================================
-    // TEST SAVE + GETBYID
-    // ======================================================
-    @Test
-    void testSaveAndGetById() {
+	@Test
+	void testSaveAndGetById() {
 
-        Prenotazione p = new Prenotazione(
-                1,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusHours(2),
-                StatoPrenotazione.ATTIVA,
-                99,
-                "AB123CD"
-        );
+		Prenotazione p = new Prenotazione(1, LocalDateTime.of(2025, 11, 10, 8, 0),
+				LocalDateTime.of(2025, 11, 10, 18, 0), StatoPrenotazione.CONFERMATA, TipoPrenotazione.UTENTE, 1,
+				"FD490LF");
 
-        dao.save(p);
+		dao.save(p);
 
-        Prenotazione letta = dao.getById(1);
+		Prenotazione letta = dao.getById(1);
 
-        assertNotNull(letta);
-        assertEquals(1, letta.getIdPrenotazione());
-        assertEquals("AB123CD", letta.getTarga());
-        assertEquals(99, letta.getIdUtente());
-    }
+		assertEquals(1, letta.getIdPrenotazione());
+		assertEquals(StatoPrenotazione.CONFERMATA, letta.getStato());
+		assertEquals(TipoPrenotazione.UTENTE, letta.getTipoPrenotazione());
+		assertEquals("FD490LF", letta.getTarga());
+	}
 
-    // ======================================================
-    // TEST UPDATE
-    // ======================================================
-    @Test
-    void testUpdate() {
+	@Test
+	void testUpdate() {
 
-        Prenotazione p = new Prenotazione(
-                2,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusHours(1),
-                StatoPrenotazione.ATTIVA,
-                50,
-                "BB002CC"
-        );
+		Prenotazione p = new Prenotazione(2, LocalDateTime.of(2025, 11, 11, 8, 0),
+				LocalDateTime.of(2025, 11, 11, 17, 0), StatoPrenotazione.RICHIESTA, TipoPrenotazione.UTENTE, 2,
+				"GH819RJ");
 
-        dao.save(p);
+		dao.save(p);
 
-        // Modifico la prenotazione
-        p.setDataFine(LocalDateTime.now().plusHours(4));
-        p.setStato(StatoPrenotazione.COMPLETATA);
+		p.setStato(StatoPrenotazione.ATTIVA);
+		p.setDataFine(LocalDateTime.of(2025, 11, 11, 19, 0));
 
-        dao.update(p);
+		dao.update(p);
 
-        Prenotazione aggiornata = dao.getById(2);
+		Prenotazione letta = dao.getById(2);
 
-        assertEquals(p.getDataFine(), aggiornata.getDataFine());
-        assertEquals(StatoPrenotazione.COMPLETATA, aggiornata.getStato());
-    }
+		assertEquals(StatoPrenotazione.ATTIVA, letta.getStato());
+		assertEquals(LocalDateTime.of(2025, 11, 11, 19, 0), letta.getDataFine());
+	}
 
-    // ======================================================
-    // TEST FINDBYDRIVER
-    // ======================================================
-    @Test
-    void testFindByDriver() {
+	@Test
+	void testDelete() {
 
-        dao.save(new Prenotazione(3, LocalDateTime.now(), LocalDateTime.now().plusHours(1),
-                StatoPrenotazione.ATTIVA, 10, "AAA111"));
+		Prenotazione p = new Prenotazione(3, LocalDateTime.of(2025, 11, 12, 9, 0),
+				LocalDateTime.of(2025, 11, 12, 12, 0), StatoPrenotazione.CONFERMATA, TipoPrenotazione.UTENTE, 3,
+				"AB123CD");
 
-        dao.save(new Prenotazione(4, LocalDateTime.now(), LocalDateTime.now().plusHours(1),
-                StatoPrenotazione.ATTIVA, 10, "BBB222"));
+		dao.save(p);
 
-        List<Prenotazione> lista = dao.findByDriver(10);
+		dao.delete(3);
 
-        assertEquals(2, lista.size());
-    }
+		Prenotazione letta = dao.getById(3);
+		assertEquals(PrenotazioneDAOImpl.PRENOTAZIONE_INESISTENTE, letta);
+	}
 
-    // ======================================================
-    // TEST FINDBYVEICOLO
-    // ======================================================
-    @Test
-    void testFindByVeicolo() {
+	@Test
+	void testFindByDriver() {
 
-        dao.save(new Prenotazione(5, LocalDateTime.now(), LocalDateTime.now().plusHours(1),
-                StatoPrenotazione.ATTIVA, 30, "GP251YD"));
+		dao.save(new Prenotazione(4, LocalDateTime.now(), LocalDateTime.now().plusHours(2), StatoPrenotazione.ATTIVA,
+				TipoPrenotazione.UTENTE, 10, "TARGA1"));
 
-        dao.save(new Prenotazione(6, LocalDateTime.now(), LocalDateTime.now().plusHours(1),
-                StatoPrenotazione.ATTIVA, 40, "GP251YD"));
+		dao.save(new Prenotazione(5, LocalDateTime.now(), LocalDateTime.now().plusHours(1),
+				StatoPrenotazione.CONFERMATA, TipoPrenotazione.UTENTE, 10, "TARGA2"));
 
-        List<Prenotazione> lista = dao.findByVeicolo("GP251YD");
+		List<Prenotazione> lista = dao.findByDriver(10);
 
-        assertEquals(2, lista.size());
-    }
+		assertEquals(2, lista.size());
+	}
 
-    // ======================================================
-    // TEST FINDATTIVE
-    // ======================================================
-    @Test
-    void testFindAttive() {
+	@Test
+	void testFindByVeicolo() {
 
-        dao.save(new Prenotazione(7, LocalDateTime.now(), LocalDateTime.now().plusHours(1),
-                StatoPrenotazione.ATTIVA, 1, "GP251YD"));
+		dao.save(new Prenotazione(6, LocalDateTime.now(), LocalDateTime.now().plusHours(3),
+				StatoPrenotazione.CONFERMATA, TipoPrenotazione.UTENTE, 12, "TST123"));
 
-        dao.save(new Prenotazione(8, LocalDateTime.now(), LocalDateTime.now().plusHours(1),
-                StatoPrenotazione.COMPLETATA, 1, "GP251YD"));
+		List<Prenotazione> lista = dao.findByVeicolo("TST123");
 
-        List<Prenotazione> attive = dao.findAttive();
+		assertEquals(1, lista.size());
+		assertEquals("TST123", lista.get(0).getTarga());
+	}
 
-        assertEquals(1, attive.size());
-    }
+	@Test
+	void testExistsOverlapping() {
 
-    // ======================================================
-    // TEST EXISTSOVERLAPPING
-    // ======================================================
-    @Test
-    void testExistsOverlapping() {
+		// prenotazione già presente: 10:00 → 15:00
+		dao.save(new Prenotazione(7, LocalDateTime.of(2025, 11, 20, 10, 0), LocalDateTime.of(2025, 11, 20, 15, 0),
+				StatoPrenotazione.ATTIVA, TipoPrenotazione.UTENTE, 1, "OVERL"));
 
-        LocalDateTime start = LocalDateTime.now();
-        LocalDateTime end = start.plusHours(2);
+		// nuova prenotazione che si sovrappone: 14:00 → 16:00
+		boolean res = dao.existsOverlapping("OVERL", LocalDateTime.of(2025, 11, 20, 14, 0),
+				LocalDateTime.of(2025, 11, 20, 16, 0));
 
-        dao.save(new Prenotazione(9, start, end,
-                StatoPrenotazione.ATTIVA, 99, "CAR_OVER"));
+		assertTrue(res);
 
-        boolean overlap = dao.existsOverlapping(
-                "CAR_OVER",
-                start.plusMinutes(10),
-                start.plusHours(1)
-        );
+		// NON si sovrappone → false
+		boolean res2 = dao.existsOverlapping("OVERL", LocalDateTime.of(2025, 11, 20, 15, 0),
+				LocalDateTime.of(2025, 11, 20, 18, 0));
 
-        assertTrue(overlap);
-    }
-
-    // ======================================================
-    // TEST DELETE
-    // ======================================================
-    @Test
-    void testDelete() {
-
-        dao.save(new Prenotazione(
-                10,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusHours(1),
-                StatoPrenotazione.ATTIVA,
-                12,
-                "GP251YD"
-        ));
-
-        dao.delete(10);
-
-        assertNull(dao.getById(10));
-    }
+		assertFalse(res2);
+	}
 }

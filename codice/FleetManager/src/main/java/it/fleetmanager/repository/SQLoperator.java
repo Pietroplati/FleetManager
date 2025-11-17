@@ -13,8 +13,7 @@ public class SQLoperator {
 	public static void main(String[] args) throws SQLException {
 		try (Connection conn = DatabaseManager.getInstance().getConnection(); Statement stmt = conn.createStatement()) {
 			String sql = """
-					DELETE FROM utente
-					WHERE idutente = 4;
+					DROP TABLE IF EXISTS Prenotazione;
 		
 					""";
 			stmt.executeUpdate(sql);

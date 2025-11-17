@@ -2,21 +2,24 @@ package it.fleetmanager.model;
 
 import java.time.LocalDateTime;
 import it.fleetmanager.util.StatoPrenotazione;
+import it.fleetmanager.util.TipoPrenotazione;
 
 public class Prenotazione {
 	private int idPrenotazione;
 	private LocalDateTime dataInizio;
 	private LocalDateTime dataFine;
-	private StatoPrenotazione stato;
+	private StatoPrenotazione statoPrenotazione;
+	private TipoPrenotazione tipoPrenotazione;
 	private int idUtente;
 	private String targa;
 
-	public Prenotazione(int idPrenotazione, LocalDateTime dataInizio, LocalDateTime dataFine, StatoPrenotazione stato,
-			int idUtente, String targa) {
+	public Prenotazione(int idPrenotazione, LocalDateTime dataInizio, LocalDateTime dataFine,
+			StatoPrenotazione statoPrenotazione, TipoPrenotazione tipoPrenotazione, int idUtente, String targa) {
 		this.idPrenotazione = idPrenotazione;
 		this.dataInizio = dataInizio;
 		this.dataFine = dataFine;
-		this.stato = stato;
+		this.statoPrenotazione = statoPrenotazione;
+		this.tipoPrenotazione = tipoPrenotazione;
 		this.idUtente = idUtente;
 		this.targa = targa;
 	}
@@ -42,11 +45,15 @@ public class Prenotazione {
 	}
 
 	public StatoPrenotazione getStato() {
-		return stato;
+		return statoPrenotazione;
 	}
 
-	public void setStato(StatoPrenotazione stato) {
-		this.stato = stato;
+	public void setStato(StatoPrenotazione statoPrenotazione) {
+		this.statoPrenotazione = statoPrenotazione;
+	}
+
+	public TipoPrenotazione getTipoPrenotazione() {
+		return tipoPrenotazione;
 	}
 
 	public int getIdUtente() {
@@ -56,4 +63,12 @@ public class Prenotazione {
 	public String getTarga() {
 		return targa;
 	}
+
+	@Override
+	public String toString() {
+		return "Prenotazione {" + "id=" + idPrenotazione + ", dataInizio=" + dataInizio + ", dataFine=" + dataFine
+				+ ", stato=" + statoPrenotazione + ", tipo=" + tipoPrenotazione + ", idUtente=" + idUtente + ", targa='"
+				+ targa + '\'' + '}';
+	}
+
 }

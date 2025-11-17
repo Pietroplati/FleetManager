@@ -6,7 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import it.fleetmanager.model.Utente;
 import it.fleetmanager.repository.DatabaseManager;
-
 import it.fleetmanager.repository.UtenteDAO;
 import it.fleetmanager.util.RuoloUtente;
 
@@ -18,75 +17,6 @@ public class UtenteDAOImpl implements UtenteDAO {
 			return "Utente inesistente";
 		}
 	};
-
-	@Override
-	public Utente getUtenteByEmail(String email) {
-		String sql = "SELECT idUtente, nome, cognome, email, password, ruoloUtente, patente "
-				+ "FROM Utente WHERE email = ?";
-
-		try (Connection conn = DatabaseManager.getInstance().getConnection();
-				PreparedStatement ps = conn.prepareStatement(sql)) {
-
-			ps.setString(1, email);
-
-			try (ResultSet rs = ps.executeQuery()) {
-				if (!rs.next()) {
-					return UTENTE_INESISTENTE;
-				}
-
-				int idUtente = rs.getInt("idUtente");
-				String nome = rs.getString("nome");
-				String cognome = rs.getString("cognome");
-				String password = rs.getString("password");
-				String ruoloDb = rs.getString("ruoloUtente");
-				String patente = rs.getString("patente");
-
-				RuoloUtente ruolo = RuoloUtente.valueOf(ruoloDb);
-
-				return (patente == null) ? new Utente(idUtente, nome, cognome, email, password, ruolo)
-						: new Utente(idUtente, nome, cognome, email, password, ruolo, patente);
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			return UTENTE_INESISTENTE;
-		}
-	}
-
-	@Override
-	public Utente getUtenteById(int id) {
-		String sql = "SELECT idUtente, nome, cognome, email, password, ruoloUtente, patente "
-				+ "FROM Utente WHERE idUtente = ?";
-
-		try (Connection conn = DatabaseManager.getInstance().getConnection();
-				PreparedStatement ps = conn.prepareStatement(sql)) {
-
-			ps.setInt(1, id);
-
-			try (ResultSet rs = ps.executeQuery()) {
-				if (!rs.next()) {
-					return UTENTE_INESISTENTE;
-				}
-
-				int idUtente = rs.getInt("idUtente");
-				String nome = rs.getString("nome");
-				String cognome = rs.getString("cognome");
-				String email = rs.getString("email");
-				String password = rs.getString("password");
-				String ruoloDb = rs.getString("ruoloUtente");
-				String patente = rs.getString("patente");
-
-				RuoloUtente ruolo = RuoloUtente.valueOf(ruoloDb);
-
-				return (patente == null) ? new Utente(idUtente, nome, cognome, email, password, ruolo)
-						: new Utente(idUtente, nome, cognome, email, password, ruolo, patente);
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			return UTENTE_INESISTENTE;
-		}
-	}
 
 	@Override
 	public void save(Utente utente) {
@@ -163,6 +93,75 @@ public class UtenteDAOImpl implements UtenteDAO {
 
 		} catch (SQLException e) {
 			System.err.println("ERRORE SQL durante l'eliminazione dell'utente: " + e.getMessage());
+		}
+	}
+
+	@Override
+	public Utente getUtenteById(int id) {
+		String sql = "SELECT idUtente, nome, cognome, email, password, ruoloUtente, patente "
+				+ "FROM Utente WHERE idUtente = ?";
+
+		try (Connection conn = DatabaseManager.getInstance().getConnection();
+				PreparedStatement ps = conn.prepareStatement(sql)) {
+
+			ps.setInt(1, id);
+
+			try (ResultSet rs = ps.executeQuery()) {
+				if (!rs.next()) {
+					return UTENTE_INESISTENTE;
+				}
+
+				int idUtente = rs.getInt("idUtente");
+				String nome = rs.getString("nome");
+				String cognome = rs.getString("cognome");
+				String email = rs.getString("email");
+				String password = rs.getString("password");
+				String ruoloDb = rs.getString("ruoloUtente");
+				String patente = rs.getString("patente");
+
+				RuoloUtente ruolo = RuoloUtente.valueOf(ruoloDb);
+
+				return (patente == null) ? new Utente(idUtente, nome, cognome, email, password, ruolo)
+						: new Utente(idUtente, nome, cognome, email, password, ruolo, patente);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return UTENTE_INESISTENTE;
+		}
+	}
+
+	@Override
+	public Utente getUtenteByEmail(String email) {
+		String sql = "SELECT idUtente, nome, cognome, email, password, ruoloUtente, patente "
+				+ "FROM Utente WHERE email = ?";
+
+		try (Connection conn = DatabaseManager.getInstance().getConnection();
+				PreparedStatement ps = conn.prepareStatement(sql)) {
+
+			ps.setString(1, email);
+
+			try (ResultSet rs = ps.executeQuery()) {
+				if (!rs.next()) {
+					return UTENTE_INESISTENTE;
+				}
+
+				int idUtente = rs.getInt("idUtente");
+				String nome = rs.getString("nome");
+				String cognome = rs.getString("cognome");
+				String password = rs.getString("password");
+				String ruoloDb = rs.getString("ruoloUtente");
+				String patente = rs.getString("patente");
+
+				RuoloUtente ruolo = RuoloUtente.valueOf(ruoloDb);
+
+				return (patente == null) ? new Utente(idUtente, nome, cognome, email, password, ruolo)
+						: new Utente(idUtente, nome, cognome, email, password, ruolo, patente);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return UTENTE_INESISTENTE;
 		}
 	}
 

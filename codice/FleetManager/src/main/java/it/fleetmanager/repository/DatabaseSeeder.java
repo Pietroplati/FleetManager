@@ -117,15 +117,16 @@ public class DatabaseSeeder {
 			// PRENOTAZIONI
 			if (root.has("prenotazioni")) {
 				try (PreparedStatement ps = conn.prepareStatement(
-						"MERGE INTO prenotazione (idprenotazione, datainizio, datafine, statoprenotazione, idutente, targa) "
-								+ "KEY(idprenotazione) VALUES (?,?,?,?,?,?)")) {
+						"MERGE INTO prenotazione (idprenotazione, datainizio, datafine, statoprenotazione, tipoprenotazione, idutente, targa) "
+								+ "KEY(idprenotazione) VALUES (?,?,?,?,?,?,?)")) {
 					for (JsonNode p : root.get("prenotazioni")) {
 						ps.setInt(1, p.get("idPrenotazione").asInt());
 						ps.setString(2, p.get("dataInizio").asText());
 						ps.setString(3, p.get("dataFine").asText());
 						ps.setString(4, p.get("statoPrenotazione").asText());
-						ps.setInt(5, p.get("idUtente").asInt());
-						ps.setString(6, p.get("targa").asText());
+						ps.setString(5, p.get("tipoPrenotazione").asText());
+						ps.setInt(6, p.get("idUtente").asInt());
+						ps.setString(7, p.get("targa").asText());
 						ps.addBatch();
 					}
 					ps.executeBatch();

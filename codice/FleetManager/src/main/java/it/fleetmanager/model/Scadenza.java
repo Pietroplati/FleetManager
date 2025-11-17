@@ -9,12 +9,14 @@ public class Scadenza {
 	private TipoScadenza tipoScadenza;
 	private LocalDate data;
 	private boolean notificata;
+	private String targa;
 
-	public Scadenza(int idScadenza, TipoScadenza tipoScadenza, LocalDate data, boolean notificata) {
+	public Scadenza(int idScadenza, TipoScadenza tipoScadenza, LocalDate data, boolean notificata, String targa) {
 		this.idScadenza = idScadenza;
 		this.tipoScadenza = tipoScadenza;
 		this.data = data;
 		this.notificata = notificata;
+		this.targa = targa;
 	}
 
 	public int getIdScadenza() {
@@ -40,4 +42,15 @@ public class Scadenza {
 	public void setNotificata(boolean notificata) {
 		this.notificata = notificata;
 	}
+
+	public String getTarga() {
+		return targa;
+	}
+
+	@Override
+	public String toString() {
+		return "Scadenza {" + "idScadenza=" + idScadenza + ", tipoScadenza=" + tipoScadenza + ", data=" + data
+				+ ", notificata=" + notificata + ", targa='" + targa + '\'' + '}';
+	}
+
 }

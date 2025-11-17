@@ -1,7 +1,6 @@
 package it.fleetmanager.repository;
 
 import static org.junit.jupiter.api.Assertions.*;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
@@ -18,10 +17,10 @@ public class UtenteDAOImplTest {
 	@BeforeEach
 	void setup() throws Exception {
 
-		//Usa un database H2 in-memory separato
+		// Usa un database H2 in-memory separato
 		DatabaseManager.setTestUrl("jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1");
 
-		//Crea la tabella UTENTE nel DB di test
+		// Crea la tabella UTENTE nel DB di test
 		try (Connection conn = DriverManager.getConnection("jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1");
 				Statement st = conn.createStatement()) {
 

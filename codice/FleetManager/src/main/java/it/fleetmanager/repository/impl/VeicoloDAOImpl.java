@@ -4,9 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
 import it.fleetmanager.model.Veicolo;
 import it.fleetmanager.repository.DatabaseManager;
 import it.fleetmanager.repository.VeicoloDAO;
@@ -22,90 +22,6 @@ public class VeicoloDAOImpl implements VeicoloDAO {
 			return "Veicolo inesistente";
 		}
 	};
-
-	@Override
-	public Veicolo getVeicoloByTarga(String targa) {
-
-		String sql = "SELECT targa, tipoVeicolo, marca, modello, annoImmatricolazione, "
-				+ "statoVeicolo, km FROM Veicolo WHERE targa = ?";
-
-		try (Connection conn = DatabaseManager.getInstance().getConnection();
-				PreparedStatement ps = conn.prepareStatement(sql)) {
-
-			ps.setString(1, targa);
-
-			try (ResultSet rs = ps.executeQuery()) {
-				if (!rs.next()) {
-					return VEICOLO_INESISTENTE;
-				}
-
-				String targaDb = rs.getString("targa");
-				String tipoDb = rs.getString("tipoVeicolo");
-				String marca = rs.getString("marca");
-				String modello = rs.getString("modello");
-
-				Integer anno = rs.getObject("annoImmatricolazione", Integer.class);
-				Integer km = rs.getObject("km", Integer.class);
-
-				String statoDb = rs.getString("statoVeicolo");
-
-				TipoVeicolo tipo = TipoVeicolo.valueOf(tipoDb);
-				StatoVeicolo stato = StatoVeicolo.valueOf(statoDb);
-
-				return new Veicolo(targaDb, tipo, marca, modello, anno, stato, km);
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			return VEICOLO_INESISTENTE;
-		}
-	}
-
-	@Override
-	public List<Veicolo> getTuttiVeicoli() {
-
-		String sql = "SELECT targa, tipoVeicolo, marca, modello, annoImmatricolazione, "
-				+ "statoVeicolo, km FROM Veicolo";
-
-		List<Veicolo> veicoli = new ArrayList<>();
-
-		try (Connection conn = DatabaseManager.getInstance().getConnection();
-				PreparedStatement ps = conn.prepareStatement(sql);
-				ResultSet rs = ps.executeQuery()) {
-
-			while (rs.next()) {
-
-				String targa = rs.getString("targa");
-				String tipoDb = rs.getString("tipoVeicolo");
-				String marca = rs.getString("marca");
-				String modello = rs.getString("modello");
-
-				int anno = rs.getInt("annoImmatricolazione");
-				int km = rs.getInt("km");
-
-				String statoDb = rs.getString("statoVeicolo");
-
-				TipoVeicolo tipo = TipoVeicolo.valueOf(tipoDb);
-				StatoVeicolo stato = StatoVeicolo.valueOf(statoDb);
-
-				Veicolo v = new Veicolo(targa, tipo, marca, modello, anno, stato, km);
-
-				veicoli.add(v);
-			}
-
-			return veicoli;
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			return veicoli; // restituiamo comunque la lista, anche se vuota
-		}
-	}
-
-	@Override
-	public List<Veicolo> getDisponibili(LocalDate dataInizio, LocalDate dataFine) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public void save(Veicolo veicolo) {
@@ -188,6 +104,137 @@ public class VeicoloDAOImpl implements VeicoloDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.err.println("Errore durante l'eliminazione del veicolo: " + targa);
+		}
+	}
+
+	@Override
+	public Veicolo getVeicoloByTarga(String targa) {
+
+		String sql = "SELECT targa, tipoVeicolo, marca, modello, annoImmatricolazione, "
+				+ "statoVeicolo, km FROM Veicolo WHERE targa = ?";
+
+		try (Connection conn = DatabaseManager.getInstance().getConnection();
+				PreparedStatement ps = conn.prepareStatement(sql)) {
+
+			ps.setString(1, targa);
+
+			try (ResultSet rs = ps.executeQuery()) {
+				if (!rs.next()) {
+					return VEICOLO_INESISTENTE;
+				}
+
+				String targaDb = rs.getString("targa");
+				String tipoDb = rs.getString("tipoVeicolo");
+				String marca = rs.getString("marca");
+				String modello = rs.getString("modello");
+
+				Integer anno = rs.getObject("annoImmatricolazione", Integer.class);
+				Integer km = rs.getObject("km", Integer.class);
+
+				String statoDb = rs.getString("statoVeicolo");
+
+				TipoVeicolo tipo = TipoVeicolo.valueOf(tipoDb);
+				StatoVeicolo stato = StatoVeicolo.valueOf(statoDb);
+
+				return new Veicolo(targaDb, tipo, marca, modello, anno, stato, km);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return VEICOLO_INESISTENTE;
+		}
+	}
+
+	@Override
+	public List<Veicolo> getTuttiVeicoli() {
+
+		String sql = "SELECT targa, tipoVeicolo, marca, modello, annoImmatricolazione, "
+				+ "statoVeicolo, km FROM Veicolo";
+
+		List<Veicolo> veicoli = new ArrayList<>();
+
+		try (Connection conn = DatabaseManager.getInstance().getConnection();
+				PreparedStatement ps = conn.prepareStatement(sql);
+				ResultSet rs = ps.executeQuery()) {
+
+			while (rs.next()) {
+
+				String targa = rs.getString("targa");
+				String tipoDb = rs.getString("tipoVeicolo");
+				String marca = rs.getString("marca");
+				String modello = rs.getString("modello");
+
+				int anno = rs.getInt("annoImmatricolazione");
+				int km = rs.getInt("km");
+
+				String statoDb = rs.getString("statoVeicolo");
+
+				TipoVeicolo tipo = TipoVeicolo.valueOf(tipoDb);
+				StatoVeicolo stato = StatoVeicolo.valueOf(statoDb);
+
+				Veicolo v = new Veicolo(targa, tipo, marca, modello, anno, stato, km);
+
+				veicoli.add(v);
+			}
+
+			return veicoli;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return veicoli;
+		}
+	}
+
+	@Override
+	public List<Veicolo> getDisponibili(LocalDateTime dataInizio, LocalDateTime dataFine) {
+
+		String sql = """
+				    SELECT v.targa, v.tipoVeicolo, v.marca, v.modello,
+				           v.annoImmatricolazione, v.statoVeicolo, v.km
+				    FROM Veicolo v
+				    WHERE NOT EXISTS (
+				        SELECT 1
+				        FROM Prenotazione p
+				        WHERE p.targa = v.targa
+				          AND p.dataInizio < ?
+				          AND p.dataFine > ?
+				    );
+				""";
+
+		List<Veicolo> disponibili = new ArrayList<>();
+
+		try (Connection conn = DatabaseManager.getInstance().getConnection();
+				PreparedStatement ps = conn.prepareStatement(sql)) {
+
+			ps.setTimestamp(1, java.sql.Timestamp.valueOf(dataFine));
+			ps.setTimestamp(2, java.sql.Timestamp.valueOf(dataInizio));
+
+			try (ResultSet rs = ps.executeQuery()) {
+
+				while (rs.next()) {
+
+					String targa = rs.getString("targa");
+					String tipoDb = rs.getString("tipoVeicolo");
+					String marca = rs.getString("marca");
+					String modello = rs.getString("modello");
+
+					Integer anno = rs.getObject("annoImmatricolazione", Integer.class);
+					Integer km = rs.getObject("km", Integer.class);
+
+					String statoDb = rs.getString("statoVeicolo");
+
+					Veicolo v = new Veicolo(targa, TipoVeicolo.valueOf(tipoDb), marca, modello, anno,
+							StatoVeicolo.valueOf(statoDb), km);
+
+					disponibili.add(v);
+				}
+			}
+
+			return disponibili;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return disponibili; // restituisce la lista (anche se vuota)
 		}
 	}
 

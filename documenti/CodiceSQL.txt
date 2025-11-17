@@ -1,6 +1,6 @@
 Creazione tabella Manutenzione------------------------------------------------------------------------
 
-CREATE TYPE tipo_manutenzione AS ENUM('ORDINARIA', 'STRAORDINARIA' , 'REVISIONE');
+CREATE TYPE IF NOT EXISTS tipo_manutenzione AS ENUM('ORDINARIA', 'STRAORDINARIA' , 'REVISIONE');
 					
 CREATE TABLE IF NOT EXISTS Manutenzione (
 	idManutenzione INT PRIMARY KEY,
@@ -14,8 +14,8 @@ CREATE TABLE IF NOT EXISTS Manutenzione (
 ------------------------------------------------------------------------------------------------------
 Creazione tabella Veicolo-----------------------------------------------------------------------------
 
-CREATE TYPE tipo_veicolo AS ENUM('AUTO', 'MOTO' , 'FURGONE', 'CAMION');
-CREATE TYPE stato_veicolo AS ENUM('DISPONIBILE', 'PRENOTATO', 'IN_MANUTENZIONE', 'NON_DISPONIBILE');
+CREATE TYPE IF NOT EXISTS tipo_veicolo AS ENUM('AUTO', 'MOTO' , 'FURGONE', 'CAMION');
+CREATE TYPE IF NOT EXISTS stato_veicolo AS ENUM('DISPONIBILE', 'PRENOTATO', 'IN_MANUTENZIONE', 'NON_DISPONIBILE');
 					
 CREATE TABLE IF NOT EXISTS Veicolo (
 	targa VARCHAR(10) PRIMARY KEY,
@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS Veicolo (
 ------------------------------------------------------------------------------------------------------
 Creazione tabella Utente------------------------------------------------------------------------------
 
-CREATE TYPE ruolo_utente AS ENUM('MANAGER', 'DRIVER');
+CREATE TYPE IF NOT EXISTS ruolo_utente AS ENUM('MANAGER', 'DRIVER');
 
 CREATE TABLE IF NOT EXISTS Utente (
 	idUtente INT PRIMARY KEY,
@@ -45,13 +45,15 @@ CREATE TABLE IF NOT EXISTS Utente (
 ------------------------------------------------------------------------------------------------------
 Creazione tabella Prenotazione------------------------------------------------------------------------
 
-CREATE TYPE stato_prenotazione AS ENUM('RICHIESTA', 'CONFERMATA', 'ATTIVA', 'ANNULLATA', 'COMPLETATA');
+CREATE TYPE IF NOT EXISTS stato_prenotazione AS ENUM('RICHIESTA', 'CONFERMATA', 'ATTIVA', 'ANNULLATA', 'COMPLETATA');
+CREATE TYPE IF NOT EXISTS tipo_prenotazione AS ENUM('UTENTE','MANUTENZIONE');
 
 CREATE TABLE IF NOT EXISTS Prenotazione (
 	idPrenotazione INT PRIMARY KEY,
 	dataInizio TIMESTAMP NOT NULL,
 	dataFine TIMESTAMP NOT NULL,
 	statoPrenotazione stato_prenotazione NOT NULL,
+	tipoPrenotazione tipo_prenotazione NOT NULL,
 	idUtente INT NOT NULL,
 	targa VARCHAR(10) NOT NULL,
 	FOREIGN KEY (idUtente) REFERENCES Utente(idUtente) ON DELETE CASCADE,
@@ -61,7 +63,7 @@ CREATE TABLE IF NOT EXISTS Prenotazione (
 ------------------------------------------------------------------------------------------------------
 Creazione tabella Scadenza----------------------------------------------------------------------------
 
-CREATE TYPE tipo_scadenza AS ENUM('BOLLO', 'ASSICURAZIONE', 'REVISIONE', 'TAGLIANDO');
+CREATE TYPE IF NOT EXISTS tipo_scadenza AS ENUM('BOLLO', 'ASSICURAZIONE', 'REVISIONE', 'TAGLIANDO');
 
 CREATE TABLE IF NOT EXISTS Scadenza (
 	idScadenza INT PRIMARY KEY,
@@ -75,7 +77,7 @@ CREATE TABLE IF NOT EXISTS Scadenza (
 ------------------------------------------------------------------------------------------------------
 Creazione tabella Notifica----------------------------------------------------------------------------
 
-CREATE TYPE tipo_notifica AS ENUM('SCADENZA', 'MANUTENZIONE', 'PRENOTAZIONE', 'SEGNALAZIONE');
+CREATE TYPE IF NOT EXISTS tipo_notifica AS ENUM('SCADENZA', 'MANUTENZIONE', 'PRENOTAZIONE', 'SEGNALAZIONE');
 
 CREATE TABLE IF NOT EXISTS Notifica(
 	idNotifica INT PRIMARY KEY,
