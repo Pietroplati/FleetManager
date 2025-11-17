@@ -59,4 +59,12 @@ public class Veicolo {
 	public void setKm(int km) {
 		this.km = km;
 	}
+
+	@Override
+	public String toString() {
+		return String.format("Veicolo { Targa='%s', Tipo='%s', Marca='%s', Modello='%s', Anno=%d, Stato='%s', Km=%d }",
+				targa, (tipoVeicolo != null ? tipoVeicolo.name() : "N/A"), marca, modello, annoImmatricolazione,
+				statoVeicolo, km);
+	}
+
 }

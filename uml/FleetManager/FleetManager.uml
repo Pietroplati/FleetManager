@@ -790,12 +790,6 @@
         <ownedOperation xmi:type="uml:Operation" xmi:id="_n7bfgLyQEfC8rbOYHjaw_Q" name="update">
           <ownedParameter xmi:type="uml:Parameter" xmi:id="_o6nroLyQEfC8rbOYHjaw_Q" name="veicolo" type="_hyBb8LiYEfCDhMtBXAAUPg" isUnique="false"/>
         </ownedOperation>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_sW0FsLyQEfC8rbOYHjaw_Q" name="updateStato">
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_trojkLyQEfC8rbOYHjaw_Q" name="targa">
-            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
-          </ownedParameter>
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_xTDWMLyQEfC8rbOYHjaw_Q" name="stato" type="_8mN3MLiYEfCDhMtBXAAUPg" isUnique="false"/>
-        </ownedOperation>
         <ownedOperation xmi:type="uml:Operation" xmi:id="_2wq1cLyQEfC8rbOYHjaw_Q" name="delete">
           <ownedParameter xmi:type="uml:Parameter" xmi:id="_5aBdULyQEfC8rbOYHjaw_Q" name="targa">
             <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
