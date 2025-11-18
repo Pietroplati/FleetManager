@@ -922,6 +922,55 @@
           </ownedParameter>
         </ownedOperation>
       </packagedElement>
+      <packagedElement xmi:type="uml:Class" xmi:id="_vUfbgMRWEfCVBL0kHPOajQ" name="NotificaDAO">
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_yk74kMRWEfCVBL0kHPOajQ" name="save">
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_z-1DsMRWEfCVBL0kHPOajQ" name="notifica" type="_KIfGYLi6EfCB54CkmTiEfw" isUnique="false"/>
+        </ownedOperation>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_6aFP4MRWEfCVBL0kHPOajQ" name="update">
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_7_5-MMRWEfCVBL0kHPOajQ" name="notifica" type="_KIfGYLi6EfCB54CkmTiEfw" isUnique="false"/>
+        </ownedOperation>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_DKQFAMRXEfCVBL0kHPOajQ" name="delete">
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_FNXzUMRXEfCVBL0kHPOajQ" name="idNotifica">
+            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+          </ownedParameter>
+        </ownedOperation>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_Ix4b4MRXEfCVBL0kHPOajQ" name="getNotificaById">
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_LHYToMRXEfCVBL0kHPOajQ" name="idNotifica">
+            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+          </ownedParameter>
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_OBsvsMRXEfCVBL0kHPOajQ" name="" type="_KIfGYLi6EfCB54CkmTiEfw" isUnique="false" direction="return">
+            <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_PTfHsMRXEfCVBL0kHPOajQ" name="LiteralInteger1" value="1"/>
+            <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_PTfuwMRXEfCVBL0kHPOajQ" name="LiteralUnlimitedNatural1" value="1"/>
+          </ownedParameter>
+        </ownedOperation>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_S5Ul8MRXEfCVBL0kHPOajQ" name="findByUtente">
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_UCso0MRXEfCVBL0kHPOajQ" name="idUtente">
+            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+          </ownedParameter>
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_XDW9cMRXEfCVBL0kHPOajQ" name="" type="_KIfGYLi6EfCB54CkmTiEfw" isUnique="false" direction="return">
+            <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_ar4jUMRXEfCVBL0kHPOajQ" name="LiteralInteger1"/>
+            <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_ar5KYMRXEfCVBL0kHPOajQ" name="LiteralUnlimitedNatural1" value="*"/>
+          </ownedParameter>
+        </ownedOperation>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_b7CeEMRXEfCVBL0kHPOajQ" name="findNonLette">
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_dlM50MRXEfCVBL0kHPOajQ" name="idUtente">
+            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+          </ownedParameter>
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_f5G2IMRXEfCVBL0kHPOajQ" name="" type="_KIfGYLi6EfCB54CkmTiEfw" isUnique="false" direction="return">
+            <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_ipDOMMRXEfCVBL0kHPOajQ" name="LiteralInteger1"/>
+            <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_ipD1QMRXEfCVBL0kHPOajQ" name="LiteralUnlimitedNatural1" value="*"/>
+          </ownedParameter>
+        </ownedOperation>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_kDMQ8MRXEfCVBL0kHPOajQ" name="findByScadenza">
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_k_5JwMRXEfCVBL0kHPOajQ" name="idScadenza">
+            <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+          </ownedParameter>
+          <ownedParameter xmi:type="uml:Parameter" xmi:id="_tC7zIMRXEfCVBL0kHPOajQ" name="" type="_KIfGYLi6EfCB54CkmTiEfw" isUnique="false" direction="return">
+            <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_wtCtYMRXEfCVBL0kHPOajQ" name="LiteralInteger1"/>
+            <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_wtCtYcRXEfCVBL0kHPOajQ" name="LiteralUnlimitedNatural1" value="*"/>
+          </ownedParameter>
+        </ownedOperation>
+      </packagedElement>
     </packagedElement>
   </packagedElement>
 </uml:Model>

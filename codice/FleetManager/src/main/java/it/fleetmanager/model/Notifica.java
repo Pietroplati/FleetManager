@@ -19,6 +19,8 @@ public class Notifica {
 		this.messaggio = messaggio;
 		this.dataInvio = dataInvio;
 		this.letta = letta;
+		this.idUtente=idUtente;
+		this.idScadenza=idScadenza;
 
 	}
 
@@ -52,5 +54,8 @@ public class Notifica {
 
 	public int getIdScadenza() {
 		return idScadenza;
+	}
+	public void setMessaggio(String messaggio) {
+		this.messaggio = messaggio;
 	}
 }
