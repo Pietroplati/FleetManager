@@ -10,18 +10,28 @@ public class Notifica {
 	private LocalDateTime dataInvio;
 	private boolean letta;
 	private int idUtente;
-	private int idScadenza;
+	private Integer idScadenza;
+
+	public Notifica(int idNotifica, TipoNotifica tipoNotifica, String messaggio, boolean letta, int idUtente,
+			Integer idScadenza) {
+		this.idNotifica = idNotifica;
+		this.tipoNotifica = tipoNotifica;
+		this.messaggio = messaggio;
+		this.dataInvio = LocalDateTime.now();
+		this.letta = letta;
+		this.idUtente = idUtente;
+		this.idScadenza = idScadenza;
+	}
 
 	public Notifica(int idNotifica, TipoNotifica tipoNotifica, String messaggio, LocalDateTime dataInvio, boolean letta,
-			int idUtente, int idScadenza) {
+			int idUtente, Integer idScadenza) {
 		this.idNotifica = idNotifica;
 		this.tipoNotifica = tipoNotifica;
 		this.messaggio = messaggio;
 		this.dataInvio = dataInvio;
 		this.letta = letta;
-		this.idUtente=idUtente;
-		this.idScadenza=idScadenza;
-
+		this.idUtente = idUtente;
+		this.idScadenza = idScadenza;
 	}
 
 	public int getIdNotifica() {
@@ -52,10 +62,19 @@ public class Notifica {
 		return idUtente;
 	}
 
-	public int getIdScadenza() {
+	public Integer getIdScadenza() {
 		return idScadenza;
 	}
+
 	public void setMessaggio(String messaggio) {
 		this.messaggio = messaggio;
 	}
+
+	@Override
+	public String toString() {
+		return "Notifica {" + "idNotifica=" + idNotifica + ", tipoNotifica=" + tipoNotifica + ", messaggio='"
+				+ messaggio + '\'' + ", dataInvio=" + dataInvio + ", letta=" + letta + ", idUtente=" + idUtente
+				+ ", idScadenza=" + (idScadenza != null ? idScadenza : "null") + '}';
+	}
+
 }

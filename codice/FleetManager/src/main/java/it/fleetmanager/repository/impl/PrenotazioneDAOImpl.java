@@ -24,21 +24,40 @@ public class PrenotazioneDAOImpl implements PrenotazioneDAO {
 		}
 	};
 
+	private Prenotazione mapPrenotazione(ResultSet rs) throws Exception {
+
+		int idPren = rs.getInt("idPrenotazione");
+		LocalDateTime dataInizio = rs.getTimestamp("dataInizio").toLocalDateTime();
+		LocalDateTime dataFine = rs.getTimestamp("dataFine").toLocalDateTime();
+
+		StatoPrenotazione stato = StatoPrenotazione.valueOf(rs.getString("statoPrenotazione"));
+		TipoPrenotazione tipo = TipoPrenotazione.valueOf(rs.getString("tipoPrenotazione"));
+
+		int idUtente = rs.getInt("idUtente");
+		String targa = rs.getString("targa");
+
+		return new Prenotazione(idPren, dataInizio, dataFine, stato, tipo, idUtente, targa);
+	}
+
 	@Override
 	public void save(Prenotazione prenotazione) {
 
-		String sql = "INSERT INTO Prenotazione "
-				+ "(idPrenotazione, dataInizio, dataFine, statoPrenotazione, tipoPrenotazione, idUtente, targa) "
-				+ "VALUES (?, ?, ?, ?, ?, ?, ?)";
+		String sql = """
+				INSERT INTO Prenotazione
+				(idPrenotazione, dataInizio, dataFine,
+				 statoPrenotazione, tipoPrenotazione,
+				 idUtente, targa)
+				VALUES (?, ?, ?, ?, ?, ?, ?)
+				""";
 
 		try (Connection conn = DatabaseManager.getInstance().getConnection();
 				PreparedStatement ps = conn.prepareStatement(sql)) {
 
 			ps.setInt(1, prenotazione.getIdPrenotazione());
-			ps.setTimestamp(2, java.sql.Timestamp.valueOf(prenotazione.getDataInizio()));
-			ps.setTimestamp(3, java.sql.Timestamp.valueOf(prenotazione.getDataFine()));
+			ps.setTimestamp(2, Timestamp.valueOf(prenotazione.getDataInizio()));
+			ps.setTimestamp(3, Timestamp.valueOf(prenotazione.getDataFine()));
 			ps.setString(4, prenotazione.getStato().name());
-			ps.setString(5, prenotazione.getTipoPrenotazione().name()); // 👈 NUOVO
+			ps.setString(5, prenotazione.getTipoPrenotazione().name());
 			ps.setInt(6, prenotazione.getIdUtente());
 			ps.setString(7, prenotazione.getTarga());
 
@@ -46,22 +65,29 @@ public class PrenotazioneDAOImpl implements PrenotazioneDAO {
 			System.out.println("Prenotazione inserita correttamente nel database H2");
 
 		} catch (SQLException e) {
-			System.err.println("ERRORE SQL durante l'inserimento della prenotazione: " + e.getMessage());
+			System.err.println("ERRORE SQL durante save(prenotazione): " + e.getMessage());
 		}
 	}
 
 	@Override
 	public void update(Prenotazione prenotazione) {
 
-		String sql = "UPDATE Prenotazione SET "
-				+ "dataInizio=?, dataFine=?, statoPrenotazione=?, tipoPrenotazione=?, idUtente=?, targa=? "
-				+ "WHERE idPrenotazione=?";
+		String sql = """
+				UPDATE Prenotazione SET
+				    dataInizio = ?,
+				    dataFine = ?,
+				    statoPrenotazione = ?,
+				    tipoPrenotazione = ?,
+				    idUtente = ?,
+				    targa = ?
+				WHERE idPrenotazione = ?
+				""";
 
 		try (Connection conn = DatabaseManager.getInstance().getConnection();
 				PreparedStatement ps = conn.prepareStatement(sql)) {
 
-			ps.setTimestamp(1, java.sql.Timestamp.valueOf(prenotazione.getDataInizio()));
-			ps.setTimestamp(2, java.sql.Timestamp.valueOf(prenotazione.getDataFine()));
+			ps.setTimestamp(1, Timestamp.valueOf(prenotazione.getDataInizio()));
+			ps.setTimestamp(2, Timestamp.valueOf(prenotazione.getDataFine()));
 			ps.setString(3, prenotazione.getStato().name());
 			ps.setString(4, prenotazione.getTipoPrenotazione().name());
 			ps.setInt(5, prenotazione.getIdUtente());
@@ -71,14 +97,13 @@ public class PrenotazioneDAOImpl implements PrenotazioneDAO {
 			int rows = ps.executeUpdate();
 
 			if (rows > 0) {
-				System.out.println("Prenotazione aggiornata correttamente nel database H2");
+				System.out.println("Prenotazione aggiornata correttamente");
 			} else {
-				System.err.println("ERRORE: prenotazione con ID " + prenotazione.getIdPrenotazione()
-						+ " non trovata nel database H2.");
+				System.err.println("ERRORE: prenotazione con ID " + prenotazione.getIdPrenotazione() + " non trovata.");
 			}
 
 		} catch (SQLException e) {
-			System.err.println("ERRORE SQL durante l'UPDATE della prenotazione: " + e.getMessage());
+			System.err.println("ERRORE SQL durante update(prenotazione): " + e.getMessage());
 		}
 	}
 
@@ -91,25 +116,23 @@ public class PrenotazioneDAOImpl implements PrenotazioneDAO {
 				PreparedStatement ps = conn.prepareStatement(sql)) {
 
 			ps.setInt(1, id);
-
 			int rows = ps.executeUpdate();
 
 			if (rows > 0) {
-				System.out.println("Prenotazione con ID " + id + " eliminata correttamente dal database H2");
+				System.out.println("Prenotazione con ID " + id + " eliminata.");
 			} else {
-				System.err
-						.println("Nessuna prenotazione trovata con ID " + id + ". Nessuna eliminazione effettuata.");
+				System.err.println("Nessuna prenotazione trovata con ID " + id);
 			}
 
 		} catch (SQLException e) {
-			System.err.println("ERRORE SQL durante delete(" + id + "): " + e.getMessage());
+			System.err.println("ERRORE SQL durante delete(prenotazione): " + e.getMessage());
 		}
 	}
 
 	@Override
 	public Prenotazione getById(int id) {
-		String sql = "SELECT idPrenotazione, dataInizio, dataFine, statoPrenotazione, "
-				+ "tipoPrenotazione, idUtente, targa " + "FROM Prenotazione WHERE idPrenotazione = ?";
+
+		String sql = "SELECT * FROM Prenotazione WHERE idPrenotazione = ?";
 
 		try (Connection conn = DatabaseManager.getInstance().getConnection();
 				PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -118,28 +141,14 @@ public class PrenotazioneDAOImpl implements PrenotazioneDAO {
 
 			try (ResultSet rs = ps.executeQuery()) {
 
-				if (!rs.next()) {
+				if (!rs.next())
 					return PRENOTAZIONE_INESISTENTE;
-				}
 
-				int idPren = rs.getInt("idPrenotazione");
-				LocalDateTime dataInizio = rs.getTimestamp("dataInizio").toLocalDateTime();
-				LocalDateTime dataFine = rs.getTimestamp("dataFine").toLocalDateTime();
-
-				String statoDb = rs.getString("statoPrenotazione");
-				StatoPrenotazione stato = StatoPrenotazione.valueOf(statoDb);
-
-				String tipoDb = rs.getString("tipoPrenotazione");
-				TipoPrenotazione tipo = TipoPrenotazione.valueOf(tipoDb);
-
-				int idUtente = rs.getInt("idUtente");
-				String targa = rs.getString("targa");
-
-				return new Prenotazione(idPren, dataInizio, dataFine, stato, tipo, idUtente, targa);
+				return mapPrenotazione(rs);
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.err.println("ERRORE SQL durante getById: " + e.getMessage());
 			return PRENOTAZIONE_INESISTENTE;
 		}
 	}
@@ -147,10 +156,9 @@ public class PrenotazioneDAOImpl implements PrenotazioneDAO {
 	@Override
 	public List<Prenotazione> findByDriver(int idUtente) {
 
-		String sql = "SELECT idPrenotazione, dataInizio, dataFine, statoPrenotazione, "
-				+ "tipoPrenotazione, idUtente, targa " + "FROM Prenotazione WHERE idUtente = ?";
+		String sql = "SELECT * FROM Prenotazione WHERE idUtente = ?";
 
-		List<Prenotazione> prenotazioni = new ArrayList<>();
+		List<Prenotazione> lista = new ArrayList<>();
 
 		try (Connection conn = DatabaseManager.getInstance().getConnection();
 				PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -158,49 +166,24 @@ public class PrenotazioneDAOImpl implements PrenotazioneDAO {
 			ps.setInt(1, idUtente);
 
 			try (ResultSet rs = ps.executeQuery()) {
-
 				while (rs.next()) {
-
-					int idPren = rs.getInt("idPrenotazione");
-					LocalDateTime dataInizio = rs.getTimestamp("dataInizio").toLocalDateTime();
-					LocalDateTime dataFine = rs.getTimestamp("dataFine").toLocalDateTime();
-
-					String statoDb = rs.getString("statoPrenotazione");
-					StatoPrenotazione stato = StatoPrenotazione.valueOf(statoDb);
-
-					String tipoDb = rs.getString("tipoPrenotazione");
-					TipoPrenotazione tipo = TipoPrenotazione.valueOf(tipoDb);
-
-					String targa = rs.getString("targa");
-
-					Prenotazione p = new Prenotazione(idPren, dataInizio, dataFine, stato, tipo, idUtente, targa);
-
-					prenotazioni.add(p);
+					lista.add(mapPrenotazione(rs));
 				}
 			}
 
-			if (prenotazioni.isEmpty()) {
-				System.err.println("Nessuna prenotazione trovata per l’utente con ID " + idUtente);
-			} else {
-				System.out
-						.println("Trovate " + prenotazioni.size() + " prenotazioni per l’utente con ID " + idUtente);
-			}
-
-			return prenotazioni;
-
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			System.err.println("ERRORE SQL durante findByDriver: " + e.getMessage());
-			return prenotazioni;
 		}
+
+		return lista;
 	}
 
 	@Override
 	public List<Prenotazione> findByVeicolo(String targa) {
 
-		String sql = "SELECT idPrenotazione, dataInizio, dataFine, statoPrenotazione, "
-				+ "tipoPrenotazione, idUtente, targa " + "FROM Prenotazione WHERE targa = ?";
+		String sql = "SELECT * FROM Prenotazione WHERE targa = ?";
 
-		List<Prenotazione> prenotazioni = new ArrayList<>();
+		List<Prenotazione> lista = new ArrayList<>();
 
 		try (Connection conn = DatabaseManager.getInstance().getConnection();
 				PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -208,50 +191,24 @@ public class PrenotazioneDAOImpl implements PrenotazioneDAO {
 			ps.setString(1, targa);
 
 			try (ResultSet rs = ps.executeQuery()) {
-
 				while (rs.next()) {
-
-					int idPren = rs.getInt("idPrenotazione");
-					LocalDateTime dataInizio = rs.getTimestamp("dataInizio").toLocalDateTime();
-					LocalDateTime dataFine = rs.getTimestamp("dataFine").toLocalDateTime();
-
-					String statoDb = rs.getString("statoPrenotazione");
-					StatoPrenotazione stato = StatoPrenotazione.valueOf(statoDb);
-
-					String tipoDb = rs.getString("tipoPrenotazione");
-					TipoPrenotazione tipo = TipoPrenotazione.valueOf(tipoDb);
-
-					int idUtente = rs.getInt("idUtente");
-					String targaDb = rs.getString("targa");
-
-					Prenotazione p = new Prenotazione(idPren, dataInizio, dataFine, stato, tipo, idUtente, targaDb);
-
-					prenotazioni.add(p);
+					lista.add(mapPrenotazione(rs));
 				}
 			}
 
-			if (prenotazioni.isEmpty()) {
-				System.err.println("Nessuna prenotazione trovata per il veicolo con targa " + targa);
-			} else {
-				System.out.println(
-						"Trovate " + prenotazioni.size() + " prenotazioni per il veicolo con targa " + targa);
-			}
-
-			return prenotazioni;
-
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			System.err.println("ERRORE SQL durante findByVeicolo: " + e.getMessage());
-			return prenotazioni;
 		}
+
+		return lista;
 	}
 
 	@Override
 	public List<Prenotazione> findByStato(StatoPrenotazione statoRichiesto) {
 
-		String sql = "SELECT idPrenotazione, dataInizio, dataFine, statoPrenotazione, "
-				+ "tipoPrenotazione, idUtente, targa " + "FROM Prenotazione WHERE statoPrenotazione = ?";
+		String sql = "SELECT * FROM Prenotazione WHERE statoPrenotazione = ?";
 
-		List<Prenotazione> prenotazioni = new ArrayList<>();
+		List<Prenotazione> lista = new ArrayList<>();
 
 		try (Connection conn = DatabaseManager.getInstance().getConnection();
 				PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -259,64 +216,47 @@ public class PrenotazioneDAOImpl implements PrenotazioneDAO {
 			ps.setString(1, statoRichiesto.name());
 
 			try (ResultSet rs = ps.executeQuery()) {
-
 				while (rs.next()) {
-
-					int idPren = rs.getInt("idPrenotazione");
-					LocalDateTime dataInizio = rs.getTimestamp("dataInizio").toLocalDateTime();
-					LocalDateTime dataFine = rs.getTimestamp("dataFine").toLocalDateTime();
-
-					StatoPrenotazione stato = StatoPrenotazione.valueOf(rs.getString("statoPrenotazione"));
-					TipoPrenotazione tipo = TipoPrenotazione.valueOf(rs.getString("tipoPrenotazione"));
-
-					int idUtente = rs.getInt("idUtente");
-					String targa = rs.getString("targa");
-
-					Prenotazione p = new Prenotazione(idPren, dataInizio, dataFine, stato, tipo, idUtente, targa);
-
-					prenotazioni.add(p);
+					lista.add(mapPrenotazione(rs));
 				}
 			}
 
-			if (prenotazioni.isEmpty()) {
-				System.err.println("Nessuna prenotazione trovata con stato " + statoRichiesto);
-			} else {
-				System.out.println("Trovate " + prenotazioni.size() + " prenotazioni con stato " + statoRichiesto);
-			}
-
-			return prenotazioni;
-
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			System.err.println("ERRORE SQL durante findByStato: " + e.getMessage());
-			return prenotazioni;
 		}
+
+		return lista;
 	}
 
 	@Override
 	public boolean existsOverlapping(String targa, LocalDateTime dataInizio, LocalDateTime dataFine) {
 
-		String sql = "SELECT COUNT(*) FROM Prenotazione " + "WHERE targa = ? " + "AND dataInizio < ? "
-				+ "AND dataFine > ?";
+		String sql = """
+				SELECT COUNT(*)
+				FROM Prenotazione
+				WHERE targa = ?
+				AND dataInizio < ?
+				AND dataFine > ?
+				""";
 
 		try (Connection conn = DatabaseManager.getInstance().getConnection();
 				PreparedStatement ps = conn.prepareStatement(sql)) {
 
 			ps.setString(1, targa);
-			ps.setTimestamp(2, Timestamp.valueOf(dataFine)); // fine nuova prenotazione
-			ps.setTimestamp(3, Timestamp.valueOf(dataInizio)); // inizio nuova prenotazione
+			ps.setTimestamp(2, Timestamp.valueOf(dataFine));
+			ps.setTimestamp(3, Timestamp.valueOf(dataInizio));
 
 			try (ResultSet rs = ps.executeQuery()) {
 				if (rs.next()) {
-					int count = rs.getInt(1);
-					return count > 0; // true → esiste sovrapposizione
+					return rs.getInt(1) > 0;
 				}
 			}
 
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			System.err.println("ERRORE SQL durante existsOverlapping: " + e.getMessage());
 		}
 
-		return false; // nessuna sovrapposizione o errore
+		return false;
 	}
 
 }

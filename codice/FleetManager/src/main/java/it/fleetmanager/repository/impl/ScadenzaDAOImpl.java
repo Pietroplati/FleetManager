@@ -21,11 +21,25 @@ public class ScadenzaDAOImpl implements ScadenzaDAO {
 		}
 	};
 
+	private Scadenza mapScadenza(ResultSet rs) throws Exception {
+
+		int id = rs.getInt("idScadenza");
+		TipoScadenza tipo = TipoScadenza.valueOf(rs.getString("tipoScadenza"));
+		LocalDate data = rs.getDate("data").toLocalDate();
+		boolean notificata = rs.getBoolean("notificata");
+		String targa = rs.getString("targa");
+
+		return new Scadenza(id, tipo, data, notificata, targa);
+	}
+
 	@Override
 	public void save(Scadenza scadenza) {
 
-		String sql = "INSERT INTO Scadenza " + "(idScadenza, tipoScadenza, data, notificata, targa) "
-				+ "VALUES (?, ?, ?, ?, ?)";
+		String sql = """
+				INSERT INTO Scadenza
+				(idScadenza, tipoScadenza, data, notificata, targa)
+				VALUES (?, ?, ?, ?, ?)
+				""";
 
 		try (Connection conn = DatabaseManager.getInstance().getConnection();
 				PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -47,8 +61,14 @@ public class ScadenzaDAOImpl implements ScadenzaDAO {
 	@Override
 	public void update(Scadenza scadenza) {
 
-		String sql = "UPDATE Scadenza SET " + "tipoScadenza = ?, " + "data = ?, " + "notificata = ?, " + "targa = ? "
-				+ "WHERE idScadenza = ?";
+		String sql = """
+				UPDATE Scadenza SET
+				    tipoScadenza = ?,
+				    data = ?,
+				    notificata = ?,
+				    targa = ?
+				WHERE idScadenza = ?
+				""";
 
 		try (Connection conn = DatabaseManager.getInstance().getConnection();
 				PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -75,31 +95,30 @@ public class ScadenzaDAOImpl implements ScadenzaDAO {
 	@Override
 	public void delete(int idScadenza) {
 
-	    String sql = "DELETE FROM Scadenza WHERE idScadenza = ?";
+		String sql = "DELETE FROM Scadenza WHERE idScadenza = ?";
 
-	    try (Connection conn = DatabaseManager.getInstance().getConnection();
-	         PreparedStatement ps = conn.prepareStatement(sql)) {
+		try (Connection conn = DatabaseManager.getInstance().getConnection();
+				PreparedStatement ps = conn.prepareStatement(sql)) {
 
-	        ps.setInt(1, idScadenza);
+			ps.setInt(1, idScadenza);
 
-	        int rows = ps.executeUpdate();
+			int rows = ps.executeUpdate();
 
-	        if (rows > 0) {
-	            System.out.println("Scadenza con ID " + idScadenza + " eliminata correttamente dal database H2!");
-	        } else {
-	            System.err.println("Nessuna scadenza trovata con ID " + idScadenza + ". Nessuna eliminazione effettuata.");
-	        }
+			if (rows > 0) {
+				System.out.println("Scadenza con ID " + idScadenza + " eliminata correttamente");
+			} else {
+				System.err.println("Nessuna scadenza trovata con ID " + idScadenza);
+			}
 
-	    } catch (Exception e) {
-	        System.err.println("ERRORE SQL durante delete(" + idScadenza + "): " + e.getMessage());
-	    }
+		} catch (Exception e) {
+			System.err.println("ERRORE SQL durante delete(scadenza): " + e.getMessage());
+		}
 	}
-
 
 	@Override
 	public Scadenza getScadenzaById(int idScadenza) {
 
-		String sql = "SELECT idScadenza, tipoScadenza, data, notificata, targa " + "FROM Scadenza WHERE idScadenza = ?";
+		String sql = "SELECT * FROM Scadenza WHERE idScadenza = ?";
 
 		try (Connection conn = DatabaseManager.getInstance().getConnection();
 				PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -113,16 +132,7 @@ public class ScadenzaDAOImpl implements ScadenzaDAO {
 					return SCADENZA_INESISTENTE;
 				}
 
-				int id = rs.getInt("idScadenza");
-				String tipoDb = rs.getString("tipoScadenza");
-				TipoScadenza tipo = TipoScadenza.valueOf(tipoDb);
-
-				LocalDate data = rs.getDate("data").toLocalDate();
-
-				boolean notificata = rs.getBoolean("notificata");
-				String targa = rs.getString("targa");
-
-				return new Scadenza(id, tipo, data, notificata, targa);
+				return mapScadenza(rs);
 			}
 
 		} catch (Exception e) {
@@ -134,8 +144,11 @@ public class ScadenzaDAOImpl implements ScadenzaDAO {
 	@Override
 	public List<Scadenza> findProssimeScadenze(LocalDate finoA) {
 
-		String sql = "SELECT idScadenza, tipoScadenza, data, notificata, targa " + "FROM Scadenza "
-				+ "WHERE data >= CURRENT_DATE AND data <= ? " + "ORDER BY data ASC";
+		String sql = """
+				SELECT * FROM Scadenza
+				WHERE data >= CURRENT_DATE AND data <= ?
+				ORDER BY data ASC
+				""";
 
 		List<Scadenza> lista = new ArrayList<>();
 
@@ -145,38 +158,22 @@ public class ScadenzaDAOImpl implements ScadenzaDAO {
 			ps.setDate(1, java.sql.Date.valueOf(finoA));
 
 			try (ResultSet rs = ps.executeQuery()) {
-
 				while (rs.next()) {
-
-					int id = rs.getInt("idScadenza");
-					TipoScadenza tipo = TipoScadenza.valueOf(rs.getString("tipoScadenza"));
-					LocalDate data = rs.getDate("data").toLocalDate();
-					boolean notificata = rs.getBoolean("notificata");
-					String targa = rs.getString("targa");
-
-					lista.add(new Scadenza(id, tipo, data, notificata, targa));
+					lista.add(mapScadenza(rs));
 				}
 			}
 
-			if (lista.isEmpty()) {
-				System.out.println("Nessuna scadenza trovata da oggi fino al " + finoA);
-			} else {
-				System.out.println("Trovate " + lista.size() + " scadenze da oggi fino al " + finoA);
-			}
-
-			return lista;
-
 		} catch (Exception e) {
 			System.err.println("ERRORE SQL durante findProssimeScadenze: " + e.getMessage());
-			return lista;
 		}
+
+		return lista;
 	}
 
 	@Override
 	public List<Scadenza> findByVeicolo(String targa) {
 
-		String sql = "SELECT idScadenza, tipoScadenza, data, notificata, targa "
-				+ "FROM Scadenza WHERE targa = ? ORDER BY data ASC";
+		String sql = "SELECT * FROM Scadenza WHERE targa = ? ORDER BY data ASC";
 
 		List<Scadenza> lista = new ArrayList<>();
 
@@ -186,32 +183,16 @@ public class ScadenzaDAOImpl implements ScadenzaDAO {
 			ps.setString(1, targa);
 
 			try (ResultSet rs = ps.executeQuery()) {
-
 				while (rs.next()) {
-
-					int id = rs.getInt("idScadenza");
-					TipoScadenza tipo = TipoScadenza.valueOf(rs.getString("tipoScadenza"));
-					LocalDate data = rs.getDate("data").toLocalDate();
-					boolean notificata = rs.getBoolean("notificata");
-					String targaDb = rs.getString("targa");
-
-					Scadenza s = new Scadenza(id, tipo, data, notificata, targaDb);
-					lista.add(s);
+					lista.add(mapScadenza(rs));
 				}
 			}
 
-			if (lista.isEmpty()) {
-				System.out.println("Nessuna scadenza trovata per il veicolo con targa " + targa);
-			} else {
-				System.out.println("Trovate " + lista.size() + " scadenze per il veicolo con targa " + targa);
-			}
-
-			return lista;
-
 		} catch (Exception e) {
 			System.err.println("ERRORE SQL durante findByVeicolo: " + e.getMessage());
-			return lista;
 		}
+
+		return lista;
 	}
 
 }

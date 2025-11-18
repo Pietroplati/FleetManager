@@ -1,6 +1,7 @@
 package it.fleetmanager.repository;
 
 import it.fleetmanager.model.Notifica;
+import java.util.List;
 
 public interface NotificaDAO {
 
@@ -12,10 +13,10 @@ public interface NotificaDAO {
 
 	Notifica getNotificaById(int idNotifica);
 
-	Notifica findByUtente(int idUtente);
+	List<Notifica> findByUtente(int idUtente);
 
-	Notifica findNonLette(int idUtente);
+	List<Notifica> findNonLette(int idUtente);
 
-	Notifica findByScadenza(int idScadenza);
+	List<Notifica> findByScadenza(Integer idScadenza);
 
 }

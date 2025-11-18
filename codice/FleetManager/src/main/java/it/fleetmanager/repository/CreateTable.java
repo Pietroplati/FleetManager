@@ -18,9 +18,9 @@ public class CreateTable {
 					    tipoVeicolo tipo_veicolo NOT NULL,
 					    marca VARCHAR(50) NOT NULL,
 					    modello VARCHAR(50) NOT NULL,
-					    annoImmatricolazione INT CHECK (annoImmatricolazione > 1900),
+					    annoImmatricolazione INT CHECK (annoImmatricolazione > 1900) NOT NULL,
 					    statoVeicolo stato_veicolo NOT NULL,
-					    km INT CHECK (km >= 0)
+					    km INT CHECK (km >= 0) NOT NULL
 					);
 
 					CREATE TYPE IF NOT EXISTS ruolo_utente AS ENUM('MANAGER', 'DRIVER');

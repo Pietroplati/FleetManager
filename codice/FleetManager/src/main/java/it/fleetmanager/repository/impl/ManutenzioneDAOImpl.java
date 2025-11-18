@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
 import it.fleetmanager.model.Manutenzione;
 import it.fleetmanager.repository.DatabaseManager;
 import it.fleetmanager.repository.ManutenzioneDAO;
@@ -15,18 +16,30 @@ public class ManutenzioneDAOImpl implements ManutenzioneDAO {
 
 	public static final Manutenzione MANUTENZIONE_INESISTENTE = new Manutenzione(-1, LocalDateTime.MIN,
 			TipoManutenzione.ORDINARIA, "N/A", "N/A") {
-
 		@Override
 		public String toString() {
 			return "Manutenzione inesistente";
 		}
 	};
 
+	private Manutenzione mapResultSetToManutenzione(ResultSet rs) throws Exception {
+		int id = rs.getInt("idManutenzione");
+		LocalDateTime data = rs.getTimestamp("data").toLocalDateTime();
+		TipoManutenzione tipo = TipoManutenzione.valueOf(rs.getString("tipoManutenzione"));
+		String descrizione = rs.getString("descrizione");
+		String targa = rs.getString("targa");
+
+		return new Manutenzione(id, data, tipo, descrizione, targa);
+	}
+
 	@Override
 	public void save(Manutenzione manutenzione) {
 
-		String sql = "INSERT INTO Manutenzione " + "(idManutenzione, data, tipoManutenzione, descrizione, targa) "
-				+ "VALUES (?, ?, ?, ?, ?)";
+		String sql = """
+				INSERT INTO Manutenzione
+				(idManutenzione, data, tipoManutenzione, descrizione, targa)
+				VALUES (?, ?, ?, ?, ?)
+				""";
 
 		try (Connection conn = DatabaseManager.getInstance().getConnection();
 				PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -38,7 +51,7 @@ public class ManutenzioneDAOImpl implements ManutenzioneDAO {
 			ps.setString(5, manutenzione.getTarga());
 
 			ps.executeUpdate();
-			System.out.println("Manutenzione inserita correttamente nel database H2!");
+			System.out.println("Manutenzione inserita correttamente!");
 
 		} catch (Exception e) {
 			System.err.println("ERRORE SQL durante save(manutenzione): " + e.getMessage());
@@ -48,8 +61,14 @@ public class ManutenzioneDAOImpl implements ManutenzioneDAO {
 	@Override
 	public void update(Manutenzione manutenzione) {
 
-		String sql = "UPDATE Manutenzione SET " + "data = ?, " + "tipoManutenzione = ?, " + "descrizione = ?, "
-				+ "targa = ? " + "WHERE idManutenzione = ?";
+		String sql = """
+				UPDATE Manutenzione SET
+					data = ?,
+					tipoManutenzione = ?,
+					descrizione = ?,
+					targa = ?
+				WHERE idManutenzione = ?
+				""";
 
 		try (Connection conn = DatabaseManager.getInstance().getConnection();
 				PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -63,8 +82,7 @@ public class ManutenzioneDAOImpl implements ManutenzioneDAO {
 			int rows = ps.executeUpdate();
 
 			if (rows > 0) {
-				System.out.println(
-						"Manutenzione aggiornata correttamente (ID: " + manutenzione.getIdManutenzione() + ")");
+				System.out.println("Manutenzione aggiornata (ID: " + manutenzione.getIdManutenzione() + ")");
 			} else {
 				System.err.println("Nessuna manutenzione trovata con ID " + manutenzione.getIdManutenzione());
 			}
@@ -83,15 +101,12 @@ public class ManutenzioneDAOImpl implements ManutenzioneDAO {
 				PreparedStatement ps = conn.prepareStatement(sql)) {
 
 			ps.setInt(1, idManutenzione);
-
 			int rows = ps.executeUpdate();
 
 			if (rows > 0) {
-				System.out
-						.println("Manutenzione con ID " + idManutenzione + " eliminata correttamente dal database H2!");
+				System.out.println("Manutenzione con ID " + idManutenzione + " eliminata!");
 			} else {
-				System.err.println(
-						"Nessuna manutenzione trovata con ID " + idManutenzione + ". Nessuna eliminazione effettuata.");
+				System.err.println("Nessuna manutenzione trovata con ID " + idManutenzione);
 			}
 
 		} catch (Exception e) {
@@ -102,8 +117,10 @@ public class ManutenzioneDAOImpl implements ManutenzioneDAO {
 	@Override
 	public Manutenzione getManutenzioneById(int idManutenzione) {
 
-		String sql = "SELECT idManutenzione, data, tipoManutenzione, descrizione, targa "
-				+ "FROM Manutenzione WHERE idManutenzione = ?";
+		String sql = """
+				SELECT * FROM Manutenzione
+				WHERE idManutenzione = ?
+				""";
 
 		try (Connection conn = DatabaseManager.getInstance().getConnection();
 				PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -111,19 +128,11 @@ public class ManutenzioneDAOImpl implements ManutenzioneDAO {
 			ps.setInt(1, idManutenzione);
 
 			try (ResultSet rs = ps.executeQuery()) {
-
-				if (!rs.next()) {
-					System.err.println("Nessuna manutenzione trovata con ID " + idManutenzione);
-					return MANUTENZIONE_INESISTENTE;
+				if (rs.next()) {
+					return mapResultSetToManutenzione(rs);
 				}
-
-				int id = rs.getInt("idManutenzione");
-				LocalDateTime data = rs.getTimestamp("data").toLocalDateTime();
-				TipoManutenzione tipo = TipoManutenzione.valueOf(rs.getString("tipoManutenzione"));
-				String descrizione = rs.getString("descrizione");
-				String targa = rs.getString("targa");
-
-				return new Manutenzione(id, data, tipo, descrizione, targa);
+				System.err.println("Nessuna manutenzione trovata con ID " + idManutenzione);
+				return MANUTENZIONE_INESISTENTE;
 			}
 
 		} catch (Exception e) {
@@ -135,8 +144,11 @@ public class ManutenzioneDAOImpl implements ManutenzioneDAO {
 	@Override
 	public List<Manutenzione> findByVeicolo(String targa) {
 
-		String sql = "SELECT idManutenzione, data, tipoManutenzione, descrizione, targa "
-				+ "FROM Manutenzione WHERE targa = ? ORDER BY data ASC";
+		String sql = """
+				SELECT * FROM Manutenzione
+				WHERE targa = ?
+				ORDER BY data ASC
+				""";
 
 		List<Manutenzione> lista = new ArrayList<>();
 
@@ -146,24 +158,13 @@ public class ManutenzioneDAOImpl implements ManutenzioneDAO {
 			ps.setString(1, targa);
 
 			try (ResultSet rs = ps.executeQuery()) {
-
 				while (rs.next()) {
-
-					int id = rs.getInt("idManutenzione");
-					LocalDateTime data = rs.getTimestamp("data").toLocalDateTime();
-					TipoManutenzione tipo = TipoManutenzione.valueOf(rs.getString("tipoManutenzione"));
-					String descrizione = rs.getString("descrizione");
-					String targaDb = rs.getString("targa");
-
-					Manutenzione m = new Manutenzione(id, data, tipo, descrizione, targaDb);
-					lista.add(m);
+					lista.add(mapResultSetToManutenzione(rs));
 				}
 			}
 
 			if (lista.isEmpty()) {
-				System.out.println("Nessuna manutenzione trovata per il veicolo con targa " + targa);
-			} else {
-				System.out.println("Trovate " + lista.size() + " manutenzioni per il veicolo con targa " + targa);
+				System.out.println("Nessuna manutenzione trovata per targa " + targa);
 			}
 
 			return lista;
@@ -177,8 +178,11 @@ public class ManutenzioneDAOImpl implements ManutenzioneDAO {
 	@Override
 	public List<Manutenzione> findByTipo(TipoManutenzione tipoManutenzione) {
 
-		String sql = "SELECT idManutenzione, data, tipoManutenzione, descrizione, targa "
-				+ "FROM Manutenzione WHERE tipoManutenzione = ? ORDER BY data ASC";
+		String sql = """
+				SELECT * FROM Manutenzione
+				WHERE tipoManutenzione = ?
+				ORDER BY data ASC
+				""";
 
 		List<Manutenzione> lista = new ArrayList<>();
 
@@ -188,23 +192,13 @@ public class ManutenzioneDAOImpl implements ManutenzioneDAO {
 			ps.setString(1, tipoManutenzione.name());
 
 			try (ResultSet rs = ps.executeQuery()) {
-
 				while (rs.next()) {
-
-					int id = rs.getInt("idManutenzione");
-					LocalDateTime data = rs.getTimestamp("data").toLocalDateTime();
-					TipoManutenzione tipo = TipoManutenzione.valueOf(rs.getString("tipoManutenzione"));
-					String descrizione = rs.getString("descrizione");
-					String targa = rs.getString("targa");
-
-					lista.add(new Manutenzione(id, data, tipo, descrizione, targa));
+					lista.add(mapResultSetToManutenzione(rs));
 				}
 			}
 
 			if (lista.isEmpty()) {
 				System.out.println("Nessuna manutenzione trovata per tipo " + tipoManutenzione);
-			} else {
-				System.out.println("Trovate " + lista.size() + " manutenzioni per tipo " + tipoManutenzione);
 			}
 
 			return lista;
@@ -214,5 +208,4 @@ public class ManutenzioneDAOImpl implements ManutenzioneDAO {
 			return lista;
 		}
 	}
-
 }

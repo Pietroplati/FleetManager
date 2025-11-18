@@ -18,11 +18,32 @@ public class UtenteDAOImpl implements UtenteDAO {
 		}
 	};
 
+	private Utente mapUtente(ResultSet rs) throws Exception {
+
+		int idUtente = rs.getInt("idUtente");
+		String nome = rs.getString("nome");
+		String cognome = rs.getString("cognome");
+		String email = rs.getString("email");
+		String password = rs.getString("password");
+		RuoloUtente ruolo = RuoloUtente.valueOf(rs.getString("ruoloUtente"));
+
+		String patente = rs.getString("patente"); // può essere null
+
+		if (patente == null) {
+			return new Utente(idUtente, nome, cognome, email, password, ruolo);
+		} else {
+			return new Utente(idUtente, nome, cognome, email, password, ruolo, patente);
+		}
+	}
+
 	@Override
 	public void save(Utente utente) {
 
-		String sql = "INSERT INTO Utente " + "(idUtente, nome, cognome, email, password, ruoloUtente, patente) "
-				+ "VALUES (?, ?, ?, ?, ?, ?, ?)";
+		String sql = """
+				INSERT INTO Utente
+				(idUtente, nome, cognome, email, password, ruoloUtente, patente)
+				VALUES (?, ?, ?, ?, ?, ?, ?)
+				""";
 
 		try (Connection conn = DatabaseManager.getInstance().getConnection();
 				PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -36,18 +57,22 @@ public class UtenteDAOImpl implements UtenteDAO {
 			ps.setString(7, utente.getPatente());
 
 			ps.executeUpdate();
-			System.out.println("Utente inserito correttamente nel database H2");
+			System.out.println("Utente inserito correttamente!");
 
 		} catch (SQLException e) {
-			System.err.println("ERRORE SQL durante l'inserimento dell'utente: " + e.getMessage());
+			System.err.println("ERRORE SQL durante save(utente): " + e.getMessage());
 		}
 	}
 
 	@Override
 	public void update(Utente utente) {
 
-		String sql = "UPDATE Utente SET " + "nome=?, cognome=?, email=?, password=?, ruoloUtente=?, patente=? "
-				+ "WHERE idUtente=?";
+		String sql = """
+				UPDATE Utente SET
+				    nome = ?, cognome = ?, email = ?, password = ?,
+				    ruoloUtente = ?, patente = ?
+				WHERE idUtente = ?
+				""";
 
 		try (Connection conn = DatabaseManager.getInstance().getConnection();
 				PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -63,13 +88,13 @@ public class UtenteDAOImpl implements UtenteDAO {
 			int rows = ps.executeUpdate();
 
 			if (rows > 0) {
-				System.out.println("✔ Utente aggiornato correttamente nel database H2!");
+				System.out.println("Utente aggiornato correttamente!");
 			} else {
-				System.err.println("ERRORE: utente con ID " + utente.getIdUtente() + " non trovato nel database H2.");
+				System.err.println("Utente con ID " + utente.getIdUtente() + " non trovato.");
 			}
 
 		} catch (SQLException e) {
-			System.err.println("ERRORE SQL durante l'UPDATE dell'utente: " + e.getMessage());
+			System.err.println("ERRORE SQL durante update(utente): " + e.getMessage());
 		}
 	}
 
@@ -86,20 +111,20 @@ public class UtenteDAOImpl implements UtenteDAO {
 			int rows = ps.executeUpdate();
 
 			if (rows > 0) {
-				System.out.println("Utente eliminato correttamente dal database H2");
+				System.out.println("Utente con ID " + id + " eliminato.");
 			} else {
-				System.err.println("ERRORE: utente con ID " + id + " non trovato nel database H2.");
+				System.err.println("Nessun utente con ID " + id + " trovato.");
 			}
 
 		} catch (SQLException e) {
-			System.err.println("ERRORE SQL durante l'eliminazione dell'utente: " + e.getMessage());
+			System.err.println("ERRORE SQL durante delete(utente): " + e.getMessage());
 		}
 	}
 
 	@Override
 	public Utente getUtenteById(int id) {
-		String sql = "SELECT idUtente, nome, cognome, email, password, ruoloUtente, patente "
-				+ "FROM Utente WHERE idUtente = ?";
+
+		String sql = "SELECT * FROM Utente WHERE idUtente = ?";
 
 		try (Connection conn = DatabaseManager.getInstance().getConnection();
 				PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -107,22 +132,11 @@ public class UtenteDAOImpl implements UtenteDAO {
 			ps.setInt(1, id);
 
 			try (ResultSet rs = ps.executeQuery()) {
-				if (!rs.next()) {
+
+				if (!rs.next())
 					return UTENTE_INESISTENTE;
-				}
 
-				int idUtente = rs.getInt("idUtente");
-				String nome = rs.getString("nome");
-				String cognome = rs.getString("cognome");
-				String email = rs.getString("email");
-				String password = rs.getString("password");
-				String ruoloDb = rs.getString("ruoloUtente");
-				String patente = rs.getString("patente");
-
-				RuoloUtente ruolo = RuoloUtente.valueOf(ruoloDb);
-
-				return (patente == null) ? new Utente(idUtente, nome, cognome, email, password, ruolo)
-						: new Utente(idUtente, nome, cognome, email, password, ruolo, patente);
+				return mapUtente(rs);
 			}
 
 		} catch (Exception e) {
@@ -133,8 +147,8 @@ public class UtenteDAOImpl implements UtenteDAO {
 
 	@Override
 	public Utente getUtenteByEmail(String email) {
-		String sql = "SELECT idUtente, nome, cognome, email, password, ruoloUtente, patente "
-				+ "FROM Utente WHERE email = ?";
+
+		String sql = "SELECT * FROM Utente WHERE email = ?";
 
 		try (Connection conn = DatabaseManager.getInstance().getConnection();
 				PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -142,21 +156,11 @@ public class UtenteDAOImpl implements UtenteDAO {
 			ps.setString(1, email);
 
 			try (ResultSet rs = ps.executeQuery()) {
-				if (!rs.next()) {
+
+				if (!rs.next())
 					return UTENTE_INESISTENTE;
-				}
 
-				int idUtente = rs.getInt("idUtente");
-				String nome = rs.getString("nome");
-				String cognome = rs.getString("cognome");
-				String password = rs.getString("password");
-				String ruoloDb = rs.getString("ruoloUtente");
-				String patente = rs.getString("patente");
-
-				RuoloUtente ruolo = RuoloUtente.valueOf(ruoloDb);
-
-				return (patente == null) ? new Utente(idUtente, nome, cognome, email, password, ruolo)
-						: new Utente(idUtente, nome, cognome, email, password, ruolo, patente);
+				return mapUtente(rs);
 			}
 
 		} catch (Exception e) {
@@ -167,6 +171,7 @@ public class UtenteDAOImpl implements UtenteDAO {
 
 	@Override
 	public boolean existsByEmail(String email) {
+
 		String sql = "SELECT 1 FROM Utente WHERE email = ?";
 
 		try (Connection conn = DatabaseManager.getInstance().getConnection();

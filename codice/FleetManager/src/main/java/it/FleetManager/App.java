@@ -1,7 +1,13 @@
 package it.fleetmanager;
 
+import java.util.List;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import it.fleetmanager.model.Notifica;
+import it.fleetmanager.repository.impl.NotificaDAOImpl;
+import it.fleetmanager.util.TipoNotifica;
 
 public class App {
 	private static final Logger log = LogManager.getLogger(App.class);
@@ -11,5 +17,9 @@ public class App {
 		log.debug("Messaggio di debug (vedrai questo solo se il livello è DEBUG).");
 		System.out.println("Hello from FleetManager");
 
+		NotificaDAOImpl NDI=new NotificaDAOImpl();
+		
+		NDI.delete(6);
+		
 	}
 }
