@@ -2,6 +2,7 @@ package it.fleetmanager.repository;
 
 import it.fleetmanager.model.Utente;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UtenteDAO {
@@ -34,4 +35,6 @@ public interface UtenteDAO {
 	 * @return true se esiste già un utente con quella email.
 	 */
 	public boolean existsByEmail(String email);
+	
+	public List<Utente> getTuttiUtenti();
 }

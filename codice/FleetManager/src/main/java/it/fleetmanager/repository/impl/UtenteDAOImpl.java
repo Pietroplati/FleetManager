@@ -4,6 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
 import it.fleetmanager.model.Utente;
 import it.fleetmanager.repository.DatabaseManager;
 import it.fleetmanager.repository.UtenteDAO;
@@ -187,6 +190,32 @@ public class UtenteDAOImpl implements UtenteDAO {
 			e.printStackTrace();
 			return false;
 		}
+	}
+
+	@Override
+	public List<Utente> getTuttiUtenti() {
+
+		String sql = """
+				SELECT *
+				FROM Utente
+				ORDER BY idUtente ASC
+				""";
+
+		List<Utente> lista = new ArrayList<>();
+
+		try (Connection conn = DatabaseManager.getInstance().getConnection();
+				PreparedStatement ps = conn.prepareStatement(sql);
+				ResultSet rs = ps.executeQuery()) {
+
+			while (rs.next()) {
+				lista.add(mapUtente(rs));
+			}
+
+		} catch (Exception e) {
+			System.err.println("ERRORE SQL durante getTuttiUtenti(): " + e.getMessage());
+		}
+
+		return lista;
 	}
 
 }

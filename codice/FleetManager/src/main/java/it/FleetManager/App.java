@@ -6,7 +6,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import it.fleetmanager.model.Notifica;
+import it.fleetmanager.model.Utente;
 import it.fleetmanager.repository.impl.NotificaDAOImpl;
+import it.fleetmanager.repository.impl.UtenteDAOImpl;
 import it.fleetmanager.util.TipoNotifica;
 
 public class App {
@@ -17,9 +19,11 @@ public class App {
 		log.debug("Messaggio di debug (vedrai questo solo se il livello è DEBUG).");
 		System.out.println("Hello from FleetManager");
 
-		NotificaDAOImpl NDI=new NotificaDAOImpl();
-		
-		NDI.delete(6);
+		UtenteDAOImpl pes = new UtenteDAOImpl();
+		List<Utente> utenti = pes.getTuttiUtenti();
+		for (Utente utente : utenti) {
+			System.out.println(utente.toString());
+		}
 		
 	}
 }
