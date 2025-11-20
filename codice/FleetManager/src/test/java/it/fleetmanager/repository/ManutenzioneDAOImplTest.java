@@ -1,16 +1,13 @@
 package it.fleetmanager.repository;
 
 import static org.junit.jupiter.api.Assertions.*;
-
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import it.fleetmanager.model.Manutenzione;
 import it.fleetmanager.repository.impl.ManutenzioneDAOImpl;
+import it.fleetmanager.util.DatabaseTestUtils;
 import it.fleetmanager.util.TipoManutenzione;
 
 public class ManutenzioneDAOImplTest {
@@ -19,25 +16,7 @@ public class ManutenzioneDAOImplTest {
 
 	@BeforeEach
 	void setup() throws Exception {
-
-		DatabaseManager.setTestUrl("jdbc:h2:mem:testManut;DB_CLOSE_DELAY=-1");
-
-		try (Connection conn = DriverManager.getConnection("jdbc:h2:mem:testManut;DB_CLOSE_DELAY=-1");
-				Statement st = conn.createStatement()) {
-
-			st.execute("""
-					    CREATE TABLE IF NOT EXISTS Manutenzione (
-					        idManutenzione INT PRIMARY KEY,
-					        data TIMESTAMP,
-					        tipoManutenzione VARCHAR(20),
-					        descrizione VARCHAR(255),
-					        targa VARCHAR(10)
-					    );
-					""");
-
-			st.execute("DELETE FROM Manutenzione");
-		}
-
+		DatabaseTestUtils.resetDatabase();
 		dao = new ManutenzioneDAOImpl();
 	}
 
