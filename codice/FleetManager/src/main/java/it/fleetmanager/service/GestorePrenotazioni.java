@@ -66,14 +66,14 @@ public class GestorePrenotazioni {
 
 	public void confermaPrenotazione(int idPrenotazione, Utente manager) {
 
-		// Deve essere MANAGER
+		// deve essere manager
 		if (manager.getRuoloUtente() != RuoloUtente.MANAGER) {
 			throw new IllegalArgumentException("Solo un manager può confermare una prenotazione.");
 		}
 
 		Prenotazione p = prenotazioneDAO.getById(idPrenotazione);
 
-		if (p == null) {
+		if (p == null || p.getIdPrenotazione() == -1) {
 			throw new IllegalArgumentException("Prenotazione non trovata");
 		}
 
@@ -88,14 +88,14 @@ public class GestorePrenotazioni {
 
 		Prenotazione p = prenotazioneDAO.getById(idPrenotazione);
 
-		if (p == null) {
+		if (p == null || p.getIdPrenotazione() == -1) {
 			throw new IllegalArgumentException("Prenotazione non trovata");
 		}
+
 		p.setStato(StatoPrenotazione.ANNULLATA);
 
 		prenotazioneDAO.update(p);
 
-		// Notifica al driver
 		sistemaNotifiche.inviaNotificaPrenotazione(new Utente(p.getIdUtente(), "", "", "", "", RuoloUtente.DRIVER), p);
 	}
 
