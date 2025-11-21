@@ -46,7 +46,7 @@ public class SistemaNotifiche {
 				+ prenotazione.getStato();
 
 		Notifica n = new Notifica(0, TipoNotifica.PRENOTAZIONE, msg, LocalDateTime.now(), false, driver.getIdUtente(),
-				0);
+				null);
 
 		notificaDAO.save(n);
 

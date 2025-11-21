@@ -1,15 +1,13 @@
 package it.fleetmanager.repository;
 
 import static org.junit.jupiter.api.Assertions.*;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import it.fleetmanager.model.Prenotazione;
 import it.fleetmanager.repository.impl.PrenotazioneDAOImpl;
+import it.fleetmanager.util.DatabaseTestUtils;
 import it.fleetmanager.util.StatoPrenotazione;
 import it.fleetmanager.util.TipoPrenotazione;
 
@@ -19,27 +17,7 @@ public class PrenotazioneDAOImplTest {
 
 	@BeforeEach
 	void setup() throws Exception {
-
-		DatabaseManager.setTestUrl("jdbc:h2:mem:testPren;DB_CLOSE_DELAY=-1");
-
-		try (Connection conn = DriverManager.getConnection("jdbc:h2:mem:testPren;DB_CLOSE_DELAY=-1");
-				Statement st = conn.createStatement()) {
-
-			st.execute("""
-						CREATE TABLE IF NOT EXISTS Prenotazione (
-						    idPrenotazione INT PRIMARY KEY,
-						    dataInizio TIMESTAMP NOT NULL,
-						    dataFine TIMESTAMP NOT NULL,
-						    statoPrenotazione VARCHAR(20) NOT NULL,
-						    tipoPrenotazione VARCHAR(20) NOT NULL,
-						    idUtente INT NOT NULL,
-						    targa VARCHAR(10) NOT NULL
-						);
-					""");
-
-			st.execute("DELETE FROM Prenotazione");
-		}
-
+		DatabaseTestUtils.resetDatabase();
 		dao = new PrenotazioneDAOImpl();
 	}
 
@@ -48,7 +26,7 @@ public class PrenotazioneDAOImplTest {
 
 		Prenotazione p = new Prenotazione(1, LocalDateTime.of(2025, 11, 10, 8, 0),
 				LocalDateTime.of(2025, 11, 10, 18, 0), StatoPrenotazione.CONFERMATA, TipoPrenotazione.UTENTE, 1,
-				"FD490LF");
+				"AB123CD");
 
 		dao.save(p);
 
@@ -57,7 +35,7 @@ public class PrenotazioneDAOImplTest {
 		assertEquals(1, letta.getIdPrenotazione());
 		assertEquals(StatoPrenotazione.CONFERMATA, letta.getStato());
 		assertEquals(TipoPrenotazione.UTENTE, letta.getTipoPrenotazione());
-		assertEquals("FD490LF", letta.getTarga());
+		assertEquals("AB123CD", letta.getTarga());
 	}
 
 	@Test
@@ -84,8 +62,7 @@ public class PrenotazioneDAOImplTest {
 	void testDelete() {
 
 		Prenotazione p = new Prenotazione(3, LocalDateTime.of(2025, 11, 12, 9, 0),
-				LocalDateTime.of(2025, 11, 12, 12, 0), StatoPrenotazione.CONFERMATA, TipoPrenotazione.UTENTE, 3,
-				"AB123CD");
+				LocalDateTime.of(2025, 11, 12, 12, 0), StatoPrenotazione.CONFERMATA, TipoPrenotazione.UTENTE, 1, "T1");
 
 		dao.save(p);
 
@@ -99,13 +76,12 @@ public class PrenotazioneDAOImplTest {
 	void testFindByDriver() {
 
 		dao.save(new Prenotazione(4, LocalDateTime.now(), LocalDateTime.now().plusHours(2), StatoPrenotazione.ATTIVA,
-				TipoPrenotazione.UTENTE, 10, "TARGA1"));
+				TipoPrenotazione.UTENTE, 2, "V1"));
 
 		dao.save(new Prenotazione(5, LocalDateTime.now(), LocalDateTime.now().plusHours(1),
-				StatoPrenotazione.CONFERMATA, TipoPrenotazione.UTENTE, 10, "TARGA2"));
+				StatoPrenotazione.CONFERMATA, TipoPrenotazione.UTENTE, 2, "V2"));
 
-		List<Prenotazione> lista = dao.findByDriver(10);
-
+		List<Prenotazione> lista = dao.findByDriver(2);
 		assertEquals(2, lista.size());
 	}
 
@@ -113,29 +89,26 @@ public class PrenotazioneDAOImplTest {
 	void testFindByVeicolo() {
 
 		dao.save(new Prenotazione(6, LocalDateTime.now(), LocalDateTime.now().plusHours(3),
-				StatoPrenotazione.CONFERMATA, TipoPrenotazione.UTENTE, 12, "TST123"));
+				StatoPrenotazione.CONFERMATA, TipoPrenotazione.UTENTE, 1, "V3"));
 
-		List<Prenotazione> lista = dao.findByVeicolo("TST123");
+		List<Prenotazione> lista = dao.findByVeicolo("V3");
 
 		assertEquals(1, lista.size());
-		assertEquals("TST123", lista.get(0).getTarga());
+		assertEquals("V3", lista.get(0).getTarga());
 	}
 
 	@Test
 	void testExistsOverlapping() {
 
-		// prenotazione già presente: 10:00 → 15:00
 		dao.save(new Prenotazione(7, LocalDateTime.of(2025, 11, 20, 10, 0), LocalDateTime.of(2025, 11, 20, 15, 0),
-				StatoPrenotazione.ATTIVA, TipoPrenotazione.UTENTE, 1, "OVERL"));
+				StatoPrenotazione.ATTIVA, TipoPrenotazione.UTENTE, 1, "ZZ000AA"));
 
-		// nuova prenotazione che si sovrappone: 14:00 → 16:00
-		boolean res = dao.existsOverlapping("OVERL", LocalDateTime.of(2025, 11, 20, 14, 0),
+		boolean res = dao.existsOverlapping("ZZ000AA", LocalDateTime.of(2025, 11, 20, 14, 0),
 				LocalDateTime.of(2025, 11, 20, 16, 0));
 
 		assertTrue(res);
 
-		// NON si sovrappone → false
-		boolean res2 = dao.existsOverlapping("OVERL", LocalDateTime.of(2025, 11, 20, 15, 0),
+		boolean res2 = dao.existsOverlapping("ZZ000AA", LocalDateTime.of(2025, 11, 20, 15, 0),
 				LocalDateTime.of(2025, 11, 20, 18, 0));
 
 		assertFalse(res2);

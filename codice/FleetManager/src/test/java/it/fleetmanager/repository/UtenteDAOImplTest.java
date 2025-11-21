@@ -1,13 +1,11 @@
 package it.fleetmanager.repository;
 
 import static org.junit.jupiter.api.Assertions.*;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.Statement;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import it.fleetmanager.model.Utente;
 import it.fleetmanager.repository.impl.UtenteDAOImpl;
+import it.fleetmanager.util.DatabaseTestUtils;
 import it.fleetmanager.util.RuoloUtente;
 
 public class UtenteDAOImplTest {
@@ -16,41 +14,18 @@ public class UtenteDAOImplTest {
 
 	@BeforeEach
 	void setup() throws Exception {
-
-		// Usa un database H2 in-memory separato
-		DatabaseManager.setTestUrl("jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1");
-
-		// Crea la tabella UTENTE nel DB di test
-		try (Connection conn = DriverManager.getConnection("jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1");
-				Statement st = conn.createStatement()) {
-
-			st.execute("""
-					    CREATE TABLE IF NOT EXISTS Utente (
-					        idUtente INT PRIMARY KEY,
-					        nome VARCHAR(100),
-					        cognome VARCHAR(100),
-					        email VARCHAR(100),
-					        password VARCHAR(100),
-					        ruoloUtente VARCHAR(20),
-					        patente VARCHAR(20)
-					    );
-					""");
-
-			// Pulisce la tabella prima di ogni test
-			st.execute("DELETE FROM Utente");
-		}
-
+		DatabaseTestUtils.resetDatabase();
 		dao = new UtenteDAOImpl();
 	}
 
 	@Test
 	void testSaveAndGetByEmail() {
-		Utente u = new Utente(1, "Mario", "Rossi", "mario@test.com", "pwd", RuoloUtente.MANAGER);
+		Utente u = new Utente(10, "Mario", "Rossi", "mario@test.com", "pwd", RuoloUtente.MANAGER);
 		dao.save(u);
 
 		Utente letto = dao.getUtenteByEmail("mario@test.com");
 
-		assertEquals(1, letto.getIdUtente());
+		assertEquals(10, letto.getIdUtente());
 		assertEquals("Mario", letto.getNome());
 		assertEquals("Rossi", letto.getCognome());
 		assertEquals(RuoloUtente.MANAGER, letto.getRuoloUtente());
@@ -58,7 +33,7 @@ public class UtenteDAOImplTest {
 
 	@Test
 	void testExistsByEmail() {
-		Utente u = new Utente(2, "Luca", "Verdi", "luca@test.com", "abc", RuoloUtente.DRIVER);
+		Utente u = new Utente(20, "Luca", "Verdi", "luca@test.com", "abc", RuoloUtente.DRIVER);
 		dao.save(u);
 
 		assertTrue(dao.existsByEmail("luca@test.com"));
@@ -67,10 +42,10 @@ public class UtenteDAOImplTest {
 
 	@Test
 	void testDelete() {
-		Utente u = new Utente(3, "Anna", "Bianchi", "anna@test.com", "pass", RuoloUtente.DRIVER);
+		Utente u = new Utente(30, "Anna", "Bianchi", "anna@test.com", "pass", RuoloUtente.DRIVER);
 		dao.save(u);
 
-		dao.delete(3);
+		dao.delete(30);
 
 		Utente letto = dao.getUtenteByEmail("anna@test.com");
 		assertEquals(UtenteDAOImpl.UTENTE_INESISTENTE, letto);
@@ -78,7 +53,7 @@ public class UtenteDAOImplTest {
 
 	@Test
 	void testUpdate() {
-		Utente u = new Utente(4, "Pietro", "Plati", "pietro@test.com", "000", RuoloUtente.DRIVER);
+		Utente u = new Utente(40, "Pietro", "Plati", "pietro@test.com", "000", RuoloUtente.DRIVER);
 		dao.save(u);
 
 		u.setNome("PietroMod");
@@ -86,7 +61,7 @@ public class UtenteDAOImplTest {
 
 		dao.update(u);
 
-		Utente letto = dao.getUtenteById(4);
+		Utente letto = dao.getUtenteById(40);
 
 		assertEquals("PietroMod", letto.getNome());
 		assertEquals("PWD_NEW", letto.getPassword());
