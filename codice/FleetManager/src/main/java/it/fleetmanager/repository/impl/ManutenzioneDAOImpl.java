@@ -208,4 +208,24 @@ public class ManutenzioneDAOImpl implements ManutenzioneDAO {
 			return lista;
 		}
 	}
+
+	@Override
+	public int getMaxId() {
+		String sql = "SELECT COALESCE(MAX(idManutenzione), 0) FROM Manutenzione";
+
+		try (Connection conn = DatabaseManager.getInstance().getConnection();
+				PreparedStatement ps = conn.prepareStatement(sql);
+				ResultSet rs = ps.executeQuery()) {
+
+			if (rs.next()) {
+				return rs.getInt(1);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return 0;
+	}
+
 }

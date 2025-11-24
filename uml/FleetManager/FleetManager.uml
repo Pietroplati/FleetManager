@@ -660,13 +660,6 @@
             <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_nJXYAb4SEfCDAPpuTtXI2g" name="LiteralUnlimitedNatural1" value="*"/>
           </ownedParameter>
         </ownedOperation>
-        <ownedOperation xmi:type="uml:Operation" xmi:id="_pMZmwL4SEfCDAPpuTtXI2g" name="getManutenzioniAperte">
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_qYRkAL4SEfCDAPpuTtXI2g" name="veicolo" type="_hyBb8LiYEfCDhMtBXAAUPg" isUnique="false"/>
-          <ownedParameter xmi:type="uml:Parameter" xmi:id="_t4uL8L4SEfCDAPpuTtXI2g" name="" type="_I8HOILifEfCDhMtBXAAUPg" isUnique="false" direction="return">
-            <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_z2ej0L4SEfCDAPpuTtXI2g" name="LiteralInteger1"/>
-            <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_z2kDYL4SEfCDAPpuTtXI2g" name="LiteralUnlimitedNatural1" value="*"/>
-          </ownedParameter>
-        </ownedOperation>
       </packagedElement>
       <packagedElement xmi:type="uml:Class" xmi:id="_5lYAUL4SEfCDAPpuTtXI2g" name="GestoreScadenze">
         <ownedAttribute xmi:type="uml:Property" xmi:id="_9fxZUL4SEfCDAPpuTtXI2g" name="scadenzaDAO" visibility="private" type="_u4tFkLyOEfC8rbOYHjaw_Q" isUnique="false"/>

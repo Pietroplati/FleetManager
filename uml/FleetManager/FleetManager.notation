@@ -1594,10 +1594,6 @@
               <element xmi:type="uml:Operation" href="FleetManager.uml#_gGM3QL4SEfCDAPpuTtXI2g"/>
               <layoutConstraint xmi:type="notation:Location" xmi:id="_2yQYd74SEfCDAPpuTtXI2g"/>
             </children>
-            <children xmi:type="notation:Shape" xmi:id="_2yQ_gL4SEfCDAPpuTtXI2g" type="Operation_ClassOperationLabel">
-              <element xmi:type="uml:Operation" href="FleetManager.uml#_pMZmwL4SEfCDAPpuTtXI2g"/>
-              <layoutConstraint xmi:type="notation:Location" xmi:id="_2yQ_gb4SEfCDAPpuTtXI2g"/>
-            </children>
             <styles xmi:type="notation:TitleStyle" xmi:id="_hEyb6L4REfCDAPpuTtXI2g"/>
             <styles xmi:type="notation:SortingStyle" xmi:id="_hEyb6b4REfCDAPpuTtXI2g"/>
             <styles xmi:type="notation:FilteringStyle" xmi:id="_hEyb6r4REfCDAPpuTtXI2g"/>

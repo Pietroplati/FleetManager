@@ -17,4 +17,6 @@ public interface ManutenzioneDAO {
 	List<Manutenzione> findByVeicolo(String targa);
 
 	List<Manutenzione> findByTipo(TipoManutenzione tipoManutenzione);
+
+	int getMaxId();
 }

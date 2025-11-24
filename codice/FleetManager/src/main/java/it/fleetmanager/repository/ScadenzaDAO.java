@@ -3,7 +3,7 @@ package it.fleetmanager.repository;
 import java.time.LocalDate;
 import java.util.List;
 import it.fleetmanager.model.Scadenza;
-import it.fleetmanager.model.Veicolo;
+
 
 public interface ScadenzaDAO {
 
