@@ -7,7 +7,7 @@ import java.sql.Statement;
 public class CreateTable {
 
 	public static void main(String[] args) {
-		try (Connection conn = DatabaseManager.getInstance().getConnection(); Statement stmt = conn.createStatement()) {
+		try (Connection conn = H2DatabaseManager.getInstance().getConnection(); Statement stmt = conn.createStatement()) {
 
 			String sql = """
 					CREATE TYPE IF NOT EXISTS tipo_veicolo AS ENUM('AUTO', 'MOTO' , 'FURGONE', 'CAMION');

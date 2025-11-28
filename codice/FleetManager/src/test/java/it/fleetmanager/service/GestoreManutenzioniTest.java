@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import it.fleetmanager.model.Manutenzione;
 import it.fleetmanager.model.Veicolo;
+import it.fleetmanager.repository.H2DatabaseManager;
 import it.fleetmanager.repository.ManutenzioneDAO;
 import it.fleetmanager.repository.VeicoloDAO;
 import it.fleetmanager.repository.impl.ManutenzioneDAOImpl;
@@ -29,9 +30,8 @@ public class GestoreManutenzioniTest {
 	void setup() throws Exception {
 
 		DatabaseTestUtils.resetDatabase();
-
-		manutenzioneDAO = new ManutenzioneDAOImpl();
-		veicoloDAO = new VeicoloDAOImpl();
+		manutenzioneDAO = new ManutenzioneDAOImpl(H2DatabaseManager.getInstance());
+		veicoloDAO = new VeicoloDAOImpl(H2DatabaseManager.getInstance());
 
 		gestore = new GestoreManutenzioni(manutenzioneDAO, veicoloDAO);
 

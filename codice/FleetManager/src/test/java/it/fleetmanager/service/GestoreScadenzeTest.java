@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import it.fleetmanager.model.Notifica;
 import it.fleetmanager.model.Scadenza;
 import it.fleetmanager.model.Veicolo;
+import it.fleetmanager.repository.H2DatabaseManager;
 import it.fleetmanager.repository.NotificaDAO;
 import it.fleetmanager.repository.ScadenzaDAO;
 import it.fleetmanager.repository.VeicoloDAO;
@@ -39,8 +40,8 @@ public class GestoreScadenzeTest {
 		DatabaseTestUtils.resetDatabase();
 
 		// DAO reali
-		scadenzaDAO = new ScadenzaDAOImpl();
-		notificaDAO = new NotificaDAOImpl();
+		scadenzaDAO = new ScadenzaDAOImpl(H2DatabaseManager.getInstance());
+		notificaDAO = new NotificaDAOImpl(H2DatabaseManager.getInstance());
 		sistemaNotifiche = new SistemaNotifiche(notificaDAO);
 
 		// VeicoloDAO fake usato solo in RAM per aggiornare stato veicolo

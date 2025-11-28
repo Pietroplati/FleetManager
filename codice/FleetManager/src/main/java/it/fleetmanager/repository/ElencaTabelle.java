@@ -11,11 +11,11 @@ public class ElencaTabelle {
 
 
 	public static void main(String[] args) throws SQLException {
-		try (Connection conn = DatabaseManager.getInstance().getConnection();) {
+		try (Connection conn = H2DatabaseManager.getInstance().getConnection();) {
 			DatabaseMetaData meta = conn.getMetaData();
 
 			try (ResultSet rsTables = meta.getTables(null, "PUBLIC", "%", new String[] { "TABLE" })) {
-				System.out.println("SCHEMA DATABASE: " + DatabaseManager.getUrl());
+				System.out.println("SCHEMA DATABASE: " + H2DatabaseManager.getUrl());
 
 				while (rsTables.next()) {
 					String schema = rsTables.getString("TABLE_SCHEM");

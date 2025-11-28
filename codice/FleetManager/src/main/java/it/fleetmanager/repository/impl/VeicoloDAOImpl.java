@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
 import it.fleetmanager.model.Veicolo;
 import it.fleetmanager.repository.DatabaseManager;
 import it.fleetmanager.repository.VeicoloDAO;
@@ -13,6 +14,8 @@ import it.fleetmanager.util.StatoVeicolo;
 import it.fleetmanager.util.TipoVeicolo;
 
 public class VeicoloDAOImpl implements VeicoloDAO {
+
+	private final DatabaseManager db;
 
 	public static final Veicolo VEICOLO_INESISTENTE = new Veicolo("N/A", null, "N/A", "N/A", -1,
 			StatoVeicolo.NON_DISPONIBILE, -1) {
@@ -22,53 +25,48 @@ public class VeicoloDAOImpl implements VeicoloDAO {
 		}
 	};
 
-	private Veicolo mapVeicolo(ResultSet rs) throws Exception {
+	public VeicoloDAOImpl(DatabaseManager db) {
+		this.db = db;
+	}
 
+	private Veicolo map(ResultSet rs) throws Exception {
 		String targa = rs.getString("targa");
 		TipoVeicolo tipo = TipoVeicolo.valueOf(rs.getString("tipoVeicolo"));
 		String marca = rs.getString("marca");
 		String modello = rs.getString("modello");
-
 		Integer anno = rs.getObject("annoImmatricolazione", Integer.class);
 		Integer km = rs.getObject("km", Integer.class);
-
 		StatoVeicolo stato = StatoVeicolo.valueOf(rs.getString("statoVeicolo"));
-
 		return new Veicolo(targa, tipo, marca, modello, anno, stato, km);
 	}
 
 	@Override
-	public void save(Veicolo veicolo) {
-
+	public void save(Veicolo v) {
 		String sql = """
 				INSERT INTO Veicolo
 				(targa, tipoVeicolo, marca, modello, annoImmatricolazione, statoVeicolo, km)
 				VALUES (?, ?, ?, ?, ?, ?, ?)
 				""";
 
-		try (Connection conn = DatabaseManager.getInstance().getConnection();
-				PreparedStatement ps = conn.prepareStatement(sql)) {
+		try (Connection conn = db.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
-			ps.setString(1, veicolo.getTarga());
-			ps.setString(2, veicolo.getTipoVeicolo().name());
-			ps.setString(3, veicolo.getMarca());
-			ps.setString(4, veicolo.getModello());
-			ps.setInt(5, veicolo.getAnnoImmatricolazione());
-			ps.setString(6, veicolo.getStatoVeicolo().name());
-			ps.setInt(7, veicolo.getKm());
+			ps.setString(1, v.getTarga());
+			ps.setString(2, v.getTipoVeicolo().name());
+			ps.setString(3, v.getMarca());
+			ps.setString(4, v.getModello());
+			ps.setInt(5, v.getAnnoImmatricolazione());
+			ps.setString(6, v.getStatoVeicolo().name());
+			ps.setInt(7, v.getKm());
 
 			ps.executeUpdate();
 
-			System.out.println("Veicolo inserito: " + veicolo.getTarga());
-
 		} catch (Exception e) {
-			System.err.println("Errore durante save(veicolo): " + e.getMessage());
+			System.err.println("ERRORE SQL save: " + e.getMessage());
 		}
 	}
 
 	@Override
-	public void update(Veicolo veicolo) {
-
+	public void update(Veicolo v) {
 		String sql = """
 				UPDATE Veicolo SET
 				    tipoVeicolo = ?, marca = ?, modello = ?,
@@ -76,102 +74,78 @@ public class VeicoloDAOImpl implements VeicoloDAO {
 				WHERE targa = ?
 				""";
 
-		try (Connection conn = DatabaseManager.getInstance().getConnection();
-				PreparedStatement ps = conn.prepareStatement(sql)) {
+		try (Connection conn = db.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
-			ps.setString(1, veicolo.getTipoVeicolo().name());
-			ps.setString(2, veicolo.getMarca());
-			ps.setString(3, veicolo.getModello());
-			ps.setInt(4, veicolo.getAnnoImmatricolazione());
-			ps.setString(5, veicolo.getStatoVeicolo().name());
-			ps.setInt(6, veicolo.getKm());
-			ps.setString(7, veicolo.getTarga());
+			ps.setString(1, v.getTipoVeicolo().name());
+			ps.setString(2, v.getMarca());
+			ps.setString(3, v.getModello());
+			ps.setInt(4, v.getAnnoImmatricolazione());
+			ps.setString(5, v.getStatoVeicolo().name());
+			ps.setInt(6, v.getKm());
+			ps.setString(7, v.getTarga());
 
-			int rows = ps.executeUpdate();
-
-			if (rows > 0) {
-				System.out.println("Veicolo aggiornato: " + veicolo.getTarga());
-			} else {
-				System.out.println("Veicolo non trovato: " + veicolo.getTarga());
-			}
+			ps.executeUpdate();
 
 		} catch (Exception e) {
-			System.err.println("Errore durante update(veicolo): " + e.getMessage());
+			System.err.println("ERRORE SQL update: " + e.getMessage());
 		}
 	}
 
 	@Override
 	public void delete(String targa) {
-
 		String sql = "DELETE FROM Veicolo WHERE targa = ?";
 
-		try (Connection conn = DatabaseManager.getInstance().getConnection();
-				PreparedStatement ps = conn.prepareStatement(sql)) {
+		try (Connection conn = db.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
 			ps.setString(1, targa);
-
-			int rows = ps.executeUpdate();
-
-			if (rows > 0) {
-				System.out.println("Veicolo eliminato: " + targa);
-			} else {
-				System.out.println("Veicolo non trovato: " + targa);
-			}
+			ps.executeUpdate();
 
 		} catch (Exception e) {
-			System.err.println("Errore durante delete(veicolo): " + e.getMessage());
+			System.err.println("ERRORE SQL delete: " + e.getMessage());
 		}
 	}
 
 	@Override
 	public Veicolo getVeicoloByTarga(String targa) {
-
 		String sql = "SELECT * FROM Veicolo WHERE targa = ?";
 
-		try (Connection conn = DatabaseManager.getInstance().getConnection();
-				PreparedStatement ps = conn.prepareStatement(sql)) {
+		try (Connection conn = db.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
 			ps.setString(1, targa);
 
 			try (ResultSet rs = ps.executeQuery()) {
-
 				if (!rs.next())
 					return VEICOLO_INESISTENTE;
-
-				return mapVeicolo(rs);
+				return map(rs);
 			}
 
 		} catch (Exception e) {
-			System.err.println("Errore durante getVeicoloByTarga: " + e.getMessage());
+			System.err.println("ERRORE SQL getVeicoloByTarga: " + e.getMessage());
 			return VEICOLO_INESISTENTE;
 		}
 	}
 
 	@Override
 	public List<Veicolo> getTuttiVeicoli() {
-
 		String sql = "SELECT * FROM Veicolo";
+		List<Veicolo> list = new ArrayList<>();
 
-		List<Veicolo> lista = new ArrayList<>();
-
-		try (Connection conn = DatabaseManager.getInstance().getConnection();
+		try (Connection conn = db.getConnection();
 				PreparedStatement ps = conn.prepareStatement(sql);
 				ResultSet rs = ps.executeQuery()) {
 
-			while (rs.next()) {
-				lista.add(mapVeicolo(rs));
-			}
+			while (rs.next())
+				list.add(map(rs));
 
 		} catch (Exception e) {
-			System.err.println("Errore durante getTuttiVeicoli: " + e.getMessage());
+			System.err.println("ERRORE SQL getTuttiVeicoli: " + e.getMessage());
 		}
 
-		return lista;
+		return list;
 	}
 
 	@Override
 	public List<Veicolo> getDisponibili(LocalDateTime dataInizio, LocalDateTime dataFine) {
-
 		String sql = """
 				SELECT v.*
 				FROM Veicolo v
@@ -184,25 +158,22 @@ public class VeicoloDAOImpl implements VeicoloDAO {
 				)
 				""";
 
-		List<Veicolo> disponibili = new ArrayList<>();
+		List<Veicolo> list = new ArrayList<>();
 
-		try (Connection conn = DatabaseManager.getInstance().getConnection();
-				PreparedStatement ps = conn.prepareStatement(sql)) {
+		try (Connection conn = db.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
 			ps.setTimestamp(1, java.sql.Timestamp.valueOf(dataFine));
 			ps.setTimestamp(2, java.sql.Timestamp.valueOf(dataInizio));
 
 			try (ResultSet rs = ps.executeQuery()) {
-
-				while (rs.next()) {
-					disponibili.add(mapVeicolo(rs));
-				}
+				while (rs.next())
+					list.add(map(rs));
 			}
 
 		} catch (Exception e) {
-			System.err.println("Errore durante getDisponibili: " + e.getMessage());
+			System.err.println("ERRORE SQL getDisponibili: " + e.getMessage());
 		}
 
-		return disponibili;
+		return list;
 	}
 }

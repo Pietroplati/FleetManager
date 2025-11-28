@@ -18,7 +18,7 @@ public class ElencaDati {
 	private static final int DESCRIZIONE_COL_WIDTH = 80;
 
 	public static void main(String[] args) {
-		try (Connection conn = DatabaseManager.getInstance().getConnection()) {
+		try (Connection conn = H2DatabaseManager.getInstance().getConnection()) {
 			DatabaseMetaData meta = conn.getMetaData();
 
 			try (ResultSet rsTables = meta.getTables(null, SCHEMA, "%", new String[] { "TABLE" })) {

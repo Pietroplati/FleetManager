@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import it.fleetmanager.model.Utente;
+import it.fleetmanager.repository.H2DatabaseManager;
 import it.fleetmanager.repository.UtenteDAO;
 import it.fleetmanager.repository.impl.UtenteDAOImpl;
 import it.fleetmanager.util.DatabaseTestUtils;
@@ -17,7 +18,7 @@ public class GestoreLoginTest {
 	@BeforeEach
 	void setupDatabase() throws Exception {
 		DatabaseTestUtils.resetDatabase();
-		utenteDAO = new UtenteDAOImpl();
+		utenteDAO = new UtenteDAOImpl(H2DatabaseManager.getInstance());
 		gestoreLogin = new GestoreLogin(utenteDAO);
 	}
 

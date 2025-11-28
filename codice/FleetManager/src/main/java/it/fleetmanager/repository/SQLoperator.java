@@ -11,7 +11,7 @@ public class SQLoperator {
 
 
 	public static void main(String[] args) throws SQLException {
-		try (Connection conn = DatabaseManager.getInstance().getConnection(); Statement stmt = conn.createStatement()) {
+		try (Connection conn = H2DatabaseManager.getInstance().getConnection(); Statement stmt = conn.createStatement()) {
 			String sql = """
 					DROP TABLE IF EXISTS Prenotazione;
 		

@@ -15,7 +15,7 @@ public class UtenteDAOImplTest {
 	@BeforeEach
 	void setup() throws Exception {
 		DatabaseTestUtils.resetDatabase();
-		dao = new UtenteDAOImpl();
+		dao = new UtenteDAOImpl(H2DatabaseManager.getInstance());
 	}
 
 	@Test

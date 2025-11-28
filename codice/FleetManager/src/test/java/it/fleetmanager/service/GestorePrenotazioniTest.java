@@ -10,6 +10,7 @@ import it.fleetmanager.model.Notifica;
 import it.fleetmanager.model.Prenotazione;
 import it.fleetmanager.model.Utente;
 import it.fleetmanager.model.Veicolo;
+import it.fleetmanager.repository.H2DatabaseManager;
 import it.fleetmanager.repository.NotificaDAO;
 import it.fleetmanager.repository.PrenotazioneDAO;
 import it.fleetmanager.repository.impl.NotificaDAOImpl;
@@ -38,8 +39,8 @@ public class GestorePrenotazioniTest {
 	void setup() throws Exception {
 		DatabaseTestUtils.resetDatabase();
 
-		prenotazioneDAO = new PrenotazioneDAOImpl();
-		notificaDAO = new NotificaDAOImpl();
+		prenotazioneDAO = new PrenotazioneDAOImpl(H2DatabaseManager.getInstance());
+		notificaDAO = new NotificaDAOImpl(H2DatabaseManager.getInstance());
 		sistemaNotifiche = new SistemaNotifiche(notificaDAO);
 
 		gestore = new GestorePrenotazioni(prenotazioneDAO, null, sistemaNotifiche);

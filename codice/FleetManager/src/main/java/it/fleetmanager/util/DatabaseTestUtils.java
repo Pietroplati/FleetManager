@@ -3,7 +3,7 @@ package it.fleetmanager.util;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import it.fleetmanager.repository.DatabaseManager;
+import it.fleetmanager.repository.H2DatabaseManager;
 
 public class DatabaseTestUtils {
 
@@ -13,7 +13,7 @@ public class DatabaseTestUtils {
 	 * Attiva il DB in memoria per i test.
 	 */
 	public static void activateInMemoryDatabase() {
-		DatabaseManager.setTestUrl(TEST_URL);
+		H2DatabaseManager.setTestUrl(TEST_URL);
 	}
 
 	/**
@@ -22,7 +22,7 @@ public class DatabaseTestUtils {
 	public static void createSchema() throws SQLException {
 		activateInMemoryDatabase();
 
-		try (Connection conn = DatabaseManager.getInstance().getConnection(); Statement stmt = conn.createStatement()) {
+		try (Connection conn = H2DatabaseManager.getInstance().getConnection(); Statement stmt = conn.createStatement()) {
 
 			// --- DROP in ordine corretto ---
 			stmt.execute("DROP TABLE IF EXISTS Notifica;");

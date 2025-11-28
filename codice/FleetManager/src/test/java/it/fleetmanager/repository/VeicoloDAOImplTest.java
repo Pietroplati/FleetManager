@@ -20,7 +20,7 @@ public class VeicoloDAOImplTest {
 	@BeforeEach
 	void setup() throws Exception {
 		DatabaseTestUtils.resetDatabase();
-		dao = new VeicoloDAOImpl();
+		dao = new VeicoloDAOImpl(H2DatabaseManager.getInstance());
 	}
 
 	@Test
@@ -83,7 +83,7 @@ public class VeicoloDAOImplTest {
 		dao.save(new Veicolo("OCC1", TipoVeicolo.AUTO, "Audi", "A3", 2020, StatoVeicolo.DISPONIBILE, 20000));
 		dao.save(new Veicolo("LIB2", TipoVeicolo.FURGONE, "Ford", "Transit", 2021, StatoVeicolo.DISPONIBILE, 10000));
 
-		try (Connection conn = DatabaseManager.getInstance().getConnection(); Statement st = conn.createStatement()) {
+		try (Connection conn = H2DatabaseManager.getInstance().getConnection(); Statement st = conn.createStatement()) {
 
 			st.execute("""
 					    INSERT INTO Prenotazione

@@ -18,7 +18,7 @@ public class PrenotazioneDAOImplTest {
 	@BeforeEach
 	void setup() throws Exception {
 		DatabaseTestUtils.resetDatabase();
-		dao = new PrenotazioneDAOImpl();
+		dao = new PrenotazioneDAOImpl(H2DatabaseManager.getInstance());
 	}
 
 	@Test

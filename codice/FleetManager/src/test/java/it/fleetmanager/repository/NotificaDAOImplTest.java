@@ -17,7 +17,7 @@ public class NotificaDAOImplTest {
 	@BeforeEach
 	void setup() throws Exception {
 		DatabaseTestUtils.resetDatabase();
-		dao = new NotificaDAOImpl();
+		dao = new NotificaDAOImpl(H2DatabaseManager.getInstance());
 	}
 
 	@Test

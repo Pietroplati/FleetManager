@@ -12,7 +12,7 @@ public class CreateDB {
     public static void main(String[] args) throws SQLException {
     	
     	try {
-    		Connection conn = DatabaseManager.getInstance().getConnection();
+    		Connection conn = H2DatabaseManager.getInstance().getConnection();
 
             DatabaseMetaData meta = conn.getMetaData();
             System.out.println("Driver: " + meta.getDriverName());

@@ -17,7 +17,7 @@ public class ManutenzioneDAOImplTest {
 	@BeforeEach
 	void setup() throws Exception {
 		DatabaseTestUtils.resetDatabase();
-		dao = new ManutenzioneDAOImpl();
+		dao = new ManutenzioneDAOImpl(H2DatabaseManager.getInstance());
 	}
 
 	@Test

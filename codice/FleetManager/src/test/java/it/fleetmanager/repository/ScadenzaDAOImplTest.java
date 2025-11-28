@@ -17,7 +17,7 @@ public class ScadenzaDAOImplTest {
 	@BeforeEach
 	void setup() throws Exception {
 		DatabaseTestUtils.resetDatabase();
-		dao = new ScadenzaDAOImpl();
+		dao = new ScadenzaDAOImpl(H2DatabaseManager.getInstance());
 	}
 
 	@Test
