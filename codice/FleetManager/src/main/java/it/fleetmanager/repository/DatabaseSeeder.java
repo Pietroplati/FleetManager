@@ -1,5 +1,5 @@
 package it.fleetmanager.repository;
-
+/*
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -12,7 +12,7 @@ import java.sql.PreparedStatement;
  * Classe per popolare il database H2 con i dati iniziali presenti nel file
  * JSON. Il database è salvato nel percorso ./data/fleetdb.mv.db e il file JSON
  * è in src/main/resources/data/fleet_data.json
- */
+ *
 public class DatabaseSeeder {
 
 	// Percorso del database (cartella "data" visibile nel progetto)
@@ -161,3 +161,4 @@ public class DatabaseSeeder {
 		}
 	}
 }
+*/

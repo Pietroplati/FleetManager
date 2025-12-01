@@ -2320,4 +2320,32 @@
       <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_qCfPUb4UEfCDAPpuTtXI2g" id="(0.999275887038378,0.5167958656330749)"/>
     </edges>
   </notation:Diagram>
+  <notation:Diagram xmi:id="_pJiycMt4EfCN-aTBbLZA_w" type="PapyrusUMLStateMachineDiagram" name="SM_FleetManager" measurementUnit="Pixel">
+    <children xmi:type="notation:Shape" xmi:id="_pJiycct4EfCN-aTBbLZA_w" type="StateMachine_Shape">
+      <children xmi:type="notation:DecorationNode" xmi:id="_pJiycst4EfCN-aTBbLZA_w" type="StateMachine_NameLabel">
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_pJiyc8t4EfCN-aTBbLZA_w" width="700" height="16"/>
+      </children>
+      <children xmi:type="notation:BasicCompartment" xmi:id="_pJiydMt4EfCN-aTBbLZA_w" type="StateMachine_RegionCompartment">
+        <children xmi:type="notation:Shape" xmi:id="_pJiydct4EfCN-aTBbLZA_w" type="Region_Shape">
+          <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_pJiydst4EfCN-aTBbLZA_w" source="RegionAnnotationKey">
+            <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_pJiyd8t4EfCN-aTBbLZA_w" key="RegionZoneKey" value=""/>
+          </eAnnotations>
+          <children xmi:type="notation:BasicCompartment" xmi:id="_pJiyeMt4EfCN-aTBbLZA_w" type="Region_SubvertexCompartment">
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_pJiyect4EfCN-aTBbLZA_w"/>
+          </children>
+          <element xmi:type="uml:Region" href="FleetManager.uml#_pJg9QMt4EfCN-aTBbLZA_w"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_pJiyest4EfCN-aTBbLZA_w" width="700" height="280"/>
+        </children>
+        <layoutConstraint xmi:type="notation:Bounds" xmi:id="_pJiye8t4EfCN-aTBbLZA_w" y="16" width="700" height="284"/>
+      </children>
+      <element xmi:type="uml:StateMachine" href="FleetManager.uml#_nPzCkMt4EfCN-aTBbLZA_w"/>
+      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_pJiyfMt4EfCN-aTBbLZA_w" x="30" y="30" width="700" height="300"/>
+    </children>
+    <styles xmi:type="notation:StringValueStyle" xmi:id="_pJiyfct4EfCN-aTBbLZA_w" name="diagram_compatibility_version" stringValue="1.4.0"/>
+    <styles xmi:type="notation:DiagramStyle" xmi:id="_pJiyfst4EfCN-aTBbLZA_w"/>
+    <styles xmi:type="style:PapyrusDiagramStyle" xmi:id="_pJiyf8t4EfCN-aTBbLZA_w" diagramKindId="org.eclipse.papyrus.uml.diagram.stateMachine">
+      <owner xmi:type="uml:Package" href="FleetManager.uml#_rXbZkKk6EfCy7Z6zNtdvTA"/>
+    </styles>
+    <element xmi:type="uml:StateMachine" href="FleetManager.uml#_nPzCkMt4EfCN-aTBbLZA_w"/>
+  </notation:Diagram>
 </xmi:XMI>

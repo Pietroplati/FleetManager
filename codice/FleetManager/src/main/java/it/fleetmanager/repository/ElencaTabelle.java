@@ -1,4 +1,4 @@
-package it.fleetmanager.repository;
+/*package it.fleetmanager.repository;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -81,3 +81,6 @@ public class ElencaTabelle {
 		System.out.println("────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────");
 	}
 }
+
+
+*/

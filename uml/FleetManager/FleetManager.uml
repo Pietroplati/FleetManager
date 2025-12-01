@@ -964,5 +964,8 @@
         </ownedOperation>
       </packagedElement>
     </packagedElement>
+    <packagedElement xmi:type="uml:StateMachine" xmi:id="_nPzCkMt4EfCN-aTBbLZA_w" name="StateMachine30">
+      <region xmi:type="uml:Region" xmi:id="_pJg9QMt4EfCN-aTBbLZA_w" name="Region1"/>
+    </packagedElement>
   </packagedElement>
 </uml:Model>
