@@ -10,18 +10,19 @@ import org.junit.jupiter.api.Test;
 
 import it.fleetmanager.model.Manutenzione;
 import it.fleetmanager.model.Veicolo;
-import it.fleetmanager.repository.H2DatabaseManager;
-import it.fleetmanager.repository.ManutenzioneDAO;
-import it.fleetmanager.repository.VeicoloDAO;
+import it.fleetmanager.repository.dao.ManutenzioneDAO;
+import it.fleetmanager.repository.dao.VeicoloDAO;
 import it.fleetmanager.repository.impl.ManutenzioneDAOImpl;
 import it.fleetmanager.repository.impl.VeicoloDAOImpl;
+import it.fleetmanager.repository.util.H2DatabaseManager;
+import it.fleetmanager.service.impl.GestoreManutenzioniImpl;
 import it.fleetmanager.util.DatabaseTestUtils;
 import it.fleetmanager.util.StatoVeicolo;
 import it.fleetmanager.util.TipoManutenzione;
 
 public class GestoreManutenzioniTest {
 
-	private GestoreManutenzioni gestore;
+	private GestoreManutenzioniImpl gestore;
 	private ManutenzioneDAO manutenzioneDAO;
 	private VeicoloDAO veicoloDAO;
 	private Veicolo veicolo;
@@ -33,7 +34,7 @@ public class GestoreManutenzioniTest {
 		manutenzioneDAO = new ManutenzioneDAOImpl(H2DatabaseManager.getInstance());
 		veicoloDAO = new VeicoloDAOImpl(H2DatabaseManager.getInstance());
 
-		gestore = new GestoreManutenzioni(manutenzioneDAO, veicoloDAO);
+		gestore = new GestoreManutenzioniImpl(manutenzioneDAO, veicoloDAO);
 
 		// Veicolo di test presente nel DatabaseTestUtils
 		veicolo = veicoloDAO.getVeicoloByTarga("T1");

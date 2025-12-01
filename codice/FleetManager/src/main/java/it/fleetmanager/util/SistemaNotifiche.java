@@ -4,9 +4,9 @@ import java.time.LocalDateTime;
 
 import it.fleetmanager.model.Notifica;
 import it.fleetmanager.model.Utente;
+import it.fleetmanager.repository.dao.NotificaDAO;
 import it.fleetmanager.model.Prenotazione;
 import it.fleetmanager.model.Scadenza;
-import it.fleetmanager.repository.NotificaDAO;
 
 public class SistemaNotifiche {
 

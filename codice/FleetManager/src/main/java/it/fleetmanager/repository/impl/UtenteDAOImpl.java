@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.fleetmanager.model.Utente;
-import it.fleetmanager.repository.DatabaseManager;
-import it.fleetmanager.repository.UtenteDAO;
+import it.fleetmanager.repository.dao.UtenteDAO;
+import it.fleetmanager.repository.util.DatabaseManager;
 import it.fleetmanager.util.RuoloUtente;
 
 public class UtenteDAOImpl implements UtenteDAO {

@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.fleetmanager.model.Veicolo;
-import it.fleetmanager.repository.DatabaseManager;
-import it.fleetmanager.repository.VeicoloDAO;
+import it.fleetmanager.repository.dao.VeicoloDAO;
+import it.fleetmanager.repository.util.DatabaseManager;
 import it.fleetmanager.util.StatoVeicolo;
 import it.fleetmanager.util.TipoVeicolo;
 

@@ -1,4 +1,4 @@
-package it.fleetmanager.repository;
+package it.fleetmanager.repository.dao;
 
 import it.fleetmanager.model.Notifica;
 import java.util.List;

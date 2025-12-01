@@ -10,8 +10,8 @@ import java.util.Collections;
 import java.util.List;
 
 import it.fleetmanager.model.Notifica;
-import it.fleetmanager.repository.DatabaseManager;
-import it.fleetmanager.repository.NotificaDAO;
+import it.fleetmanager.repository.dao.NotificaDAO;
+import it.fleetmanager.repository.util.DatabaseManager;
 import it.fleetmanager.util.TipoNotifica;
 
 public class NotificaDAOImpl implements NotificaDAO {

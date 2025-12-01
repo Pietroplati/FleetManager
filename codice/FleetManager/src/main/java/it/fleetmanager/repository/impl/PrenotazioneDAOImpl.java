@@ -10,8 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.fleetmanager.model.Prenotazione;
-import it.fleetmanager.repository.DatabaseManager;
-import it.fleetmanager.repository.PrenotazioneDAO;
+import it.fleetmanager.repository.dao.PrenotazioneDAO;
+import it.fleetmanager.repository.util.DatabaseManager;
 import it.fleetmanager.util.StatoPrenotazione;
 import it.fleetmanager.util.TipoPrenotazione;
 

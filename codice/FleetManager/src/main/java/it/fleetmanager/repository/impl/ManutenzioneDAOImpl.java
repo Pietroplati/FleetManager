@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.fleetmanager.model.Manutenzione;
-import it.fleetmanager.repository.DatabaseManager;
-import it.fleetmanager.repository.ManutenzioneDAO;
+import it.fleetmanager.repository.dao.ManutenzioneDAO;
+import it.fleetmanager.repository.util.DatabaseManager;
 import it.fleetmanager.util.TipoManutenzione;
 
 public class ManutenzioneDAOImpl implements ManutenzioneDAO {

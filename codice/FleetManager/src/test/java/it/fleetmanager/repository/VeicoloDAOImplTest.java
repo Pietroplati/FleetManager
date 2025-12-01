@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import it.fleetmanager.model.Veicolo;
 import it.fleetmanager.repository.impl.VeicoloDAOImpl;
+import it.fleetmanager.repository.util.H2DatabaseManager;
 import it.fleetmanager.util.DatabaseTestUtils;
 import it.fleetmanager.util.StatoVeicolo;
 import it.fleetmanager.util.TipoVeicolo;

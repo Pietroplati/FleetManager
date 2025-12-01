@@ -1,4 +1,4 @@
-package it.fleetmanager.service;
+package it.fleetmanager.service.impl;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -6,28 +6,26 @@ import java.util.List;
 import it.fleetmanager.model.Scadenza;
 import it.fleetmanager.model.Utente;
 import it.fleetmanager.model.Veicolo;
-import it.fleetmanager.repository.ScadenzaDAO;
-import it.fleetmanager.repository.VeicoloDAO;
+import it.fleetmanager.repository.dao.ScadenzaDAO;
+import it.fleetmanager.repository.dao.VeicoloDAO;
 import it.fleetmanager.repository.impl.ScadenzaDAOImpl;
+import it.fleetmanager.service.interfaces.GestoreScadenze;
 import it.fleetmanager.util.SistemaNotifiche;
 import it.fleetmanager.util.StatoVeicolo;
 
-public class GestoreScadenze {
+public class GestoreScadenzeImpl implements GestoreScadenze {
 
 	private final ScadenzaDAO scadenzaDAO;
 	private final VeicoloDAO veicoloDAO;
 	private final SistemaNotifiche sistemaNotifiche;
 
-	public GestoreScadenze(ScadenzaDAO scadenzaDAO, VeicoloDAO veicoloDAO, SistemaNotifiche sistemaNotifiche) {
+	public GestoreScadenzeImpl(ScadenzaDAO scadenzaDAO, VeicoloDAO veicoloDAO, SistemaNotifiche sistemaNotifiche) {
 		this.scadenzaDAO = scadenzaDAO;
 		this.veicoloDAO = veicoloDAO;
 		this.sistemaNotifiche = sistemaNotifiche;
 	}
 
-	/**
-	 * Restituisce la prima scadenza non ancora notificata che cade entro la data
-	 * indicata. Ritorna SCADENZA_INESISTENTE se non ci sono scadenze.
-	 */
+	@Override
 	public Scadenza controllaScadenzeEntro(LocalDate dataLimite) {
 
 		if (dataLimite == null) {
@@ -36,18 +34,14 @@ public class GestoreScadenze {
 
 		List<Scadenza> scadenze = scadenzaDAO.findProssimeScadenze(dataLimite);
 
-		// Nessuna scadenza trovata
 		if (scadenze.isEmpty()) {
 			return ScadenzaDAOImpl.SCADENZA_INESISTENTE;
 		}
 
-		// Restituisco semplicemente la prima scadenza (sono ordinate per data)
 		return scadenze.get(0);
 	}
 
-	/**
-	 * Imposta notificata = true per una scadenza.
-	 */
+	@Override
 	public void marcaComeNotificata(Integer idScadenza) {
 
 		if (idScadenza == null || idScadenza <= 0) {
@@ -64,9 +58,7 @@ public class GestoreScadenze {
 		scadenzaDAO.update(s);
 	}
 
-	/**
-	 * Se esiste una scadenza scaduta (data < oggi) blocca il veicolo.
-	 */
+	@Override
 	public void bloccaVeicoloSeScaduta(Veicolo veicolo) {
 
 		if (veicolo == null) {
@@ -93,10 +85,7 @@ public class GestoreScadenze {
 		}
 	}
 
-	/**
-	 * Controllo periodico generale: - trova scadenze entro 7 giorni - invia
-	 * notifiche - blocca veicoli con scadenze passate
-	 */
+	@Override
 	public void eseguiControlloPeriodico() {
 
 		LocalDate limite = LocalDate.now().plusDays(7);
@@ -105,7 +94,6 @@ public class GestoreScadenze {
 
 		for (Scadenza s : scadenze) {
 
-			// notifiche SOLO se non è già notificata
 			if (!s.getNotificata()) {
 
 				Utente manager = new Utente(1, "Manager", "System", "", "", null);
@@ -116,7 +104,6 @@ public class GestoreScadenze {
 				scadenzaDAO.update(s);
 			}
 
-			// blocco veicolo se necessario
 			Veicolo v = veicoloDAO.getVeicoloByTarga(s.getTarga());
 			if (v != null && v.getStatoVeicolo() != StatoVeicolo.NON_DISPONIBILE) {
 				bloccaVeicoloSeScaduta(v);

@@ -1,4 +1,4 @@
-package it.fleetmanager.repository;
+package it.fleetmanager.repository.util;
 
 import java.io.File;
 import java.sql.Connection;

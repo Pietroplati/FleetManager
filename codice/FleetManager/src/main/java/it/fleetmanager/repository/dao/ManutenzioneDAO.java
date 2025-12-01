@@ -1,4 +1,4 @@
-package it.fleetmanager.repository;
+package it.fleetmanager.repository.dao;
 
 import java.util.List;
 import it.fleetmanager.model.Manutenzione;

@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import it.fleetmanager.model.Manutenzione;
 import it.fleetmanager.repository.impl.ManutenzioneDAOImpl;
+import it.fleetmanager.repository.util.H2DatabaseManager;
 import it.fleetmanager.util.DatabaseTestUtils;
 import it.fleetmanager.util.TipoManutenzione;
 

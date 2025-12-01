@@ -1,19 +1,22 @@
-package it.fleetmanager.service;
+package it.fleetmanager.service.impl;
 
 import java.util.List;
 import java.util.Objects;
-import it.fleetmanager.model.Utente;
-import it.fleetmanager.repository.UtenteDAO;
-import it.fleetmanager.repository.impl.UtenteDAOImpl;
 
-public class GestoreLogin {
+import it.fleetmanager.model.Utente;
+import it.fleetmanager.repository.dao.UtenteDAO;
+import it.fleetmanager.repository.impl.UtenteDAOImpl;
+import it.fleetmanager.service.interfaces.GestoreLogin;
+
+public class GestoreLoginImpl implements GestoreLogin {
 
 	private final UtenteDAO utenteDAO;
 
-	public GestoreLogin(UtenteDAO utenteDAO) {
+	public GestoreLoginImpl(UtenteDAO utenteDAO) {
 		this.utenteDAO = utenteDAO;
 	}
 
+	@Override
 	public Utente login(String email, String password) {
 
 		if (email == null || password == null || email.isBlank() || password.isBlank()) {
@@ -33,6 +36,7 @@ public class GestoreLogin {
 		return utente;
 	}
 
+	@Override
 	public boolean createUtente(Utente nuovoUtente) {
 
 		if (nuovoUtente == null || nuovoUtente.getEmail() == null || nuovoUtente.getEmail().isBlank()) {
@@ -47,9 +51,11 @@ public class GestoreLogin {
 		return true;
 	}
 
+	@Override
 	public void logout(Utente utente) {
 	}
 
+	@Override
 	public boolean aggiornaProfilo(Utente utenteAggiornato) {
 
 		if (utenteAggiornato == null || utenteAggiornato.getIdUtente() <= 0) {
@@ -65,6 +71,7 @@ public class GestoreLogin {
 		return true;
 	}
 
+	@Override
 	public boolean eliminaUtente(int idUtente) {
 
 		if (idUtente <= 0) {
@@ -80,6 +87,7 @@ public class GestoreLogin {
 		return true;
 	}
 
+	@Override
 	public Utente getUtenteByEmail(String email) {
 
 		if (email == null || email.isBlank()) {
@@ -94,6 +102,7 @@ public class GestoreLogin {
 		return u;
 	}
 
+	@Override
 	public List<Utente> getTuttiUtenti() {
 		return utenteDAO.getTuttiUtenti();
 	}

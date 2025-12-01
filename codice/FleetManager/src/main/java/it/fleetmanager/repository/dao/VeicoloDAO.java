@@ -1,4 +1,4 @@
-package it.fleetmanager.repository;
+package it.fleetmanager.repository.dao;
 
 import java.time.LocalDateTime;
 import java.util.List;

@@ -1,25 +1,27 @@
-package it.fleetmanager.service;
+package it.fleetmanager.service.impl;
 
 import java.time.LocalDate;
 import java.util.List;
 
 import it.fleetmanager.model.Manutenzione;
 import it.fleetmanager.model.Veicolo;
-import it.fleetmanager.repository.ManutenzioneDAO;
-import it.fleetmanager.repository.VeicoloDAO;
-import it.fleetmanager.util.TipoManutenzione;
+import it.fleetmanager.repository.dao.ManutenzioneDAO;
+import it.fleetmanager.repository.dao.VeicoloDAO;
+import it.fleetmanager.service.interfaces.GestoreManutenzioni;
 import it.fleetmanager.util.StatoVeicolo;
+import it.fleetmanager.util.TipoManutenzione;
 
-public class GestoreManutenzioni {
+public class GestoreManutenzioniImpl implements GestoreManutenzioni {
 
 	private ManutenzioneDAO manutenzioneDAO;
 	private VeicoloDAO veicoloDAO;
 
-	public GestoreManutenzioni(ManutenzioneDAO manutenzioneDAO, VeicoloDAO veicoloDAO) {
+	public GestoreManutenzioniImpl(ManutenzioneDAO manutenzioneDAO, VeicoloDAO veicoloDAO) {
 		this.manutenzioneDAO = manutenzioneDAO;
 		this.veicoloDAO = veicoloDAO;
 	}
 
+	@Override
 	public Manutenzione programmareManutenzione(Veicolo veicolo, LocalDate data, TipoManutenzione tipo,
 			String descrizione) {
 
@@ -51,6 +53,7 @@ public class GestoreManutenzioni {
 		return m;
 	}
 
+	@Override
 	public Manutenzione segnalareInterventoStraordinario(Veicolo veicolo, String descrizione) {
 
 		if (veicolo == null)
@@ -69,6 +72,7 @@ public class GestoreManutenzioni {
 		return m;
 	}
 
+	@Override
 	public void chiudiManutenzione(int idManutenzione) {
 
 		Manutenzione m = manutenzioneDAO.getManutenzioneById(idManutenzione);
@@ -87,6 +91,7 @@ public class GestoreManutenzioni {
 		manutenzioneDAO.update(m);
 	}
 
+	@Override
 	public List<Manutenzione> getManutenzioniVeicolo(Veicolo veicolo) {
 
 		if (veicolo == null)

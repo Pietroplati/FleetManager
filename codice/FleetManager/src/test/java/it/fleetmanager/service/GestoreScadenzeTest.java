@@ -11,12 +11,13 @@ import org.junit.jupiter.api.Test;
 import it.fleetmanager.model.Notifica;
 import it.fleetmanager.model.Scadenza;
 import it.fleetmanager.model.Veicolo;
-import it.fleetmanager.repository.H2DatabaseManager;
-import it.fleetmanager.repository.NotificaDAO;
-import it.fleetmanager.repository.ScadenzaDAO;
-import it.fleetmanager.repository.VeicoloDAO;
+import it.fleetmanager.repository.dao.NotificaDAO;
+import it.fleetmanager.repository.dao.ScadenzaDAO;
+import it.fleetmanager.repository.dao.VeicoloDAO;
 import it.fleetmanager.repository.impl.NotificaDAOImpl;
 import it.fleetmanager.repository.impl.ScadenzaDAOImpl;
+import it.fleetmanager.repository.util.H2DatabaseManager;
+import it.fleetmanager.service.impl.GestoreScadenzeImpl;
 import it.fleetmanager.util.DatabaseTestUtils;
 import it.fleetmanager.util.SistemaNotifiche;
 import it.fleetmanager.util.StatoVeicolo;
@@ -28,7 +29,7 @@ public class GestoreScadenzeTest {
 	private ScadenzaDAO scadenzaDAO;
 	private NotificaDAO notificaDAO;
 	private SistemaNotifiche sistemaNotifiche;
-	private GestoreScadenze gestore;
+	private GestoreScadenzeImpl gestore;
 
 	private VeicoloDAO veicoloDAO;
 	private Veicolo veicolo;
@@ -36,15 +37,12 @@ public class GestoreScadenzeTest {
 	@BeforeEach
 	void setup() throws Exception {
 
-		// DB in-memory identico a quello reale
 		DatabaseTestUtils.resetDatabase();
 
-		// DAO reali
 		scadenzaDAO = new ScadenzaDAOImpl(H2DatabaseManager.getInstance());
 		notificaDAO = new NotificaDAOImpl(H2DatabaseManager.getInstance());
 		sistemaNotifiche = new SistemaNotifiche(notificaDAO);
 
-		// VeicoloDAO fake usato solo in RAM per aggiornare stato veicolo
 		veicoloDAO = new VeicoloDAO() {
 
 			Veicolo internal;
@@ -79,10 +77,8 @@ public class GestoreScadenzeTest {
 			}
 		};
 
-		gestore = new GestoreScadenze(scadenzaDAO, veicoloDAO, sistemaNotifiche);
+		gestore = new GestoreScadenzeImpl(scadenzaDAO, veicoloDAO, sistemaNotifiche);
 
-		// Veicolo già presente anche nel DB reale, ma usiamo quello in memoria per i
-		// test
 		veicolo = new Veicolo("AB123CD", TipoVeicolo.AUTO, "Fiat", "Panda", 2018, StatoVeicolo.DISPONIBILE, 10000);
 
 		veicoloDAO.save(veicolo);

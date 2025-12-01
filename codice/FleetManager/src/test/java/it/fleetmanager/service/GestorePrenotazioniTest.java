@@ -10,11 +10,12 @@ import it.fleetmanager.model.Notifica;
 import it.fleetmanager.model.Prenotazione;
 import it.fleetmanager.model.Utente;
 import it.fleetmanager.model.Veicolo;
-import it.fleetmanager.repository.H2DatabaseManager;
-import it.fleetmanager.repository.NotificaDAO;
-import it.fleetmanager.repository.PrenotazioneDAO;
+import it.fleetmanager.repository.dao.NotificaDAO;
+import it.fleetmanager.repository.dao.PrenotazioneDAO;
 import it.fleetmanager.repository.impl.NotificaDAOImpl;
 import it.fleetmanager.repository.impl.PrenotazioneDAOImpl;
+import it.fleetmanager.repository.util.H2DatabaseManager;
+import it.fleetmanager.service.impl.GestorePrenotazioniImpl;
 import it.fleetmanager.util.DatabaseTestUtils;
 import it.fleetmanager.util.RuoloUtente;
 import it.fleetmanager.util.SistemaNotifiche;
@@ -29,7 +30,7 @@ public class GestorePrenotazioniTest {
 	private PrenotazioneDAO prenotazioneDAO;
 	private NotificaDAO notificaDAO;
 	private SistemaNotifiche sistemaNotifiche;
-	private GestorePrenotazioni gestore;
+	private GestorePrenotazioniImpl gestore;
 
 	private Utente driver;
 	private Utente manager;
@@ -43,7 +44,7 @@ public class GestorePrenotazioniTest {
 		notificaDAO = new NotificaDAOImpl(H2DatabaseManager.getInstance());
 		sistemaNotifiche = new SistemaNotifiche(notificaDAO);
 
-		gestore = new GestorePrenotazioni(prenotazioneDAO, null, sistemaNotifiche);
+		gestore = new GestorePrenotazioniImpl(prenotazioneDAO, null, sistemaNotifiche);
 
 		driver = new Utente(2, "Luca", "Verdi", "driver@example.com", "pwd", RuoloUtente.DRIVER, "B");
 		manager = new Utente(1, "Mario", "Rossi", "manager@example.com", "pwd", RuoloUtente.MANAGER);
