@@ -19,4 +19,6 @@ public interface ManutenzioneDAO {
 	List<Manutenzione> findByTipo(TipoManutenzione tipoManutenzione);
 
 	int getMaxId();
+	
+	List<Manutenzione> getTutteManutenzioni();
 }

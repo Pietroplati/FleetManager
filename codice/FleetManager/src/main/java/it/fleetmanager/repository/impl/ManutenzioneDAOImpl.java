@@ -198,4 +198,31 @@ public class ManutenzioneDAOImpl implements ManutenzioneDAO {
 
 		return 0;
 	}
+	
+	@Override
+	public List<Manutenzione> getTutteManutenzioni() {
+
+		String sql = """
+				SELECT * FROM Manutenzione
+				ORDER BY data ASC
+				""";
+
+		List<Manutenzione> list = new ArrayList<>();
+
+		try (Connection conn = db.getConnection();
+				PreparedStatement ps = conn.prepareStatement(sql);
+				ResultSet rs = ps.executeQuery()) {
+
+			while (rs.next()) {
+				list.add(map(rs));
+			}
+
+		} catch (Exception e) {
+			System.err.println("ERRORE SQL durante getTutteManutenzioni(): " + e.getMessage());
+		}
+
+		return list;
+	}
+
+	
 }

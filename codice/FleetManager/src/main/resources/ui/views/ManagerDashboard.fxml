@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.geometry.Pos?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.effect.DropShadow?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+	xmlns:fx="http://javafx.com/fxml"
+	fx:controller="it.fleetmanager.ui.ManagerDashboardController"
+	prefWidth="1280" prefHeight="720"
+	style="-fx-background-color: #e9f0f7;">
+
+	<center>
+		<VBox alignment="CENTER" spacing="40">
+
+			<!-- HEADER -->
+			<VBox alignment="CENTER" spacing="10">
+				<Circle radius="45" fill="#8fb3d6">
+					<effect>
+						<DropShadow radius="20" color="rgba(0,0,0,0.20)" />
+					</effect>
+				</Circle>
+
+				<Label text="Dashboard Manager"
+					style="-fx-font-size: 30; -fx-font-weight: bold; -fx-text-fill:#2f4773;" />
+
+				<Label text="Pannello di controllo della flotta"
+					style="-fx-font-size: 15; -fx-text-fill:#4a76a8;" />
+			</VBox>
+
+			<!-- WIDGET CONTAINER -->
+			<HBox alignment="CENTER" spacing="25">
+
+				<!-- ===== WIDGET 1 – VEICOLI ===== -->
+				<VBox alignment="CENTER" spacing="8" prefWidth="220"
+					prefHeight="130"
+					style="
+                        -fx-background-color: white;
+                        -fx-background-radius: 15;
+                        -fx-padding: 20;
+                        -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 15, 0.2, 0, 4);
+                      ">
+
+					<Label text="Veicoli totali"
+						style="-fx-font-size: 15; -fx-text-fill:#2f4773;" />
+
+					<Label fx:id="lblTotVeicoli" text="0"
+						style="-fx-font-size: 34; -fx-font-weight: bold; -fx-text-fill:#2f4773;" />
+
+				</VBox>
+
+				<!-- ===== WIDGET 2 – PRENOTAZIONI ===== -->
+				<VBox alignment="CENTER" spacing="8" prefWidth="220"
+					prefHeight="130"
+					style="
+                        -fx-background-color: white;
+                        -fx-background-radius: 15;
+                        -fx-padding: 20;
+                        -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 15, 0.2, 0, 4);
+                      ">
+
+					<Label text="Prenotazioni attive"
+						style="-fx-font-size: 15; -fx-text-fill:#2f4773;" />
+
+					<Label fx:id="lblPrenotazioniAttive" text="0"
+						style="-fx-font-size: 34; -fx-font-weight: bold; -fx-text-fill:#2f4773;" />
+
+				</VBox>
+
+				<!-- ===== WIDGET 3 – MANUTENZIONI ===== -->
+				<VBox alignment="CENTER" spacing="8" prefWidth="220"
+					prefHeight="130"
+					style="
+                        -fx-background-color: white;
+                        -fx-background-radius: 15;
+                        -fx-padding: 20;
+                        -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 15, 0.2, 0, 4);
+                      ">
+
+					<Label text="Manutenzioni aperte"
+						style="-fx-font-size: 15; -fx-text-fill:#2f4773;" />
+
+					<Label fx:id="lblManutenzioni" text="0"
+						style="-fx-font-size: 34; -fx-font-weight: bold; -fx-text-fill:#2f4773;" />
+
+				</VBox>
+
+			</HBox>
+
+			<!-- BUTTONS -->
+			<HBox alignment="CENTER" spacing="20">
+
+				<Button text="Gestisci Veicoli" onAction="#onGestisciVeicoli"
+					prefWidth="200"
+					style="
+                            -fx-background-radius: 10;
+                            -fx-font-size: 16;
+                            -fx-font-weight: bold;
+                            -fx-text-fill: white;
+                            -fx-padding: 10 20;
+                            -fx-background-color: linear-gradient(to right,
+                                #4a76a8, #2f4773);
+                        " />
+
+				<Button text="Gestisci Prenotazioni"
+					onAction="#onGestisciPrenotazioni" prefWidth="200"
+					style="
+                            -fx-background-radius: 10;
+                            -fx-font-size: 16;
+                            -fx-font-weight: bold;
+                            -fx-text-fill: white;
+                            -fx-padding: 10 20;
+                            -fx-background-color: linear-gradient(to right,
+                                #5e8bbf, #466c9c);
+                        " />
+
+				<Button text="Gestisci Manutenzioni"
+					onAction="#onGestisciManutenzioni" prefWidth="200"
+					style="
+                            -fx-background-radius: 10;
+                            -fx-font-size: 16;
+                            -fx-font-weight: bold;
+                            -fx-text-fill: white;
+                            -fx-padding: 10 20;
+                            -fx-background-color: linear-gradient(to right,
+                                #8fb3d6, #6b8eb9);
+                        " />
+
+				<Button text="Logout" onAction="#onLogout" prefWidth="200"
+					style="
+                            -fx-background-radius: 10;
+                            -fx-font-size: 16;
+                            -fx-font-weight: bold;
+                            -fx-text-fill: white;
+                            -fx-padding: 10 20;
+                            -fx-background-color: linear-gradient(to right,
+                                #b2c7db, #92aac4);
+                        " />
+
+			</HBox>
+
+		</VBox>
+	</center>
+
+</BorderPane>

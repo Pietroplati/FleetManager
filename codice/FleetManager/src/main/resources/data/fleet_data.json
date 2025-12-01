@@ -24,7 +24,16 @@
 			"cognome": "Foresti",
 			"email": "paolo.foresti@legno.com",
 			"password": "xyz",
-			"ruoloUtente": "DRIVER",
+			"ruoloUtente": "MANAGER",
+			"patente": null
+		},
+		{
+			"idUtente": 4,
+			"nome": "Francesco",
+			"cognome": "Basis",
+			"email": "a",
+			"password": "a",
+			"ruoloUtente": "MANAGER",
 			"patente": null
 		}
 	],
