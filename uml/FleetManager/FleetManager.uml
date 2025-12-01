@@ -725,6 +725,7 @@
           </ownedParameter>
         </ownedOperation>
       </packagedElement>
+      <packagedElement xmi:type="uml:CallEvent" xmi:id="_hCXtkM7GEfCTIb301IfNBA" name="CallEvent1"/>
     </packagedElement>
     <packagedElement xmi:type="uml:Package" xmi:id="_OIP0gLpPEfCZ9qt19jY5LA" name="repository">
       <packagedElement xmi:type="uml:Class" xmi:id="_XMVrMLpPEfCZ9qt19jY5LA" name="UtenteDAO">
@@ -964,8 +965,36 @@
         </ownedOperation>
       </packagedElement>
     </packagedElement>
-    <packagedElement xmi:type="uml:StateMachine" xmi:id="_nPzCkMt4EfCN-aTBbLZA_w" name="StateMachine30">
-      <region xmi:type="uml:Region" xmi:id="_pJg9QMt4EfCN-aTBbLZA_w" name="Region1"/>
+    <packagedElement xmi:type="uml:StateMachine" xmi:id="_nPzCkMt4EfCN-aTBbLZA_w" name="FleetManager">
+      <region xmi:type="uml:Region" xmi:id="_pJg9QMt4EfCN-aTBbLZA_w" name="Region1">
+        <ownedComment xmi:type="uml:Comment" xmi:id="_zhvhAM7IEfCTIb301IfNBA"/>
+      </region>
+    </packagedElement>
+    <packagedElement xmi:type="uml:StateMachine" xmi:id="_C40GwM7LEfCTIb301IfNBA" name="Prenotazione">
+      <region xmi:type="uml:Region" xmi:id="_ENtdIM7LEfCTIb301IfNBA" name="Region1">
+        <transition xmi:type="uml:Transition" xmi:id="_OwI6EM7LEfCTIb301IfNBA" name="creaPrenotazione() [patente!=null &amp;&amp; veicolo disponibile] / save() notifica()" source="_J5qTUM7LEfCTIb301IfNBA" target="_IT0W4M7LEfCTIb301IfNBA"/>
+        <transition xmi:type="uml:Transition" xmi:id="_jVZG0M7LEfCTIb301IfNBA" name="confermaPrenotazione() [ruolo == MANAGER] / update(), notifica()" source="_IT0W4M7LEfCTIb301IfNBA" target="_cM_gwM7LEfCTIb301IfNBA"/>
+        <transition xmi:type="uml:Transition" xmi:id="__JNzEM7LEfCTIb301IfNBA" name="annullaPrenotazione() / update(), notifica()" source="_IT0W4M7LEfCTIb301IfNBA" target="_6v8FsM7LEfCTIb301IfNBA"/>
+        <transition xmi:type="uml:Transition" xmi:id="_beqlsM7MEfCTIb301IfNBA" name="annullaPrenotazione() / update(), notifica()" source="_cM_gwM7LEfCTIb301IfNBA" target="_6v8FsM7LEfCTIb301IfNBA"/>
+        <transition xmi:type="uml:Transition" xmi:id="_fgY5QM7NEfCTIb301IfNBA" name="attivaPrenotazione() [now >= dataInizio] / update(), notifica()" source="_cM_gwM7LEfCTIb301IfNBA" target="_ahEfkM7NEfCTIb301IfNBA"/>
+        <transition xmi:type="uml:Transition" xmi:id="_yJm3IM7NEfCTIb301IfNBA" name="completaPrenotazione() [now >= dataFine] / update(), notifica()" source="_ahEfkM7NEfCTIb301IfNBA" target="_t5pd0M7NEfCTIb301IfNBA"/>
+        <transition xmi:type="uml:Transition" xmi:id="_JSbM0M7OEfCTIb301IfNBA" name="annullaPrenotazione() [dataFine > now] / update(), notifica()" source="_ahEfkM7NEfCTIb301IfNBA" target="_6v8FsM7LEfCTIb301IfNBA"/>
+        <transition xmi:type="uml:Transition" xmi:id="_Y_woYM7OEfCTIb301IfNBA" source="_t5pd0M7NEfCTIb301IfNBA" target="_WvkHYM7OEfCTIb301IfNBA"/>
+        <transition xmi:type="uml:Transition" xmi:id="_ecQGQM7OEfCTIb301IfNBA" source="_6v8FsM7LEfCTIb301IfNBA" target="_WvkHYM7OEfCTIb301IfNBA"/>
+        <subvertex xmi:type="uml:State" xmi:id="_IT0W4M7LEfCTIb301IfNBA" name="RICHIESTA"/>
+        <subvertex xmi:type="uml:Pseudostate" xmi:id="_J5qTUM7LEfCTIb301IfNBA" name="Initial"/>
+        <subvertex xmi:type="uml:State" xmi:id="_cM_gwM7LEfCTIb301IfNBA" name="CONFERMATA"/>
+        <subvertex xmi:type="uml:State" xmi:id="_6v8FsM7LEfCTIb301IfNBA" name="ANNULLATA"/>
+        <subvertex xmi:type="uml:State" xmi:id="_ahEfkM7NEfCTIb301IfNBA" name="ATTIVA"/>
+        <subvertex xmi:type="uml:State" xmi:id="_t5pd0M7NEfCTIb301IfNBA" name="COMPLETATA"/>
+        <subvertex xmi:type="uml:FinalState" xmi:id="_WvkHYM7OEfCTIb301IfNBA" name="FinalState"/>
+      </region>
     </packagedElement>
   </packagedElement>
+  <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_aWrOQM6dEfC0Kb8eXSGAhw">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_aWtqgM6dEfC0Kb8eXSGAhw" source="http://www.eclipse.org/uml2/2.0.0/UML">
+      <references xmi:type="ecore:EPackage" href="pathmap://PAPYRUS_ACTIONLANGUAGE_PROFILE/ActionLanguage-Profile.profile.uml#_Kv8EIKFXEeS_KNX0nfvIVQ"/>
+    </eAnnotations>
+    <appliedProfile xmi:type="uml:Profile" href="pathmap://PAPYRUS_ACTIONLANGUAGE_PROFILE/ActionLanguage-Profile.profile.uml#ActionLanguage"/>
+  </profileApplication>
 </uml:Model>
