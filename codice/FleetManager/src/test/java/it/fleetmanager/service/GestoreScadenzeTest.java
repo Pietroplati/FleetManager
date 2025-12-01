@@ -16,6 +16,7 @@ import it.fleetmanager.repository.dao.ScadenzaDAO;
 import it.fleetmanager.repository.dao.VeicoloDAO;
 import it.fleetmanager.repository.impl.NotificaDAOImpl;
 import it.fleetmanager.repository.impl.ScadenzaDAOImpl;
+import it.fleetmanager.repository.impl.VeicoloDAOImpl;
 import it.fleetmanager.repository.util.H2DatabaseManager;
 import it.fleetmanager.service.impl.GestoreScadenzeImpl;
 import it.fleetmanager.util.DatabaseTestUtils;
@@ -42,40 +43,7 @@ public class GestoreScadenzeTest {
 		scadenzaDAO = new ScadenzaDAOImpl(H2DatabaseManager.getInstance());
 		notificaDAO = new NotificaDAOImpl(H2DatabaseManager.getInstance());
 		sistemaNotifiche = new SistemaNotifiche(notificaDAO);
-
-		veicoloDAO = new VeicoloDAO() {
-
-			Veicolo internal;
-
-			@Override
-			public void save(Veicolo v) {
-				internal = v;
-			}
-
-			@Override
-			public void update(Veicolo v) {
-				internal = v;
-			}
-
-			@Override
-			public Veicolo getVeicoloByTarga(String t) {
-				return internal;
-			}
-
-			@Override
-			public void delete(String t) {
-			}
-
-			@Override
-			public List<Veicolo> getTuttiVeicoli() {
-				return List.of();
-			}
-
-			@Override
-			public List<Veicolo> getDisponibili(java.time.LocalDateTime a, java.time.LocalDateTime b) {
-				return List.of();
-			}
-		};
+		veicoloDAO = new VeicoloDAOImpl(H2DatabaseManager.getInstance());
 
 		gestore = new GestoreScadenzeImpl(scadenzaDAO, veicoloDAO, sistemaNotifiche);
 

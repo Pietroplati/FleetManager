@@ -115,4 +115,45 @@ public class GestorePrenotazioniImpl implements GestorePrenotazioni {
 	public List<Prenotazione> getPrenotazioniVeicolo(Veicolo veicolo) {
 		return prenotazioneDAO.findByVeicolo(veicolo.getTarga());
 	}
+
+	@Override
+	public void attivaPrenotazione(int idPrenotazione) {
+		Prenotazione p = prenotazioneDAO.getById(idPrenotazione);
+
+		if (p == null || p.getIdPrenotazione() == -1) {
+			throw new IllegalArgumentException("Prenotazione non trovata");
+		}
+
+		LocalDateTime now = LocalDateTime.now();
+
+		if (now.isBefore(p.getDataInizio())) {
+			throw new IllegalStateException("Non è possibile attivare la prenotazione prima della data di inizio.");
+		}
+
+		p.setStato(StatoPrenotazione.ATTIVA);
+		prenotazioneDAO.update(p);
+
+		sistemaNotifiche.inviaNotificaPrenotazione(new Utente(p.getIdUtente(), "", "", "", "", RuoloUtente.DRIVER), p);
+	}
+
+	@Override
+	public void completaPrenotazione(int idPrenotazione) {
+		Prenotazione p = prenotazioneDAO.getById(idPrenotazione);
+
+		if (p == null || p.getIdPrenotazione() == -1) {
+			throw new IllegalArgumentException("Prenotazione non trovata");
+		}
+
+		LocalDateTime now = LocalDateTime.now();
+
+		if (now.isBefore(p.getDataFine())) {
+			throw new IllegalStateException("Non è possibile completare la prenotazione prima della data di fine.");
+		}
+
+		p.setStato(StatoPrenotazione.COMPLETATA);
+		prenotazioneDAO.update(p);
+
+		sistemaNotifiche.inviaNotificaPrenotazione(new Utente(p.getIdUtente(), "", "", "", "", RuoloUtente.DRIVER), p);
+	}
+
 }

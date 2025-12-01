@@ -20,4 +20,8 @@ public interface GestorePrenotazioni {
 	List<Prenotazione> getPrenotazioniDriver(Utente driver);
 
 	List<Prenotazione> getPrenotazioniVeicolo(Veicolo veicolo);
+
+	void attivaPrenotazione(int idPrenotazione);
+	
+	void completaPrenotazione(int idPrenotazione);
 }
