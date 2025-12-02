@@ -8,6 +8,7 @@ import it.fleetmanager.repository.impl.ManutenzioneDAOImpl;
 import it.fleetmanager.repository.impl.PrenotazioneDAOImpl;
 import it.fleetmanager.repository.impl.VeicoloDAOImpl;
 import it.fleetmanager.repository.util.H2DatabaseManager;
+import it.fleetmanager.ui.veicoli.VeicoliController;
 import it.fleetmanager.util.StatoPrenotazione;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -70,9 +71,13 @@ public class ManagerDashboardController {
 
 	@FXML
 	private void onGestisciVeicoli() {
-		System.out.println("TODO: apri gestione veicoli");
-		// SceneManager.changeScene("/it/fleetmanager/ui/VeicoliView.fxml");
+		VeicoliController controller =
+			    SceneManager.changeSceneWithController("/ui/views/veicoli/VeicoliView.fxml");
+
+			controller.setUtente(utente);
+
 	}
+
 
 	@FXML
 	private void onGestisciPrenotazioni() {

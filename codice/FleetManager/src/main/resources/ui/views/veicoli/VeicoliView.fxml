@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="it.fleetmanager.ui.veicoli.VeicoliController"
+            style="-fx-background-color: #e9f0f7;"
+            prefWidth="1280" prefHeight="720">
+
+    <!-- ==================== TOP ==================== -->
+    <top>
+        <VBox alignment="CENTER" spacing="10">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+
+            <Label text="Gestione Veicoli"
+                   style="-fx-font-size: 28; -fx-font-weight: bold; -fx-text-fill:#2f4773;"/>
+
+            <Label text="Visualizza e gestisci tutti i veicoli della flotta"
+                   style="-fx-font-size: 14; -fx-text-fill:#4a76a8;"/>
+        </VBox>
+    </top>
+
+    <!-- ==================== CENTER ==================== -->
+    <center>
+        <VBox alignment="CENTER" spacing="20">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+
+            <!-- TABELLONE -->
+            <TableView fx:id="tableVeicoli"
+                       prefWidth="900" prefHeight="450"
+                       style="-fx-background-radius: 10;">
+
+                <columns>
+                    <TableColumn text="Targa" fx:id="colTarga" prefWidth="120"/>
+                    <TableColumn text="Tipo" fx:id="colTipo" prefWidth="120"/>
+                    <TableColumn text="Marca" fx:id="colMarca" prefWidth="150"/>
+                    <TableColumn text="Modello" fx:id="colModello" prefWidth="150"/>
+                    <TableColumn text="Anno" fx:id="colAnno" prefWidth="90"/>
+                    <TableColumn text="Stato" fx:id="colStato" prefWidth="150"/>
+                    <TableColumn text="Km" fx:id="colKm" prefWidth="90"/>
+                </columns>
+            </TableView>
+
+            <!-- PULSANTI -->
+            <HBox alignment="CENTER" spacing="20">
+                <Button text="Aggiungi veicolo" onAction="#onAggiungi"
+                        prefWidth="200"
+                        style="-fx-background-color:#4a76a8; -fx-text-fill:white; -fx-background-radius:10;"/>
+
+                <Button text="Modifica" onAction="#onModifica"
+                        prefWidth="200"
+                        style="-fx-background-color:#5e8bbf; -fx-text-fill:white; -fx-background-radius:10;"/>
+
+                <Button text="Elimina" onAction="#onElimina"
+                        prefWidth="200"
+                        style="-fx-background-color:#8fb3d6; -fx-text-fill:white; -fx-background-radius:10;"/>
+
+                <Button text="Indietro" onAction="#onBack"
+                        prefWidth="200"
+                        style="-fx-background-color:#92aac4; -fx-text-fill:white; -fx-background-radius:10;"/>
+            </HBox>
+
+        </VBox>
+    </center>
+
+</BorderPane>

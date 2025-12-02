@@ -10,11 +10,12 @@ import java.util.List;
 import it.fleetmanager.model.Scadenza;
 import it.fleetmanager.repository.dao.ScadenzaDAO;
 import it.fleetmanager.repository.util.DatabaseManager;
+import it.fleetmanager.repository.util.H2DatabaseManager;
 import it.fleetmanager.util.TipoScadenza;
 
 public class ScadenzaDAOImpl implements ScadenzaDAO {
 
-	private final DatabaseManager db;
+	private final H2DatabaseManager db;
 
 	public static final Scadenza SCADENZA_INESISTENTE = new Scadenza(-1, TipoScadenza.BOLLO, LocalDate.MIN, false,
 			"N/A") {
@@ -24,7 +25,7 @@ public class ScadenzaDAOImpl implements ScadenzaDAO {
 		}
 	};
 
-	public ScadenzaDAOImpl(DatabaseManager db) {
+	public ScadenzaDAOImpl(H2DatabaseManager db) {
 		this.db = db;
 	}
 

@@ -10,12 +10,13 @@ import java.util.List;
 import it.fleetmanager.model.Veicolo;
 import it.fleetmanager.repository.dao.VeicoloDAO;
 import it.fleetmanager.repository.util.DatabaseManager;
+import it.fleetmanager.repository.util.H2DatabaseManager;
 import it.fleetmanager.util.StatoVeicolo;
 import it.fleetmanager.util.TipoVeicolo;
 
 public class VeicoloDAOImpl implements VeicoloDAO {
 
-	private final DatabaseManager db;
+	private final H2DatabaseManager db;
 
 	public static final Veicolo VEICOLO_INESISTENTE = new Veicolo("N/A", null, "N/A", "N/A", -1,
 			StatoVeicolo.NON_DISPONIBILE, -1) {
@@ -25,7 +26,7 @@ public class VeicoloDAOImpl implements VeicoloDAO {
 		}
 	};
 
-	public VeicoloDAOImpl(DatabaseManager db) {
+	public VeicoloDAOImpl(H2DatabaseManager db) {
 		this.db = db;
 	}
 

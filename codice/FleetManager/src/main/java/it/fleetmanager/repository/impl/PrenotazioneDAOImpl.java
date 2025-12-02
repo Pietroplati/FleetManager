@@ -12,12 +12,13 @@ import java.util.List;
 import it.fleetmanager.model.Prenotazione;
 import it.fleetmanager.repository.dao.PrenotazioneDAO;
 import it.fleetmanager.repository.util.DatabaseManager;
+import it.fleetmanager.repository.util.H2DatabaseManager;
 import it.fleetmanager.util.StatoPrenotazione;
 import it.fleetmanager.util.TipoPrenotazione;
 
 public class PrenotazioneDAOImpl implements PrenotazioneDAO {
 
-	private final DatabaseManager db;
+	private final H2DatabaseManager db;
 
 	public static final Prenotazione PRENOTAZIONE_INESISTENTE = new Prenotazione(-1, LocalDateTime.MIN,
 			LocalDateTime.MIN, StatoPrenotazione.ANNULLATA, TipoPrenotazione.UTENTE, -1, "N/A") {
@@ -27,7 +28,7 @@ public class PrenotazioneDAOImpl implements PrenotazioneDAO {
 		}
 	};
 
-	public PrenotazioneDAOImpl(DatabaseManager db) {
+	public PrenotazioneDAOImpl(H2DatabaseManager db) {
 		this.db = db;
 	}
 

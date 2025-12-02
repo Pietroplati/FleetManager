@@ -11,12 +11,12 @@ import java.util.List;
 
 import it.fleetmanager.model.Notifica;
 import it.fleetmanager.repository.dao.NotificaDAO;
-import it.fleetmanager.repository.util.DatabaseManager;
+import it.fleetmanager.repository.util.H2DatabaseManager;
 import it.fleetmanager.util.TipoNotifica;
 
 public class NotificaDAOImpl implements NotificaDAO {
 
-	private final DatabaseManager db;
+	private final H2DatabaseManager db;
 
 	public static final Notifica NOTIFICA_INESISTENTE = new Notifica(-1, TipoNotifica.PRENOTAZIONE, "N/A",
 			LocalDateTime.MIN, false, -1, null) {
@@ -26,7 +26,7 @@ public class NotificaDAOImpl implements NotificaDAO {
 		}
 	};
 
-	public NotificaDAOImpl(DatabaseManager db) {
+	public NotificaDAOImpl(H2DatabaseManager db) {
 		this.db = db;
 	}
 
