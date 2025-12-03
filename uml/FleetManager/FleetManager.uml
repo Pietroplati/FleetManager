@@ -991,17 +991,26 @@
       </region>
     </packagedElement>
     <packagedElement xmi:type="uml:Interaction" xmi:id="_oUfhMM-TEfCBm5kaOM2t2Q" name="NuovaPrenotazione">
-      <lifeline xmi:type="uml:Lifeline" xmi:id="_wfudQM-TEfCBm5kaOM2t2Q" name="Utente" coveredBy="_2EmbEM-TEfCBm5kaOM2t2Q _YMwMIM-UEfCBm5kaOM2t2Q _YM2SwM-UEfCBm5kaOM2t2Q _2FqLAc-TEfCBm5kaOM2t2Q"/>
+      <lifeline xmi:type="uml:Lifeline" xmi:id="_wfudQM-TEfCBm5kaOM2t2Q" name="Utente" coveredBy="_2EmbEM-TEfCBm5kaOM2t2Q _L2fowNBSEfClr6SeB4jOsw _YMwMIM-UEfCBm5kaOM2t2Q _YM2SwM-UEfCBm5kaOM2t2Q _L3qtcNBSEfClr6SeB4jOsw _QczFgNBSEfClr6SeB4jOsw _lDLeMNBTEfC9kLg0Sc2D0g _2FqLAc-TEfCBm5kaOM2t2Q _L3gVYNBSEfClr6SeB4jOsw"/>
       <lifeline xmi:type="uml:Lifeline" xmi:id="_yDBcAM-TEfCBm5kaOM2t2Q" name="ControllerPrenotazioni" coveredBy="_2EnCIM-TEfCBm5kaOM2t2Q _ANcTUM-UEfCBm5kaOM2t2Q _AOA7Ec-UEfCBm5kaOM2t2Q _2FqLAM-TEfCBm5kaOM2t2Q"/>
-      <lifeline xmi:type="uml:Lifeline" xmi:id="_4VMksM-TEfCBm5kaOM2t2Q" name="GestorePrenotazioni" coveredBy="_ANc6YM-UEfCBm5kaOM2t2Q _AOA7EM-UEfCBm5kaOM2t2Q"/>
+      <lifeline xmi:type="uml:Lifeline" xmi:id="_4VMksM-TEfCBm5kaOM2t2Q" name="GestorePrenotazioni" coveredBy="_ANc6YM-UEfCBm5kaOM2t2Q _L2fBsNBSEfClr6SeB4jOsw _AOA7EM-UEfCBm5kaOM2t2Q"/>
       <lifeline xmi:type="uml:Lifeline" xmi:id="_mZn6gM-UEfCBm5kaOM2t2Q" name="Lifeline1"/>
       <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_2EmbEM-TEfCBm5kaOM2t2Q" name="Message3SendEvent" covered="_wfudQM-TEfCBm5kaOM2t2Q" message="_2EefQM-TEfCBm5kaOM2t2Q"/>
       <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_2EnCIM-TEfCBm5kaOM2t2Q" name="Message3ReceiveEvent" covered="_yDBcAM-TEfCBm5kaOM2t2Q" message="_2EefQM-TEfCBm5kaOM2t2Q"/>
       <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_ANcTUM-UEfCBm5kaOM2t2Q" name="Message11SendEvent" covered="_yDBcAM-TEfCBm5kaOM2t2Q" message="_ANaeIM-UEfCBm5kaOM2t2Q"/>
       <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_ANc6YM-UEfCBm5kaOM2t2Q" name="Message11ReceiveEvent" covered="_4VMksM-TEfCBm5kaOM2t2Q" message="_ANaeIM-UEfCBm5kaOM2t2Q"/>
-      <fragment xmi:type="uml:CombinedFragment" xmi:id="_YMwMIM-UEfCBm5kaOM2t2Q" name="CombinedFragment16" visibility="public" covered="_wfudQM-TEfCBm5kaOM2t2Q">
-        <operand xmi:type="uml:InteractionOperand" xmi:id="_YM2SwM-UEfCBm5kaOM2t2Q" name="InteractionOperand0" covered="_wfudQM-TEfCBm5kaOM2t2Q">
-          <guard xmi:type="uml:InteractionConstraint" xmi:id="_YM2Swc-UEfCBm5kaOM2t2Q" name="guardia"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_L2fBsNBSEfClr6SeB4jOsw" name="Message18SendEvent" covered="_4VMksM-TEfCBm5kaOM2t2Q" message="_L2YUANBSEfClr6SeB4jOsw"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_L2fowNBSEfClr6SeB4jOsw" name="Message18ReceiveEvent" covered="_wfudQM-TEfCBm5kaOM2t2Q" message="_L2YUANBSEfClr6SeB4jOsw"/>
+      <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="_L3gVYNBSEfClr6SeB4jOsw" name="BehaviorExecutionSpecification21" covered="_wfudQM-TEfCBm5kaOM2t2Q" finish="_L3qtcNBSEfClr6SeB4jOsw" start="_L2fowNBSEfClr6SeB4jOsw"/>
+      <fragment xmi:type="uml:CombinedFragment" xmi:id="_YMwMIM-UEfCBm5kaOM2t2Q" name="CombinedFragment16" visibility="public" covered="_wfudQM-TEfCBm5kaOM2t2Q" interactionOperator="strict">
+        <operand xmi:type="uml:InteractionOperand" xmi:id="_YM2SwM-UEfCBm5kaOM2t2Q" name="InteractionOperand0" covered="_wfudQM-TEfCBm5kaOM2t2Q"/>
+      </fragment>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_L3qtcNBSEfClr6SeB4jOsw" name="Message23SendEvent" covered="_wfudQM-TEfCBm5kaOM2t2Q" message="_L3qGYNBSEfClr6SeB4jOsw"/>
+      <fragment xmi:type="uml:CombinedFragment" xmi:id="_QczFgNBSEfClr6SeB4jOsw" name="CombinedFragment24" covered="_wfudQM-TEfCBm5kaOM2t2Q" interactionOperator="break">
+        <operand xmi:type="uml:InteractionOperand" xmi:id="_lDLeMNBTEfC9kLg0Sc2D0g" name="patente == null" covered="_wfudQM-TEfCBm5kaOM2t2Q">
+          <guard xmi:type="uml:InteractionConstraint" xmi:id="_lDQWsNBTEfC9kLg0Sc2D0g" name="guard">
+            <specification xmi:type="uml:LiteralString" xmi:id="_nT2gUNBTEfC9kLg0Sc2D0g" value="patente == null"/>
+          </guard>
         </operand>
       </fragment>
       <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_AOA7EM-UEfCBm5kaOM2t2Q" name="Message16SendEvent" covered="_4VMksM-TEfCBm5kaOM2t2Q" message="_AOAUAM-UEfCBm5kaOM2t2Q"/>
@@ -1012,6 +1021,8 @@
       <message xmi:type="uml:Message" xmi:id="_2Fpj8M-TEfCBm5kaOM2t2Q" name="Message8" messageSort="reply" receiveEvent="_2FqLAc-TEfCBm5kaOM2t2Q" sendEvent="_2FqLAM-TEfCBm5kaOM2t2Q"/>
       <message xmi:type="uml:Message" xmi:id="_ANaeIM-UEfCBm5kaOM2t2Q" name="CreaPrenotazione()" receiveEvent="_ANc6YM-UEfCBm5kaOM2t2Q" sendEvent="_ANcTUM-UEfCBm5kaOM2t2Q"/>
       <message xmi:type="uml:Message" xmi:id="_AOAUAM-UEfCBm5kaOM2t2Q" name="Prenotazione" messageSort="reply" receiveEvent="_AOA7Ec-UEfCBm5kaOM2t2Q" sendEvent="_AOA7EM-UEfCBm5kaOM2t2Q"/>
+      <message xmi:type="uml:Message" xmi:id="_L2YUANBSEfClr6SeB4jOsw" name="getPatente()" receiveEvent="_L2fowNBSEfClr6SeB4jOsw" sendEvent="_L2fBsNBSEfClr6SeB4jOsw"/>
+      <message xmi:type="uml:Message" xmi:id="_L3qGYNBSEfClr6SeB4jOsw" name="patente" messageSort="reply" sendEvent="_L3qtcNBSEfClr6SeB4jOsw"/>
     </packagedElement>
   </packagedElement>
   <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_aWrOQM6dEfC0Kb8eXSGAhw">
