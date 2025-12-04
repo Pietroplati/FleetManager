@@ -33,7 +33,7 @@ public class GestorePrenotazioniImpl implements GestorePrenotazioni {
 			throw new IllegalArgumentException("L’utente non ha la patente, non può prenotare veicoli.");
 		}
 
-		boolean disponibile = validadisponibilita(veicolo, dataInizio, dataFine);
+		boolean disponibile = validaDisponibilita(veicolo, dataInizio, dataFine);
 
 		if (!disponibile) {
 			throw new IllegalArgumentException(
@@ -51,7 +51,7 @@ public class GestorePrenotazioniImpl implements GestorePrenotazioni {
 	}
 
 	@Override
-	public boolean validadisponibilita(Veicolo veicolo, LocalDateTime dataInizio, LocalDateTime dataFine) {
+	public boolean validaDisponibilita(Veicolo veicolo, LocalDateTime dataInizio, LocalDateTime dataFine) {
 
 		List<Prenotazione> prenotazioni = prenotazioneDAO.findByVeicolo(veicolo.getTarga());
 

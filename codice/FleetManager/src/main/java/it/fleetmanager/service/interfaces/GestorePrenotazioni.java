@@ -11,7 +11,7 @@ public interface GestorePrenotazioni {
 
 	Prenotazione creaPrenotazione(Utente driver, Veicolo veicolo, LocalDateTime dataInizio, LocalDateTime dataFine);
 
-	boolean validadisponibilita(Veicolo veicolo, LocalDateTime dataInizio, LocalDateTime dataFine);
+	boolean validaDisponibilita(Veicolo veicolo, LocalDateTime dataInizio, LocalDateTime dataFine);
 
 	void confermaPrenotazione(int idPrenotazione, Utente manager);
 
