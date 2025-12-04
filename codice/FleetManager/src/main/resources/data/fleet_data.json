@@ -31,10 +31,19 @@
 			"idUtente": 4,
 			"nome": "Francesco",
 			"cognome": "Basis",
-			"email": "a",
+			"email": "a", 
 			"password": "a",
 			"ruoloUtente": "MANAGER",
 			"patente": null
+		},
+		{
+			"idUtente": 5,
+			"nome": "Pietro",
+			"cognome": "Plati",
+			"email": "b",
+			"password": "b",
+			"ruoloUtente": "DRIVER",
+			"patente": "PP673678"
 		}
 	],
 	"prenotazioni": [

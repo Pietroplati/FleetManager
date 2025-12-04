@@ -18,8 +18,16 @@ public class SistemaNotifiche {
 
 	public void inviaNotifica(Utente destinatario, String messaggio) {
 
-		Notifica n = new Notifica(0, TipoNotifica.SEGNALAZIONE, messaggio, LocalDateTime.now(), false,
-				destinatario.getIdUtente(), 0);
+		// ID = null → autoincrement
+		Notifica n = new Notifica(
+				null,                           
+				TipoNotifica.SEGNALAZIONE,
+				messaggio,
+				LocalDateTime.now(),
+				false,
+				destinatario.getIdUtente(),
+				null
+		);
 
 		notificaDAO.save(n);
 
@@ -31,8 +39,16 @@ public class SistemaNotifiche {
 		String msg = "Scadenza " + scadenza.getTipoScadenza() + " per il veicolo " + scadenza.getTarga()
 				+ " fissata al " + scadenza.getData();
 
-		Notifica n = new Notifica(0, TipoNotifica.SCADENZA, msg, LocalDateTime.now(), false, manager.getIdUtente(),
-				scadenza.getIdScadenza());
+		// ID = null → autoincrement
+		Notifica n = new Notifica(
+				null,                           // <--- CORRETTO
+				TipoNotifica.SCADENZA,
+				msg,
+				LocalDateTime.now(),
+				false,
+				manager.getIdUtente(),
+				scadenza.getIdScadenza()
+		);
 
 		notificaDAO.save(n);
 
@@ -45,8 +61,16 @@ public class SistemaNotifiche {
 				+ prenotazione.getDataInizio() + " al " + prenotazione.getDataFine() + " | Stato: "
 				+ prenotazione.getStato();
 
-		Notifica n = new Notifica(0, TipoNotifica.PRENOTAZIONE, msg, LocalDateTime.now(), false, driver.getIdUtente(),
-				null);
+		// ID = null → autoincrement
+		Notifica n = new Notifica(
+				null,                           // <--- CORRETTO
+				TipoNotifica.PRENOTAZIONE,
+				msg,
+				LocalDateTime.now(),
+				false,
+				driver.getIdUtente(),
+				null
+		);
 
 		notificaDAO.save(n);
 
