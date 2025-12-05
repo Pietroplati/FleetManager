@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -45,30 +46,37 @@ public class PrenotazioneDAOImpl implements PrenotazioneDAO {
 
 	@Override
 	public void save(Prenotazione p) {
-		String sql = """
-				INSERT INTO Prenotazione
-				(idPrenotazione, dataInizio, dataFine,
-				 statoPrenotazione, tipoPrenotazione,
-				 idUtente, targa)
-				VALUES (?, ?, ?, ?, ?, ?, ?)
-				""";
 
-		try (Connection conn = db.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+	    String sql = """
+	        INSERT INTO Prenotazione
+	        (dataInizio, dataFine, statoPrenotazione, tipoPrenotazione, idUtente, targa)
+	        VALUES (?, ?, ?, ?, ?, ?)
+	    """;
 
-			ps.setInt(1, p.getIdPrenotazione());
-			ps.setTimestamp(2, Timestamp.valueOf(p.getDataInizio()));
-			ps.setTimestamp(3, Timestamp.valueOf(p.getDataFine()));
-			ps.setString(4, p.getStato().name());
-			ps.setString(5, p.getTipoPrenotazione().name());
-			ps.setInt(6, p.getIdUtente());
-			ps.setString(7, p.getTarga());
+	    try (Connection conn = db.getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-			ps.executeUpdate();
+	        ps.setTimestamp(1, Timestamp.valueOf(p.getDataInizio()));
+	        ps.setTimestamp(2, Timestamp.valueOf(p.getDataFine()));
+	        ps.setString(3, p.getStato().name());
+	        ps.setString(4, p.getTipoPrenotazione().name());
+	        ps.setInt(5, p.getIdUtente());
+	        ps.setString(6, p.getTarga());
 
-		} catch (SQLException e) {
-			System.err.println("ERRORE SQL save: " + e.getMessage());
-		}
+	        ps.executeUpdate();
+
+	        // ⭐ Recupero ID generato automaticamente
+	        try (ResultSet rs = ps.getGeneratedKeys()) {
+	            if (rs.next()) {
+	                p.setId(rs.getInt(1));
+	            }
+	        }
+
+	    } catch (Exception e) {
+	        System.err.println("ERRORE SQL save: " + e.getMessage());
+	    }
 	}
+
 
 	@Override
 	public void update(Prenotazione p) {

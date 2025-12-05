@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import it.fleetmanager.util.TipoNotifica;
 
 public class Notifica {
-	private int idNotifica;
+	private Integer idNotifica;
 	private TipoNotifica tipoNotifica;
 	private String messaggio;
 	private LocalDateTime dataInvio;
@@ -15,7 +15,7 @@ public class Notifica {
 	public Notifica(Integer idNotifica, TipoNotifica tipoNotifica, String messaggio, LocalDateTime dataInvio,
 			boolean letta, int idUtente, Integer idScadenza) {
 
-		this.idNotifica = (idNotifica == null ? -1 : idNotifica);
+		this.idNotifica = idNotifica;
 		this.tipoNotifica = tipoNotifica;
 		this.messaggio = messaggio;
 		this.dataInvio = dataInvio;

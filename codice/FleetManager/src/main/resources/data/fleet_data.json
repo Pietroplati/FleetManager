@@ -46,53 +46,7 @@
 			"patente": "PP673678"
 		}
 	],
-	"prenotazioni": [
-		{
-			"idPrenotazione": 1,
-			"dataInizio": "2025-11-10T08:00:00",
-			"dataFine": "2025-11-10T18:00:00",
-			"statoPrenotazione": "CONFERMATA",
-			"tipoPrenotazione": "UTENTE",
-			"idUtente": 1,
-			"targa": "FD490LF"
-		},
-		{
-			"idPrenotazione": 2,
-			"dataInizio": "2025-11-11T09:00:00",
-			"dataFine": "2025-11-11T17:30:00",
-			"statoPrenotazione": "ATTIVA",
-			"tipoPrenotazione": "UTENTE",
-			"idUtente": 2,
-			"targa": "GH819RJ"
-		},
-		{
-			"idPrenotazione": 3,
-			"dataInizio": "2025-11-13T07:30:00",
-			"dataFine": "2025-11-13T19:00:00",
-			"statoPrenotazione": "RICHIESTA",
-			"tipoPrenotazione": "UTENTE",
-			"idUtente": 3,
-			"targa": "GV779WE"
-		},
-		{
-			"idPrenotazione": 4,
-			"dataInizio": "2025-11-08T08:30:00",
-			"dataFine": "2025-11-08T12:30:00",
-			"statoPrenotazione": "COMPLETATA",
-			"tipoPrenotazione": "UTENTE",
-			"idUtente": 1,
-			"targa": "FZ320YT"
-		},
-		{
-			"idPrenotazione": 5,
-			"dataInizio": "2025-11-15T10:00:00",
-			"dataFine": "2025-11-15T16:00:00",
-			"statoPrenotazione": "ANNULLATA",
-			"tipoPrenotazione": "UTENTE",
-			"idUtente": 2,
-			"targa": "GB476FG"
-		}
-	],
+
 	"notifiche": [
 		{
 			"idNotifica": 1,
