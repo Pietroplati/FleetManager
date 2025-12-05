@@ -26,4 +26,6 @@ public interface PrenotazioneDAO {
 	 * dataInizio-dataFine per il veicolo specificato.
 	 */
 	boolean existsOverlapping(String targa, LocalDateTime dataInizio, LocalDateTime dataFine);
+	
+	List<Prenotazione> findAll();
 }

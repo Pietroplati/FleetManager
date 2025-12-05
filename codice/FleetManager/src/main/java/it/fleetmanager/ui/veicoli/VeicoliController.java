@@ -7,8 +7,8 @@ import it.fleetmanager.model.Veicolo;
 import it.fleetmanager.repository.dao.VeicoloDAO;
 import it.fleetmanager.repository.impl.VeicoloDAOImpl;
 import it.fleetmanager.repository.util.H2DatabaseManager;
-import it.fleetmanager.ui.ManagerDashboardController;
 import it.fleetmanager.ui.SceneManager;
+import it.fleetmanager.ui.dashboards.ManagerDashboardController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -104,7 +104,7 @@ public class VeicoliController {
 	@FXML
 	private void onBack() {
 		ManagerDashboardController controller = SceneManager
-				.changeSceneWithController("/ui/views/ManagerDashboard.fxml");
+				.changeSceneWithController("/ui/views/dashboards/ManagerDashboard.fxml");
 
 		controller.setUtente(utente);
 

@@ -12,7 +12,6 @@ import java.util.List;
 
 import it.fleetmanager.model.Prenotazione;
 import it.fleetmanager.repository.dao.PrenotazioneDAO;
-import it.fleetmanager.repository.util.DatabaseManager;
 import it.fleetmanager.repository.util.H2DatabaseManager;
 import it.fleetmanager.util.StatoPrenotazione;
 import it.fleetmanager.util.TipoPrenotazione;
@@ -41,57 +40,63 @@ public class PrenotazioneDAOImpl implements PrenotazioneDAO {
 		TipoPrenotazione tipo = TipoPrenotazione.valueOf(rs.getString("tipoPrenotazione"));
 		int idUtente = rs.getInt("idUtente");
 		String targa = rs.getString("targa");
+
 		return new Prenotazione(idPren, dataInizio, dataFine, stato, tipo, idUtente, targa);
 	}
 
 	@Override
 	public void save(Prenotazione p) {
 
-	    String sql = """
-	        INSERT INTO Prenotazione
-	        (dataInizio, dataFine, statoPrenotazione, tipoPrenotazione, idUtente, targa)
-	        VALUES (?, ?, ?, ?, ?, ?)
-	    """;
+		String sql = """
+				    INSERT INTO Prenotazione
+				    (dataInizio, dataFine, statoPrenotazione, tipoPrenotazione, idUtente, targa)
+				    VALUES (?, ?, ?, ?, ?, ?)
+				""";
 
-	    try (Connection conn = db.getConnection();
-	         PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+		try (Connection conn = db.getConnection();
+				PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-	        ps.setTimestamp(1, Timestamp.valueOf(p.getDataInizio()));
-	        ps.setTimestamp(2, Timestamp.valueOf(p.getDataFine()));
-	        ps.setString(3, p.getStato().name());
-	        ps.setString(4, p.getTipoPrenotazione().name());
-	        ps.setInt(5, p.getIdUtente());
-	        ps.setString(6, p.getTarga());
+			conn.setAutoCommit(false);
 
-	        ps.executeUpdate();
+			ps.setTimestamp(1, Timestamp.valueOf(p.getDataInizio()));
+			ps.setTimestamp(2, Timestamp.valueOf(p.getDataFine()));
+			ps.setString(3, p.getStato().name());
+			ps.setString(4, p.getTipoPrenotazione().name());
+			ps.setInt(5, p.getIdUtente());
+			ps.setString(6, p.getTarga());
 
-	        // ⭐ Recupero ID generato automaticamente
-	        try (ResultSet rs = ps.getGeneratedKeys()) {
-	            if (rs.next()) {
-	                p.setId(rs.getInt(1));
-	            }
-	        }
+			ps.executeUpdate();
 
-	    } catch (Exception e) {
-	        System.err.println("ERRORE SQL save: " + e.getMessage());
-	    }
+			try (ResultSet rs = ps.getGeneratedKeys()) {
+				if (rs.next()) {
+					p.setId(rs.getInt(1));
+				}
+			}
+
+			conn.commit(); // ⭐ fondamentare per vedere il dato subito
+
+		} catch (Exception e) {
+			System.err.println("ERRORE SQL save: " + e.getMessage());
+		}
 	}
-
 
 	@Override
 	public void update(Prenotazione p) {
+
 		String sql = """
-				UPDATE Prenotazione SET
-				    dataInizio = ?,
-				    dataFine = ?,
-				    statoPrenotazione = ?,
-				    tipoPrenotazione = ?,
-				    idUtente = ?,
-				    targa = ?
-				WHERE idPrenotazione = ?
+				    UPDATE Prenotazione SET
+				        dataInizio = ?,
+				        dataFine = ?,
+				        statoPrenotazione = ?,
+				        tipoPrenotazione = ?,
+				        idUtente = ?,
+				        targa = ?
+				    WHERE idPrenotazione = ?
 				""";
 
 		try (Connection conn = db.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+			conn.setAutoCommit(false);
 
 			ps.setTimestamp(1, Timestamp.valueOf(p.getDataInizio()));
 			ps.setTimestamp(2, Timestamp.valueOf(p.getDataFine()));
@@ -102,6 +107,8 @@ public class PrenotazioneDAOImpl implements PrenotazioneDAO {
 			ps.setInt(7, p.getIdPrenotazione());
 
 			ps.executeUpdate();
+
+			conn.commit(); // ⭐ SRVER PER FORZARE AGGIORNAMENTO
 
 		} catch (SQLException e) {
 			System.err.println("ERRORE SQL update: " + e.getMessage());
@@ -114,8 +121,12 @@ public class PrenotazioneDAOImpl implements PrenotazioneDAO {
 
 		try (Connection conn = db.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
+			conn.setAutoCommit(false);
+
 			ps.setInt(1, id);
 			ps.executeUpdate();
+
+			conn.commit();
 
 		} catch (SQLException e) {
 			System.err.println("ERRORE SQL delete: " + e.getMessage());
@@ -124,6 +135,7 @@ public class PrenotazioneDAOImpl implements PrenotazioneDAO {
 
 	@Override
 	public Prenotazione getById(int id) {
+
 		String sql = "SELECT * FROM Prenotazione WHERE idPrenotazione = ?";
 
 		try (Connection conn = db.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -144,6 +156,7 @@ public class PrenotazioneDAOImpl implements PrenotazioneDAO {
 
 	@Override
 	public List<Prenotazione> findByDriver(int idUtente) {
+
 		String sql = "SELECT * FROM Prenotazione WHERE idUtente = ?";
 		List<Prenotazione> list = new ArrayList<>();
 
@@ -152,8 +165,9 @@ public class PrenotazioneDAOImpl implements PrenotazioneDAO {
 			ps.setInt(1, idUtente);
 
 			try (ResultSet rs = ps.executeQuery()) {
-				while (rs.next())
+				while (rs.next()) {
 					list.add(map(rs));
+				}
 			}
 
 		} catch (Exception e) {
@@ -165,6 +179,7 @@ public class PrenotazioneDAOImpl implements PrenotazioneDAO {
 
 	@Override
 	public List<Prenotazione> findByVeicolo(String targa) {
+
 		String sql = "SELECT * FROM Prenotazione WHERE targa = ?";
 		List<Prenotazione> list = new ArrayList<>();
 
@@ -173,8 +188,9 @@ public class PrenotazioneDAOImpl implements PrenotazioneDAO {
 			ps.setString(1, targa);
 
 			try (ResultSet rs = ps.executeQuery()) {
-				while (rs.next())
+				while (rs.next()) {
 					list.add(map(rs));
+				}
 			}
 
 		} catch (Exception e) {
@@ -186,6 +202,7 @@ public class PrenotazioneDAOImpl implements PrenotazioneDAO {
 
 	@Override
 	public List<Prenotazione> findByStato(StatoPrenotazione stato) {
+
 		String sql = "SELECT * FROM Prenotazione WHERE statoPrenotazione = ?";
 		List<Prenotazione> list = new ArrayList<>();
 
@@ -194,8 +211,9 @@ public class PrenotazioneDAOImpl implements PrenotazioneDAO {
 			ps.setString(1, stato.name());
 
 			try (ResultSet rs = ps.executeQuery()) {
-				while (rs.next())
+				while (rs.next()) {
 					list.add(map(rs));
+				}
 			}
 
 		} catch (Exception e) {
@@ -207,12 +225,13 @@ public class PrenotazioneDAOImpl implements PrenotazioneDAO {
 
 	@Override
 	public boolean existsOverlapping(String targa, LocalDateTime dataInizio, LocalDateTime dataFine) {
+
 		String sql = """
-				SELECT COUNT(*)
-				FROM Prenotazione
-				WHERE targa = ?
-				AND dataInizio < ?
-				AND dataFine > ?
+				    SELECT COUNT(*)
+				    FROM Prenotazione
+				    WHERE targa = ?
+				    AND dataInizio < ?
+				    AND dataFine > ?
 				""";
 
 		try (Connection conn = db.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -232,4 +251,25 @@ public class PrenotazioneDAOImpl implements PrenotazioneDAO {
 
 		return false;
 	}
+	
+	@Override
+	public List<Prenotazione> findAll() {
+	    String sql = "SELECT * FROM Prenotazione";
+	    List<Prenotazione> list = new ArrayList<>();
+
+	    try (Connection conn = db.getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql);
+	         ResultSet rs = ps.executeQuery()) {
+
+	        while (rs.next()) {
+	            list.add(map(rs));
+	        }
+
+	    } catch (Exception e) {
+	        System.err.println("ERRORE SQL findAll: " + e.getMessage());
+	    }
+
+	    return list;
+	}
+
 }

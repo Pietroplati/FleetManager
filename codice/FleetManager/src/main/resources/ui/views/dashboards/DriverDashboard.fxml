@@ -13,7 +13,7 @@
 
 <BorderPane xmlns="http://javafx.com/javafx"
 	xmlns:fx="http://javafx.com/fxml"
-	fx:controller="it.fleetmanager.ui.DriverDashboardController"
+	fx:controller="it.fleetmanager.ui.dashboards.DriverDashboardController"
 	prefWidth="1280" prefHeight="720"
 	style="-fx-background-color: #e9f0f7;">
 

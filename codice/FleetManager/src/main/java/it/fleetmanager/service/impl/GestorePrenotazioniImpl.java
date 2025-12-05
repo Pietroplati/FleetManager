@@ -156,4 +156,29 @@ public class GestorePrenotazioniImpl implements GestorePrenotazioni {
 		sistemaNotifiche.inviaNotificaPrenotazione(new Utente(p.getIdUtente(), "", "", "", "", RuoloUtente.DRIVER), p);
 	}
 
+	@Override
+	public void aggiornaStatiPrenotazioni() {
+		LocalDateTime now = LocalDateTime.now();
+
+		// Aggiorna CONFERMATE → ATTIVA
+		List<Prenotazione> confermate = prenotazioneDAO.findByStato(StatoPrenotazione.CONFERMATA);
+		for (Prenotazione p : confermate) {
+			if (!now.isBefore(p.getDataInizio()) && now.isBefore(p.getDataFine())) {
+				// now >= inizio && now < fine
+				p.setStato(StatoPrenotazione.ATTIVA);
+				prenotazioneDAO.update(p);
+			}
+		}
+
+		// Aggiorna ATTIVE → COMPLETATA
+		List<Prenotazione> attive = prenotazioneDAO.findByStato(StatoPrenotazione.ATTIVA);
+		for (Prenotazione p : attive) {
+			if (!now.isBefore(p.getDataFine())) {
+				// now >= fine
+				p.setStato(StatoPrenotazione.COMPLETATA);
+				prenotazioneDAO.update(p);
+			}
+		}
+	}
+
 }

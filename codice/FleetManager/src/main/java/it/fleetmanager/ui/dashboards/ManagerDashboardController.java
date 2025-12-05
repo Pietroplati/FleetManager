@@ -1,4 +1,4 @@
-package it.fleetmanager.ui;
+package it.fleetmanager.ui.dashboards;
 
 import it.fleetmanager.model.Utente;
 import it.fleetmanager.repository.dao.ManutenzioneDAO;
@@ -8,6 +8,7 @@ import it.fleetmanager.repository.impl.ManutenzioneDAOImpl;
 import it.fleetmanager.repository.impl.PrenotazioneDAOImpl;
 import it.fleetmanager.repository.impl.VeicoloDAOImpl;
 import it.fleetmanager.repository.util.H2DatabaseManager;
+import it.fleetmanager.ui.SceneManager;
 import it.fleetmanager.ui.prenotazioni.PrenotazioniController;
 import it.fleetmanager.ui.veicoli.VeicoliController;
 import it.fleetmanager.util.StatoPrenotazione;
@@ -77,6 +78,6 @@ public class ManagerDashboardController {
 
     @FXML
     private void onLogout() {
-        SceneManager.changeScene("/it/fleetmanager/ui/LoginView.fxml");
+    	SceneManager.changeScene("/ui/views/LoginView.fxml");
     }
 }

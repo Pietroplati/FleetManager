@@ -6,6 +6,8 @@ import it.fleetmanager.repository.impl.UtenteDAOImpl;
 import it.fleetmanager.repository.util.H2DatabaseManager;
 import it.fleetmanager.service.impl.GestoreLoginImpl;
 import it.fleetmanager.service.interfaces.GestoreLogin;
+import it.fleetmanager.ui.dashboards.DriverDashboardController;
+import it.fleetmanager.ui.dashboards.ManagerDashboardController;
 import it.fleetmanager.util.RuoloUtente;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -55,7 +57,7 @@ public class LoginController {
 
 			// Carico la dashboard manager e ottengo il controller
 			ManagerDashboardController controller = SceneManager
-					.changeSceneWithController("/ui/views/ManagerDashboard.fxml");
+					.changeSceneWithController("/ui/views/dashboards/ManagerDashboard.fxml");
 
 			controller.setUtente(utente);
 
@@ -63,7 +65,7 @@ public class LoginController {
 
 			// Carico la dashboard driver e ottengo il controller
 			DriverDashboardController controller = SceneManager
-					.changeSceneWithController("/ui/views/DriverDashboard.fxml");
+					.changeSceneWithController("/ui/views/dashboards/DriverDashboard.fxml");
 
 			controller.setUtente(utente);
 		}

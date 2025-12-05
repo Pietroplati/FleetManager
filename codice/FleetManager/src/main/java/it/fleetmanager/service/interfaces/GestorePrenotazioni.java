@@ -24,4 +24,6 @@ public interface GestorePrenotazioni {
 	void attivaPrenotazione(int idPrenotazione);
 	
 	void completaPrenotazione(int idPrenotazione);
+	
+	void aggiornaStatiPrenotazioni();
 }
