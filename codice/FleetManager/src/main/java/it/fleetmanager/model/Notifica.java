@@ -12,26 +12,22 @@ public class Notifica {
 	private int idUtente;
 	private Integer idScadenza;
 
-	public Notifica(int idNotifica, TipoNotifica tipoNotifica, String messaggio, boolean letta, int idUtente,
-			Integer idScadenza) {
-		this.idNotifica = idNotifica;
-		this.tipoNotifica = tipoNotifica;
-		this.messaggio = messaggio;
-		this.dataInvio = LocalDateTime.now();
-		this.letta = letta;
-		this.idUtente = idUtente;
-		this.idScadenza = idScadenza;
-	}
+	public Notifica(Integer idNotifica, TipoNotifica tipoNotifica, String messaggio, LocalDateTime dataInvio,
+			boolean letta, int idUtente, Integer idScadenza) {
 
-	public Notifica(int idNotifica, TipoNotifica tipoNotifica, String messaggio, LocalDateTime dataInvio, boolean letta,
-			int idUtente, Integer idScadenza) {
-		this.idNotifica = idNotifica;
+		this.idNotifica = (idNotifica == null ? -1 : idNotifica);
 		this.tipoNotifica = tipoNotifica;
 		this.messaggio = messaggio;
 		this.dataInvio = dataInvio;
 		this.letta = letta;
 		this.idUtente = idUtente;
 		this.idScadenza = idScadenza;
+	}
+
+	public Notifica(Integer idNotifica, TipoNotifica tipoNotifica, String messaggio, boolean letta, int idUtente,
+			Integer idScadenza) {
+
+		this(idNotifica, tipoNotifica, messaggio, LocalDateTime.now(), letta, idUtente, idScadenza);
 	}
 
 	public int getIdNotifica() {

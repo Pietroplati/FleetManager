@@ -8,91 +8,75 @@ import it.fleetmanager.repository.impl.ManutenzioneDAOImpl;
 import it.fleetmanager.repository.impl.PrenotazioneDAOImpl;
 import it.fleetmanager.repository.impl.VeicoloDAOImpl;
 import it.fleetmanager.repository.util.H2DatabaseManager;
+import it.fleetmanager.ui.prenotazioni.PrenotazioniController;
 import it.fleetmanager.ui.veicoli.VeicoliController;
 import it.fleetmanager.util.StatoPrenotazione;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
-/**
- * Controller per la dashboard del Manager. Riceve l'utente dal LoginController
- * e mostra le statistiche principali.
- */
 public class ManagerDashboardController {
 
-	// Riferimenti ai label del FXML
-	@FXML
-	private Label lblTotVeicoli;
+    @FXML
+    private Label lblTotVeicoli;
 
-	@FXML
-	private Label lblPrenotazioniAttive;
+    @FXML
+    private Label lblPrenotazioniAttive;
 
-	@FXML
-	private Label lblManutenzioni;
+    @FXML
+    private Label lblManutenzioni;
 
-	// DAOs
-	private final VeicoloDAO veicoloDAO = new VeicoloDAOImpl(H2DatabaseManager.getInstance());
+    private final VeicoloDAO veicoloDAO = new VeicoloDAOImpl(H2DatabaseManager.getInstance());
+    private final PrenotazioneDAO prenotazioneDAO = new PrenotazioneDAOImpl(H2DatabaseManager.getInstance());
+    private final ManutenzioneDAO manutenzioneDAO = new ManutenzioneDAOImpl(H2DatabaseManager.getInstance());
 
-	private final PrenotazioneDAO prenotazioneDAO = new PrenotazioneDAOImpl(H2DatabaseManager.getInstance());
+    private Utente utente;
 
-	private final ManutenzioneDAO manutenzioneDAO = new ManutenzioneDAOImpl(H2DatabaseManager.getInstance());
+    public void setUtente(Utente utente) {
+        this.utente = utente;
+        aggiornaStatistiche();
+    }
 
-	// Utente loggato
-	private Utente utente;
+    private void aggiornaStatistiche() {
+        try {
+            int totVeicoli = veicoloDAO.getTuttiVeicoli().size();
+            int prenAttive = prenotazioneDAO.findByStato(StatoPrenotazione.ATTIVA).size();
+            int manutenzioni = manutenzioneDAO.getTutteManutenzioni().size();
 
-	/**
-	 * Metodo chiamato dal LoginController dopo il cambio di scena.
-	 */
-	public void setUtente(Utente utente) {
-		this.utente = utente;
-		aggiornaStatistiche();
-	}
+            lblTotVeicoli.setText(String.valueOf(totVeicoli));
+            lblPrenotazioniAttive.setText(String.valueOf(prenAttive));
+            lblManutenzioni.setText(String.valueOf(manutenzioni));
 
-	/**
-	 * Aggiorna le statistiche della dashboard manager.
-	 */
-	private void aggiornaStatistiche() {
-		try {
-			int totVeicoli = veicoloDAO.getTuttiVeicoli().size();
-			int prenAttive = prenotazioneDAO.findByStato(StatoPrenotazione.ATTIVA).size();
-			int manutenzioni = manutenzioneDAO.getTutteManutenzioni().size();
+        } catch (Exception e) {
+            System.err.println("[ERROR] Errore caricamento statistiche: " + e.getMessage());
+        }
+    }
 
-			lblTotVeicoli.setText(String.valueOf(totVeicoli));
-			lblPrenotazioniAttive.setText(String.valueOf(prenAttive));
-			lblManutenzioni.setText(String.valueOf(manutenzioni));
+    // ------------------------------------------------------------------------
 
-		} catch (Exception e) {
-			System.err.println("[ERROR] Errore caricamento statistiche: " + e.getMessage());
-		}
-	}
+    @FXML
+    private void onGestisciVeicoli() {
+        VeicoliController controller =
+                SceneManager.changeSceneWithController("/ui/views/veicoli/VeicoliView.fxml");
 
-	// ------------------------------------------------------------------------
-	// METODI PER I PULSANTI
-	// ------------------------------------------------------------------------
+        controller.setUtente(utente);
+    }
 
-	@FXML
-	private void onGestisciVeicoli() {
-		VeicoliController controller =
-			    SceneManager.changeSceneWithController("/ui/views/veicoli/VeicoliView.fxml");
+    @FXML
+    private void onGestisciPrenotazioni() {
 
-			controller.setUtente(utente);
+        PrenotazioniController controller =
+                SceneManager.changeSceneWithController("/ui/views/prenotazioni/PrenotazioniView.fxml");
 
-	}
+        controller.setUtente(utente);
+    }
 
+    @FXML
+    private void onGestisciManutenzioni() {
+        System.out.println("TODO: apri gestione manutenzioni");
+    }
 
-	@FXML
-	private void onGestisciPrenotazioni() {
-		System.out.println("TODO: apri gestione prenotazioni");
-		// SceneManager.changeScene("/it/fleetmanager/ui/PrenotazioniView.fxml");
-	}
-
-	@FXML
-	private void onGestisciManutenzioni() {
-		System.out.println("TODO: apri gestione manutenzioni");
-		// SceneManager.changeScene("/it/fleetmanager/ui/ManutenzioniView.fxml");
-	}
-
-	@FXML
-	private void onLogout() {
-		SceneManager.changeScene("/it/fleetmanager/ui/LoginView.fxml");
-	}
+    @FXML
+    private void onLogout() {
+        SceneManager.changeScene("/it/fleetmanager/ui/LoginView.fxml");
+    }
 }

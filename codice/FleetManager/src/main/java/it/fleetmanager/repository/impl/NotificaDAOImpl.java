@@ -48,24 +48,25 @@ public class NotificaDAOImpl implements NotificaDAO {
 	public void save(Notifica n) {
 
 		String sql = """
-				INSERT INTO Notifica
-				(idNotifica, tipoNotifica, messaggio, dataInvio, letta, idUtente, idScadenza)
-				VALUES (?, ?, ?, ?, ?, ?, ?)
-				""";
+					            INSERT INTO Notifica
+				(tipoNotifica, messaggio, dataInvio, letta, idUtente, idScadenza)
+				VALUES (?, ?, ?, ?, ?, ?)
+
+					            """;
 
 		try (Connection conn = db.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
-			ps.setInt(1, n.getIdNotifica());
-			ps.setString(2, n.getTipoNotifica().name());
-			ps.setString(3, n.getMessaggio());
-			ps.setTimestamp(4, java.sql.Timestamp.valueOf(n.getDataInvio()));
-			ps.setBoolean(5, n.getLetta());
-			ps.setInt(6, n.getIdUtente());
+			// NIENTE ID → lo genera il DB
+			ps.setString(1, n.getTipoNotifica().name());
+			ps.setString(2, n.getMessaggio());
+			ps.setTimestamp(3, java.sql.Timestamp.valueOf(n.getDataInvio()));
+			ps.setBoolean(4, n.getLetta());
+			ps.setInt(5, n.getIdUtente());
 
 			if (n.getIdScadenza() != null)
-				ps.setInt(7, n.getIdScadenza());
+				ps.setInt(6, n.getIdScadenza());
 			else
-				ps.setNull(7, Types.INTEGER);
+				ps.setNull(6, Types.INTEGER);
 
 			ps.executeUpdate();
 

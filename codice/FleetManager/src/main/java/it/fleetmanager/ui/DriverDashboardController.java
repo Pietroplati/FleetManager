@@ -4,6 +4,8 @@ import it.fleetmanager.model.Utente;
 import it.fleetmanager.repository.dao.PrenotazioneDAO;
 import it.fleetmanager.repository.impl.PrenotazioneDAOImpl;
 import it.fleetmanager.repository.util.H2DatabaseManager;
+import it.fleetmanager.ui.prenotazioni.NuovaPrenotazioneController;
+import it.fleetmanager.ui.prenotazioni.PrenotazioniController;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
@@ -13,64 +15,73 @@ import javafx.scene.control.Label;
  */
 public class DriverDashboardController {
 
-	// Riferimenti al FXML
-	@FXML
-	private Label lblNome;
+    // Riferimenti al FXML
+    @FXML
+    private Label lblNome;
 
-	@FXML
-	private Label lblEmail;
+    @FXML
+    private Label lblEmail;
 
-	@FXML
-	private Label lblPatente;
+    @FXML
+    private Label lblPatente;
 
-	// Utente loggato
-	private Utente utente;
+    // Utente loggato
+    private Utente utente;
 
-	// DAO necessari
-	private final PrenotazioneDAO prenotazioneDAO = new PrenotazioneDAOImpl(H2DatabaseManager.getInstance());
+    // DAO necessari
+    private final PrenotazioneDAO prenotazioneDAO = new PrenotazioneDAOImpl(H2DatabaseManager.getInstance());
 
-	/**
-	 * Richiamato dal LoginController dopo il cambio scena.
-	 */
-	public void setUtente(Utente utente) {
-		this.utente = utente;
-		aggiornaDatiUtente();
-	}
+    /**
+     * Richiamato dal LoginController dopo il cambio scena.
+     */
+    public void setUtente(Utente utente) {
+        this.utente = utente;
+        aggiornaDatiUtente();
+    }
 
-	/**
-	 * Aggiorna le informazioni del driver nella UI.
-	 */
-	private void aggiornaDatiUtente() {
-		if (utente == null) {
-			System.err.println("ERRORE: utente nullo in DriverDashboardController");
-			return;
-		}
+    /**
+     * Aggiorna le informazioni del driver nella UI.
+     */
+    private void aggiornaDatiUtente() {
+        if (utente == null) {
+            System.err.println("ERRORE: utente nullo in DriverDashboardController");
+            return;
+        }
 
-		lblNome.setText(utente.getNome() + " " + utente.getCognome());
-		lblEmail.setText(utente.getEmail());
-		lblPatente.setText("Patente: " + utente.getPatente());
-	}
+        lblNome.setText(utente.getNome() + " " + utente.getCognome());
+        lblEmail.setText(utente.getEmail());
+        lblPatente.setText("Patente: " + utente.getPatente());
+    }
 
-	// ------------------------------------------------------------------------
-	// METODI PER I PULSANTI
-	// ------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
+    // METODI PER I PULSANTI
+    // ------------------------------------------------------------------------
 
-	@FXML
-	private void onApriPrenotazioni() {
-		System.out.println("TODO: aprire lista prenotazioni del driver");
-		// In futuro:
-		// SceneManager.changeScene("/it/fleetmanager/ui/DriverPrenotazioni.fxml");
-	}
+    @FXML
+    private void onApriPrenotazioni() {
 
-	@FXML
-	private void onNuovaPrenotazione() {
-		System.out.println("TODO: procedura nuova prenotazione");
-		// In futuro:
-		// SceneManager.changeScene("/it/fleetmanager/ui/NuovaPrenotazione.fxml");
-	}
+        var ctrl = SceneManager.changeSceneWithController(
+            "/ui/views/prenotazioni/PrenotazioniView.fxml"
+        );
 
-	@FXML
-	private void onLogout() {
-		SceneManager.changeScene("/it/fleetmanager/ui/LoginView.fxml");
-	}
+        ((PrenotazioniController) ctrl).setUtente(utente);
+    }
+
+
+    @FXML
+    private void onNuovaPrenotazione() {
+
+        var ctrl = SceneManager.changeSceneWithController(
+            "/ui/views/prenotazioni/NuovaPrenotazioneView.fxml"
+        );
+
+        ((NuovaPrenotazioneController) ctrl).setUtente(utente);
+    }
+
+
+
+    @FXML
+    private void onLogout() {
+        SceneManager.changeScene("/ui/views/LoginView.fxml");
+    }
 }
