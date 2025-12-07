@@ -19,15 +19,8 @@ public class SistemaNotifiche {
 	public void inviaNotifica(Utente destinatario, String messaggio) {
 
 		// ID = null → autoincrement
-		Notifica n = new Notifica(
-				null,                           
-				TipoNotifica.SEGNALAZIONE,
-				messaggio,
-				LocalDateTime.now(),
-				false,
-				destinatario.getIdUtente(),
-				null
-		);
+		Notifica n = new Notifica(null, TipoNotifica.SEGNALAZIONE, messaggio, LocalDateTime.now(), false,
+				destinatario.getIdUtente(), null);
 
 		notificaDAO.save(n);
 
@@ -40,15 +33,9 @@ public class SistemaNotifiche {
 				+ " fissata al " + scadenza.getData();
 
 		// ID = null → autoincrement
-		Notifica n = new Notifica(
-				null,                           // <--- CORRETTO
-				TipoNotifica.SCADENZA,
-				msg,
-				LocalDateTime.now(),
-				false,
-				manager.getIdUtente(),
-				scadenza.getIdScadenza()
-		);
+		Notifica n = new Notifica(null, // <--- CORRETTO
+				TipoNotifica.SCADENZA, msg, LocalDateTime.now(), false, manager.getIdUtente(),
+				scadenza.getIdScadenza());
 
 		notificaDAO.save(n);
 
@@ -62,18 +49,37 @@ public class SistemaNotifiche {
 				+ prenotazione.getStato();
 
 		// ID = null → autoincrement
-		Notifica n = new Notifica(
-				null,                           // <--- CORRETTO
-				TipoNotifica.PRENOTAZIONE,
-				msg,
-				LocalDateTime.now(),
-				false,
-				driver.getIdUtente(),
-				null
-		);
+		Notifica n = new Notifica(null, // <--- CORRETTO
+				TipoNotifica.PRENOTAZIONE, msg, LocalDateTime.now(), false, driver.getIdUtente(), null);
 
 		notificaDAO.save(n);
 
 		System.out.println("[PRENOTAZIONE] Driver " + driver.getNome() + ": " + msg);
 	}
+
+	public void notificaManutenzioneProgrammata(int idUtente, String targa, LocalDateTime data) {
+		String msg = "Manutenzione programmata per il veicolo " + targa + " in data " + data.toLocalDate();
+
+		Notifica n = new Notifica(0, // ID → gestito dal DB
+				TipoNotifica.MANUTENZIONE, msg, LocalDateTime.now(), false, idUtente, null);
+
+		notificaDAO.save(n);
+	}
+
+	public void notificaManutenzioneConclusa(int idUtente, String targa) {
+		String msg = "Manutenzione completata per il veicolo " + targa + ".";
+
+		Notifica n = new Notifica(0, TipoNotifica.MANUTENZIONE, msg, LocalDateTime.now(), false, idUtente, null);
+
+		notificaDAO.save(n);
+	}
+
+	public void notificaInterventoStraordinario(int idUtente, String targa) {
+		String msg = "Intervento straordinario segnalato sul veicolo " + targa + ".";
+
+		Notifica n = new Notifica(0, TipoNotifica.MANUTENZIONE, msg, LocalDateTime.now(), false, idUtente, null);
+
+		notificaDAO.save(n);
+	}
+
 }
