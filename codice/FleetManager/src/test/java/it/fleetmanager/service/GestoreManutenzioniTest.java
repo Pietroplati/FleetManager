@@ -34,7 +34,7 @@ public class GestoreManutenzioniTest {
 		manutenzioneDAO = new ManutenzioneDAOImpl(H2DatabaseManager.getInstance());
 		veicoloDAO = new VeicoloDAOImpl(H2DatabaseManager.getInstance());
 
-		gestore = new GestoreManutenzioniImpl(manutenzioneDAO, veicoloDAO);
+		gestore = new GestoreManutenzioniImpl(manutenzioneDAO, veicoloDAO, null);
 
 		// Veicolo di test presente nel DatabaseTestUtils
 		veicolo = veicoloDAO.getVeicoloByTarga("T1");
