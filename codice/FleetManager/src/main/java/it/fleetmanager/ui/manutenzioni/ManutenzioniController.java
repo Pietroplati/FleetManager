@@ -7,11 +7,9 @@ import it.fleetmanager.model.Manutenzione;
 import it.fleetmanager.model.Utente;
 import it.fleetmanager.repository.dao.ManutenzioneDAO;
 import it.fleetmanager.repository.dao.NotificaDAO;
-import it.fleetmanager.repository.dao.UtenteDAO;
 import it.fleetmanager.repository.dao.VeicoloDAO;
 import it.fleetmanager.repository.impl.ManutenzioneDAOImpl;
 import it.fleetmanager.repository.impl.NotificaDAOImpl;
-import it.fleetmanager.repository.impl.UtenteDAOImpl;
 import it.fleetmanager.repository.impl.VeicoloDAOImpl;
 import it.fleetmanager.repository.util.H2DatabaseManager;
 import it.fleetmanager.service.impl.GestoreManutenzioniImpl;
@@ -31,7 +29,8 @@ public class ManutenzioniController {
 	private TableColumn<Manutenzione, String> colId, colTarga, colData, colTipo, colDescrizione;
 
 	@FXML
-	private Button btnNuova, btnChiudi, btnStraordinaria;
+	private Button btnNuova, btnChiudi;
+
 	@FXML
 	private Label lblDescrizioneRuolo;
 
@@ -40,7 +39,6 @@ public class ManutenzioniController {
 	private final H2DatabaseManager db = H2DatabaseManager.getInstance();
 	private final ManutenzioneDAO manutDAO = new ManutenzioneDAOImpl(db);
 	private final VeicoloDAO veicoloDAO = new VeicoloDAOImpl(db);
-	private final UtenteDAO utenteDAO = new UtenteDAOImpl(db);
 	private final NotificaDAO notificaDAO = new NotificaDAOImpl(db);
 
 	private final SistemaNotifiche sistemaNotifiche = new SistemaNotifiche(notificaDAO);
@@ -68,7 +66,6 @@ public class ManutenzioniController {
 		} else {
 			lblDescrizioneRuolo.setText("Le mie manutenzioni");
 			btnChiudi.setVisible(false);
-			btnStraordinaria.setVisible(false);
 		}
 
 		tableManutenzioni.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
@@ -81,12 +78,13 @@ public class ManutenzioniController {
 
 	// ============================================================
 	// BOTTONI
+	// ============================================================
 
 	@FXML
 	private void onNuovaManutenzione() {
-	    var ctrl = (NuovaManutenzioneController)
-	        SceneManager.changeSceneWithController("/ui/views/manutenzioni/NuovaManutenzioneView.fxml");
-	    ctrl.setUtente(utenteLoggato);
+		var ctrl = (NuovaManutenzioneController) SceneManager
+				.changeSceneWithController("/ui/views/manutenzioni/NuovaManutenzioneView.fxml");
+		ctrl.setUtente(utenteLoggato);
 	}
 
 	@FXML
@@ -100,13 +98,6 @@ public class ManutenzioniController {
 		gestoreManut.chiudiManutenzione(m.getIdManutenzione());
 		mostraInfo("Manutenzione chiusa.");
 		caricaDati();
-	}
-
-	@FXML
-	private void onSegnalaStraordinaria() {
-	    var ctrl = (NuovaStraordinariaController)
-	        SceneManager.changeSceneWithController("/ui/views/manutenzioni/NuovaStraordinariaView.fxml");
-	    ctrl.setUtente(utenteLoggato);
 	}
 
 	// ============================================================

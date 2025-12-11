@@ -16,58 +16,54 @@ import javafx.scene.control.TextField;
 
 public class LoginController {
 
-	@FXML
-	private TextField emailField;
+    @FXML
+    private TextField emailField;
 
-	@FXML
-	private PasswordField passwordField;
+    @FXML
+    private PasswordField passwordField;
 
-	@FXML
-	private Label errorLabel;
+    @FXML
+    private Label errorLabel;
 
-	private final GestoreLogin gestoreLogin;
+    private final GestoreLogin gestoreLogin;
 
-	public LoginController() {
-		UtenteDAO utenteDAO = new UtenteDAOImpl(H2DatabaseManager.getInstance());
-		this.gestoreLogin = new GestoreLoginImpl(utenteDAO);
-	}
+    public LoginController() {
+        UtenteDAO utenteDAO = new UtenteDAOImpl(H2DatabaseManager.getInstance());
+        this.gestoreLogin = new GestoreLoginImpl(utenteDAO);
+    }
 
-	@FXML
-	private void onLoginClicked() {
-		String email = emailField.getText();
-		String password = passwordField.getText();
+    @FXML
+    private void onLoginClicked() {
+        String email = emailField.getText();
+        String password = passwordField.getText();
 
-		errorLabel.setText(""); // reset messaggio errore
+        errorLabel.setText("");
 
-		Utente utente = gestoreLogin.login(email, password);
+        Utente utente = gestoreLogin.login(email, password);
 
-		if (utente == null) {
-			errorLabel.setText("Credenziali non valide.");
-			return;
-		}
+        if (utente == null) {
+            errorLabel.setText("Credenziali non valide.");
+            return;
+        }
 
-		// Login OK → routing per ruolo
-		caricaDashboard(utente);
+        caricaDashboard(utente);
+    }
 
-	}
+    private void caricaDashboard(Utente utente) {
 
-	private void caricaDashboard(Utente utente) {
+        if (utente.getRuoloUtente() == RuoloUtente.MANAGER) {
 
-		if (utente.getRuoloUtente() == RuoloUtente.MANAGER) {
+            ManagerDashboardController controller =
+                    SceneManager.changeSceneWithController("/ui/views/dashboards/ManagerDashboard.fxml");
 
-			// Carico la dashboard manager e ottengo il controller
-			ManagerDashboardController controller = SceneManager
-					.changeSceneWithController("/ui/views/dashboards/ManagerDashboard.fxml");
+            controller.setUtente(utente);
 
-			controller.setUtente(utente);
+        } else {
 
-		} else {
+            DriverDashboardController controller =
+                    SceneManager.changeSceneWithController("/ui/views/dashboards/DriverDashboard.fxml");
 
-			// Carico la dashboard driver e ottengo il controller
-			DriverDashboardController controller = SceneManager
-					.changeSceneWithController("/ui/views/dashboards/DriverDashboard.fxml");
-
-			controller.setUtente(utente);
-		}
-	}
+            controller.setUtente(utente);
+        }
+    }
 }

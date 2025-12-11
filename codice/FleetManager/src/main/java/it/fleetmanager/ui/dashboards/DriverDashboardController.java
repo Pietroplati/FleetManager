@@ -6,9 +6,12 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
+import it.fleetmanager.model.Notifica;
 import it.fleetmanager.model.Prenotazione;
 import it.fleetmanager.model.Utente;
+import it.fleetmanager.repository.dao.NotificaDAO;
 import it.fleetmanager.repository.dao.PrenotazioneDAO;
+import it.fleetmanager.repository.impl.NotificaDAOImpl;
 import it.fleetmanager.repository.impl.PrenotazioneDAOImpl;
 import it.fleetmanager.repository.util.H2DatabaseManager;
 import it.fleetmanager.ui.SceneManager;
@@ -16,11 +19,13 @@ import it.fleetmanager.ui.prenotazioni.NuovaPrenotazioneController;
 import it.fleetmanager.ui.prenotazioni.PrenotazioniController;
 import it.fleetmanager.util.StatoPrenotazione;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.shape.Circle;
 
 public class DriverDashboardController {
 
-	// ===== LABEL UI =====
+	// ===== UI =====
 	@FXML
 	private Label lblNome;
 	@FXML
@@ -35,37 +40,48 @@ public class DriverDashboardController {
 	@FXML
 	private Label lblVeicoloAssegnato;
 
-	// ===== UTENTE LOGGATO =====
-	private Utente utente;
+	@FXML
+	private Button btnNotifiche;
+	@FXML
+	private Circle badgeNotifiche;
 
-	// ===== DAO =====
+	// ===== DAOs =====
 	private final PrenotazioneDAO prenotazioneDAO = new PrenotazioneDAOImpl(H2DatabaseManager.getInstance());
 
+	private final NotificaDAO notificaDAO = new NotificaDAOImpl(H2DatabaseManager.getInstance());
+
+	// ===== UTENTE =====
+	private Utente utente;
+
 	// ============================================================
-	// SETTAGGIO UTENTE (chiamato dopo login)
+	// IMPOSTA L’UTENTE DOPO IL LOGIN
 	// ============================================================
 	public void setUtente(Utente utente) {
 		this.utente = utente;
 
 		aggiornaDatiUtente();
 		aggiornaWidgets();
+		aggiornaBadgeNotifiche();
 	}
 
+	// ============================================================
+	// DATI UTENTE
+	// ============================================================
 	private void aggiornaDatiUtente() {
 		lblNome.setText(utente.getNome() + " " + utente.getCognome());
 		lblEmail.setText(utente.getEmail());
 		lblPatente.setText("Patente: " + utente.getPatente());
 	}
 
+	// ============================================================
+	// WIDGETS DASHBOARD
+	// ============================================================
 	private void aggiornaWidgets() {
 		aggiornaPrenotazioniAttive();
 		aggiornaProssimaPrenotazione();
 		aggiornaVeicoloAssegnato();
 	}
 
-	// ============================================================
-	// 1️⃣ PRENOTAZIONI ATTIVE ORA
-	// ============================================================
 	private void aggiornaPrenotazioniAttive() {
 		long count = prenotazioneDAO.findByDriver(utente.getIdUtente()).stream()
 				.filter(p -> p.getStato() == StatoPrenotazione.ATTIVA).count();
@@ -73,9 +89,6 @@ public class DriverDashboardController {
 		lblPrenotazioniAttive.setText(String.valueOf(count));
 	}
 
-	// ============================================================
-	// 2️⃣ PROSSIMA PRENOTAZIONE (solo data/orario)
-	// ============================================================
 	private void aggiornaProssimaPrenotazione() {
 
 		List<Prenotazione> prenList = prenotazioneDAO.findByDriver(utente.getIdUtente());
@@ -83,44 +96,46 @@ public class DriverDashboardController {
 
 		DateTimeFormatter fmt = DateTimeFormatter.ofPattern("d MMMM HH:mm", new Locale("it", "IT"));
 
-		// --- 1) Se esiste PRENOTAZIONE ATTIVA → mostra quando FINISCE ---
-		var attivaFiniscePrima = prenList.stream().filter(p -> p.getStato() == StatoPrenotazione.ATTIVA)
+		// -- Se esiste prenotazione ATTIVA che finisce presto
+		var attiva = prenList.stream().filter(p -> p.getStato() == StatoPrenotazione.ATTIVA)
 				.filter(p -> p.getDataFine().isAfter(now)).min(Comparator.comparing(Prenotazione::getDataFine));
 
-		if (attivaFiniscePrima.isPresent()) {
-			lblProssimaPrenotazione.setText(attivaFiniscePrima.get().getDataFine().format(fmt));
+		if (attiva.isPresent()) {
+			lblProssimaPrenotazione.setText(attiva.get().getDataFine().format(fmt));
 			return;
 		}
 
-		// --- 2) Altrimenti → mostra PRENOTAZIONE CONFERMATA più vicina a iniziare ---
-		var confermataPiuVicina = prenList.stream().filter(p -> p.getStato() == StatoPrenotazione.CONFERMATA)
+		// -- Altrimenti la confermata più vicina a iniziare
+		var confermata = prenList.stream().filter(p -> p.getStato() == StatoPrenotazione.CONFERMATA)
 				.filter(p -> p.getDataInizio().isAfter(now)).min(Comparator.comparing(Prenotazione::getDataInizio));
 
-		if (confermataPiuVicina.isPresent()) {
-			lblProssimaPrenotazione.setText(confermataPiuVicina.get().getDataInizio().format(fmt));
+		if (confermata.isPresent()) {
+			lblProssimaPrenotazione.setText(confermata.get().getDataInizio().format(fmt));
 			return;
 		}
 
-		// --- 3) Nessuna prenotazione futura ---
 		lblProssimaPrenotazione.setText("Nessuna");
 	}
 
-	// ============================================================
-	// 3️⃣ VEICOLO ASSEGNATO (solo se prenotazione ATTIVA ora)
-	// ============================================================
 	private void aggiornaVeicoloAssegnato() {
 
 		List<Prenotazione> prenList = prenotazioneDAO.findByDriver(utente.getIdUtente());
 		LocalDateTime now = LocalDateTime.now();
 
-		// 🔥 PRENDI SOLO LE PRENOTAZIONI ATTIVE (stato = ATTIVA)
 		var attuale = prenList.stream().filter(p -> p.getStato() == StatoPrenotazione.ATTIVA)
-				.filter(p -> !p.getDataInizio().isAfter(now)) // dataInizio <= now
-				.filter(p -> p.getDataFine().isAfter(now)) // dataFine > now
-				.findFirst();
+				.filter(p -> !p.getDataInizio().isAfter(now)).filter(p -> p.getDataFine().isAfter(now)).findFirst();
 
 		attuale.ifPresentOrElse(p -> lblVeicoloAssegnato.setText(p.getTarga()),
 				() -> lblVeicoloAssegnato.setText("Nessuno"));
+	}
+
+	// ============================================================
+	// 🔴 BADGE NOTIFICHE (APPARE SOLO SE CI SONO NON LETTE)
+	// ============================================================
+	private void aggiornaBadgeNotifiche() {
+
+		List<Notifica> nonLette = notificaDAO.findNonLette(utente.getIdUtente());
+		badgeNotifiche.setVisible(!nonLette.isEmpty());
 	}
 
 	// ============================================================
@@ -136,6 +151,17 @@ public class DriverDashboardController {
 	private void onNuovaPrenotazione() {
 		var ctrl = SceneManager.changeSceneWithController("/ui/views/prenotazioni/NuovaPrenotazioneView.fxml");
 		((NuovaPrenotazioneController) ctrl).setUtente(utente);
+	}
+
+	@FXML
+	private void onSegnalazioneStraordinaria() {
+		SceneManager.changeScene("/ui/views/segnalazioni/SegnalazioneStraordinariaView.fxml");
+	}
+
+	@FXML
+	private void onApriNotifiche() {
+		var ctrl = SceneManager.changeSceneWithController("/ui/views/notifiche/NotificheView.fxml");
+		((it.fleetmanager.ui.notifiche.NotificheController) ctrl).setUtente(utente);
 	}
 
 	@FXML

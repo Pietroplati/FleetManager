@@ -5,58 +5,60 @@
 <?import javafx.scene.layout.*?>
 
 <BorderPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="it.fleetmanager.ui.manutenzioni.ManutenzioniController"
-            prefWidth="1280" prefHeight="720"
-            style="-fx-background-color: #e9f0f7;">
+	xmlns:fx="http://javafx.com/fxml"
+	fx:controller="it.fleetmanager.ui.manutenzioni.ManutenzioniController"
+	style="-fx-background-color: #e9f0f7;">
 
-    <top>
-        <VBox alignment="CENTER" spacing="5" style="-fx-padding: 25 0 15 0;">
-            <Label text="Gestione Manutenzioni"
-                   style="-fx-font-size: 30; -fx-font-weight: bold; -fx-text-fill:#2f4773;" />
+	<!-- ====== HEADER ====== -->
+	<top>
+		<VBox alignment="CENTER" spacing="5"
+			style="-fx-padding: 25 0 15 0;">
+			<Label text="Gestione Manutenzioni"
+				style="-fx-font-size: 30; -fx-font-weight: bold; -fx-text-fill:#2f4773;" />
 
-            <Label fx:id="lblDescrizioneRuolo"
-                   text="Caricamento..."
-                   style="-fx-font-size: 15; -fx-text-fill:#4a76a8;" />
-        </VBox>
-    </top>
+			<Label fx:id="lblDescrizioneRuolo" text="Caricamento..."
+				style="-fx-font-size: 15; -fx-text-fill:#4a76a8;" />
+		</VBox>
+	</top>
 
-    <center>
-        <VBox alignment="CENTER" spacing="20">
+	<!-- ====== CENTRO ====== -->
+	<center>
+		<VBox alignment="CENTER" spacing="20">
 
-            <VBox alignment="CENTER"
-                  prefWidth="1100"
-                  spacing="15"
-                  style="
+			<!-- ====== TABELLA ====== -->
+			<VBox alignment="CENTER" prefWidth="1100" spacing="15"
+				style="
                      -fx-background-color: white;
                      -fx-background-radius: 15;
                      -fx-padding: 20;
                      -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 15, 0.2, 0, 4);
                   ">
 
-                <TableView fx:id="tableManutenzioni"
-                           prefHeight="450"
-                           prefWidth="1050">
+				<TableView fx:id="tableManutenzioni" prefHeight="450"
+					prefWidth="1050">
 
-                    <columns>
-                        <TableColumn fx:id="colId" text="ID" prefWidth="80" />
-                        <TableColumn fx:id="colTarga" text="Targa" prefWidth="150" />
-                        <TableColumn fx:id="colData" text="Data" prefWidth="200" />
-                        <TableColumn fx:id="colTipo" text="Tipo" prefWidth="180" />
-                        <TableColumn fx:id="colDescrizione" text="Descrizione" prefWidth="300" />
-                    </columns>
+					<columns>
+						<TableColumn fx:id="colId" text="ID" prefWidth="80" />
+						<TableColumn fx:id="colTarga" text="Targa"
+							prefWidth="150" />
+						<TableColumn fx:id="colData" text="Data"
+							prefWidth="200" />
+						<TableColumn fx:id="colTipo" text="Tipo"
+							prefWidth="180" />
+						<TableColumn fx:id="colDescrizione" text="Descrizione"
+							prefWidth="300" />
+					</columns>
 
-                </TableView>
+				</TableView>
 
-            </VBox>
+			</VBox>
 
-            <HBox alignment="CENTER" spacing="20">
+			<!-- ====== BOTTONI ====== -->
+			<HBox alignment="CENTER" spacing="20">
 
-                <Button fx:id="btnNuova"
-                        text="Nuova Manutenzione"
-                        onAction="#onNuovaManutenzione"
-                        prefWidth="200"
-                        style="
+				<Button fx:id="btnNuova" text="Nuova Manutenzione"
+					onAction="#onNuovaManutenzione" prefWidth="200"
+					style="
                            -fx-background-radius: 10;
                            -fx-font-size: 16;
                            -fx-font-weight: bold;
@@ -64,11 +66,9 @@
                            -fx-background-color: linear-gradient(to right,#4a76a8,#2f4773);
                         " />
 
-                <Button fx:id="btnChiudi"
-                        text="Chiudi Manutenzione"
-                        onAction="#onChiudi"
-                        prefWidth="200"
-                        style="
+				<Button fx:id="btnChiudi" text="Chiudi Manutenzione"
+					onAction="#onChiudi" prefWidth="200"
+					style="
                            -fx-background-radius: 10;
                            -fx-font-size: 16;
                            -fx-font-weight: bold;
@@ -76,31 +76,20 @@
                            -fx-background-color: linear-gradient(to right,#5e8bbf,#466c9c);
                         " />
 
-                <Button fx:id="btnStraordinaria"
-                        text="Segnala Straordinaria"
-                        onAction="#onSegnalaStraordinaria"
-                        prefWidth="220"
-                        style="
-                           -fx-background-radius: 10;
-                           -fx-font-size: 16;
-                           -fx-font-weight: bold;
-                           -fx-text-fill: white;
-                           -fx-background-color: linear-gradient(to right,#8fb3d6,#6b8eb9);
-                        " />
+				<!-- BOTTONE SEGNA STRAORDINARIA RIMOSSO -->
 
-                <Button text="Torna alla Dashboard"
-                        onAction="#onBack"
-                        prefWidth="200"
-                        style="
+				<Button text="Torna alla Dashboard" onAction="#onBack"
+					prefWidth="200"
+					style="
                            -fx-background-radius: 10;
                            -fx-font-size: 16;
                            -fx-font-weight: bold;
                            -fx-text-fill: white;
                            -fx-background-color: linear-gradient(to right,#b2c7db,#92aac4);
                         " />
-            </HBox>
+			</HBox>
 
-        </VBox>
-    </center>
+		</VBox>
+	</center>
 
 </BorderPane>

@@ -7,8 +7,7 @@
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="it.fleetmanager.ui.veicoli.VeicoliController"
-            style="-fx-background-color: #e9f0f7;"
-            prefWidth="1280" prefHeight="720">
+            style="-fx-background-color: #e9f0f7;">
 
     <!-- ==================== TOP ==================== -->
     <top>

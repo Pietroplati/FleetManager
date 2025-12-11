@@ -13,7 +13,9 @@ public class SQLoperator {
 	public static void main(String[] args) throws SQLException {
 		try (Connection conn = H2DatabaseManager.getInstance().getConnection(); Statement stmt = conn.createStatement()) {
 			String sql = """
-					DROP TABLE IF EXISTS Prenotazione;
+					DELETE FROM Notifica
+WHERE idUtente = 5;
+
 		
 					""";
 			stmt.executeUpdate(sql);
