@@ -78,7 +78,7 @@
 
 				<!-- Manager only -->
 				<Button fx:id="btnConferma" text="Conferma" visible="false"
-					onAction="#onConferma" prefWidth="160"
+					managed="false" onAction="#onConferma" prefWidth="160"
 					style="
                            -fx-background-radius: 10;
                            -fx-font-size: 16;
@@ -88,7 +88,7 @@
                         " />
 
 				<Button fx:id="btnCompleta" text="Completa" visible="false"
-					onAction="#onCompleta" prefWidth="160"
+					managed="false" onAction="#onCompleta" prefWidth="160"
 					style="
                            -fx-background-radius: 10;
                            -fx-font-size: 16;
@@ -110,7 +110,8 @@
 
 				<!-- Driver only -->
 				<Button fx:id="btnNuova" text="Nuova Prenotazione"
-					visible="false" onAction="#onNuovaPrenotazione" prefWidth="200"
+					visible="false" managed="false" onAction="#onNuovaPrenotazione"
+					prefWidth="200"
 					style="
                            -fx-background-radius: 10;
                            -fx-font-size: 16;

@@ -13,8 +13,8 @@ public class SQLoperator {
 	public static void main(String[] args) throws SQLException {
 		try (Connection conn = H2DatabaseManager.getInstance().getConnection(); Statement stmt = conn.createStatement()) {
 			String sql = """
-					DELETE FROM Notifica
-WHERE idUtente = 5;
+					DELETE FROM Utente
+WHERE idUtente = 3;
 
 		
 					""";

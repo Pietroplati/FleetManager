@@ -47,9 +47,9 @@ public class PrenotazioniController {
 
 	// SERVIZIO
 	private final GestorePrenotazioniImpl gestorePrenotazioni = new GestorePrenotazioniImpl(prenDAO, veicoloDAO,
-			new SistemaNotifiche(notificaDAO));
+			utenteDAO, new SistemaNotifiche(notificaDAO, utenteDAO));
 
-	// CACHE UTENTI (ZERO QUERY durante il rendering)
+	// CACHE UTENTI
 	private Map<Integer, Utente> cacheUtenti;
 
 	private final DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
@@ -57,22 +57,24 @@ public class PrenotazioniController {
 	// ============================================================
 	// INIT
 	// ============================================================
-
 	public void setUtente(Utente user) {
 		this.utenteLoggato = user;
 
-		caricaCacheUtenti(); // 🔥 riduce da 100 query → 0 query
+		caricaCacheUtenti();
 		configuraUI();
 		gestorePrenotazioni.aggiornaStatiPrenotazioni();
 		tablePrenotazioni.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
 		caricaDati();
+
+		// Listener sulla selezione della tabella
+		tablePrenotazioni.getSelectionModel().selectedItemProperty()
+				.addListener((obs, oldSel, newSel) -> aggiornaBottoni(newSel));
 	}
 
 	// ============================================================
 	// CACHE UTENTI
 	// ============================================================
-
 	private void caricaCacheUtenti() {
 		cacheUtenti = new HashMap<>();
 		for (Utente u : utenteDAO.getTuttiUtenti()) {
@@ -83,7 +85,6 @@ public class PrenotazioniController {
 	// ============================================================
 	// CONFIGURA UI
 	// ============================================================
-
 	private void configuraUI() {
 
 		colId.setCellValueFactory(c -> new SimpleStringProperty("" + c.getValue().getIdPrenotazione()));
@@ -110,22 +111,22 @@ public class PrenotazioniController {
 			btnConferma.setVisible(false);
 			btnCompleta.setVisible(false);
 		}
+
+		// Disabilita tutto finché non è selezionato nulla
+		aggiornaBottoni(null);
 	}
 
 	// ============================================================
-	// CARICAMENTO DATI (VELOCISSIMO)
+	// CARICAMENTO DATI
 	// ============================================================
-
 	private void caricaDati() {
-		List<Prenotazione> tutte = prenDAO.findAll(); // UNA SOLA QUERY
+		List<Prenotazione> tutte = prenDAO.findAll();
 
-		// FILTRO DRIVER
 		if (utenteLoggato.getRuoloUtente() == RuoloUtente.DRIVER) {
 			tutte = tutte.stream().filter(p -> p.getIdUtente() == utenteLoggato.getIdUtente())
 					.collect(Collectors.toList());
 		}
 
-		// ORDINAMENTO
 		tutte.sort((a, b) -> {
 			int cmp = Integer.compare(priorita(a), priorita(b));
 			return (cmp != 0) ? cmp : confrontoTemporale(a, b);
@@ -133,10 +134,6 @@ public class PrenotazioniController {
 
 		tablePrenotazioni.getItems().setAll(tutte);
 	}
-
-	// ============================================================
-	// PRIORITÀ ORDINAMENTO (UNIFICATA)
-	// ============================================================
 
 	private int priorita(Prenotazione p) {
 		StatoPrenotazione s = p.getStato();
@@ -162,17 +159,56 @@ public class PrenotazioniController {
 
 	private int confrontoTemporale(Prenotazione a, Prenotazione b) {
 		LocalDateTime now = LocalDateTime.now();
-
 		LocalDateTime ta = a.getDataInizio().isAfter(now) ? a.getDataInizio() : a.getDataFine();
 		LocalDateTime tb = b.getDataInizio().isAfter(now) ? b.getDataInizio() : b.getDataFine();
-
 		return ta.compareTo(tb);
 	}
 
 	// ============================================================
-	// BOTTONI
+	// AGGIORNA BOTTONI DINAMICAMENTE
 	// ============================================================
+	private void aggiornaBottoni(Prenotazione p) {
 
+		if (p == null) {
+			btnConferma.setDisable(true);
+			btnCompleta.setDisable(true);
+			btnAnnulla.setDisable(true);
+			return;
+		}
+
+		StatoPrenotazione stato = p.getStato();
+
+		// MANAGER
+		if (utenteLoggato.getRuoloUtente() == RuoloUtente.MANAGER) {
+
+			btnConferma.setDisable(stato != StatoPrenotazione.RICHIESTA);
+
+			btnCompleta.setDisable(stato != StatoPrenotazione.ATTIVA);
+
+			btnAnnulla.setDisable(!(stato == StatoPrenotazione.RICHIESTA || stato == StatoPrenotazione.CONFERMATA));
+
+			return;
+		}
+
+		// DRIVER
+		if (utenteLoggato.getRuoloUtente() == RuoloUtente.DRIVER) {
+
+			btnConferma.setDisable(true);
+			btnCompleta.setDisable(true);
+
+			if (p.getIdUtente() != utenteLoggato.getIdUtente()) {
+				btnAnnulla.setDisable(true);
+			} else {
+				boolean annullabile = (stato == StatoPrenotazione.RICHIESTA || stato == StatoPrenotazione.CONFERMATA);
+
+				btnAnnulla.setDisable(!annullabile);
+			}
+		}
+	}
+
+	// ============================================================
+	// BOTTONI AZIONI
+	// ============================================================
 	@FXML
 	private void onNuovaPrenotazione() {
 		var ctrl = SceneManager.changeSceneWithController("/ui/views/prenotazioni/NuovaPrenotazioneView.fxml");
@@ -222,10 +258,8 @@ public class PrenotazioniController {
 	// ============================================================
 	// REFRESH
 	// ============================================================
-
 	@FXML
 	private void onRefreshClick() {
-
 		loadingIndicator.setVisible(true);
 
 		Task<Void> task = new Task<>() {
@@ -252,7 +286,6 @@ public class PrenotazioniController {
 	// ============================================================
 	// NAVIGAZIONE
 	// ============================================================
-
 	@FXML
 	private void onBack() {
 		if (utenteLoggato.getRuoloUtente() == RuoloUtente.MANAGER) {
@@ -269,7 +302,6 @@ public class PrenotazioniController {
 	// ============================================================
 	// ALERT
 	// ============================================================
-
 	private void mostraErrore(String msg) {
 		Alert a = new Alert(Alert.AlertType.ERROR);
 		a.setHeaderText("Errore");

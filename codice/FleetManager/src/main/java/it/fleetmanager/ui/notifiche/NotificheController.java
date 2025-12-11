@@ -27,6 +27,9 @@ import javafx.beans.property.SimpleStringProperty;
 
 public class NotificheController {
 
+	// ============================================================
+	// UI
+	// ============================================================
 	@FXML
 	private TableView<Notifica> tableNotifiche;
 	@FXML
@@ -45,6 +48,9 @@ public class NotificheController {
 	@FXML
 	private ProgressIndicator loadingIndicator;
 
+	// ============================================================
+	// DAO & DATI
+	// ============================================================
 	private Utente utente;
 
 	private final NotificaDAO notificaDAO = new NotificaDAOImpl(H2DatabaseManager.getInstance());
@@ -54,7 +60,7 @@ public class NotificheController {
 	private final DateTimeFormatter fmt = DateTimeFormatter.ofPattern("d MMMM yyyy HH:mm", new Locale("it", "IT"));
 
 	// ============================================================
-	// INITIALIZE - come VeicoliController
+	// INITIALIZE
 	// ============================================================
 	@FXML
 	private void initialize() {
@@ -84,12 +90,11 @@ public class NotificheController {
 
 		colData.setCellValueFactory(n -> new SimpleStringProperty(n.getValue().getDataInvio().format(fmt)));
 
-		// 🔥 SI / NO
 		colLetta.setCellValueFactory(n -> new SimpleStringProperty(n.getValue().getLetta() ? "SI" : "NO"));
 	}
 
 	// ============================================================
-	// CARICAMENTO DATI (con Task → come prenotazioni)
+	// CARICAMENTO DATI (Task asincrono)
 	// ============================================================
 	private void caricaNotifiche() {
 
@@ -117,6 +122,7 @@ public class NotificheController {
 		try {
 			List<Notifica> tutte = notificaDAO.findByUtente(utente.getIdUtente());
 
+			// Ordine: prima non lette, poi per data decrescente
 			List<Notifica> ordinate = tutte.stream().sorted(Comparator.comparing(Notifica::getLetta) // false → true
 					.thenComparing(Notifica::getDataInvio, Comparator.reverseOrder())).collect(Collectors.toList());
 
@@ -131,6 +137,16 @@ public class NotificheController {
 	}
 
 	// ============================================================
+	// SELEZIONE (come in PrenotazioniController)
+	// ============================================================
+	private Notifica getSel() {
+		Notifica n = tableNotifiche.getSelectionModel().getSelectedItem();
+		if (n == null)
+			mostraErrore("Seleziona una notifica.");
+		return n;
+	}
+
+	// ============================================================
 	// REFRESH
 	// ============================================================
 	@FXML
@@ -139,11 +155,10 @@ public class NotificheController {
 	}
 
 	// ============================================================
-	// SEGNA TUTTE COME LETTE
+	// SEGNA TUTTE come LETTE
 	// ============================================================
 	@FXML
 	private void onSegnaTutteComeLette() {
-
 		try {
 			List<Notifica> nonLette = notificaDAO.findNonLette(utente.getIdUtente());
 
@@ -160,7 +175,33 @@ public class NotificheController {
 	}
 
 	// ============================================================
-	// BACK (identico al PrenotazioniController)
+	// 🔥 SEGNA SOLO LA SELEZIONATA COME LETTA
+	// ============================================================
+	@FXML
+	private void onSegnaComeLetta() {
+		Notifica n = getSel();
+		if (n == null)
+			return;
+
+		if (n.getLetta()) {
+			mostraInfo("La notifica è già segnata come letta.");
+			return;
+		}
+
+		try {
+			n.setLetta(true);
+			notificaDAO.update(n);
+
+			mostraInfo("Notifica segnata come letta.");
+			caricaNotifiche();
+
+		} catch (Exception e) {
+			mostraErrore("Errore durante l'aggiornamento.");
+		}
+	}
+
+	// ============================================================
+	// BACK
 	// ============================================================
 	@FXML
 	private void onBack() {
@@ -169,12 +210,14 @@ public class NotificheController {
 
 			ManagerDashboardController ctrl = SceneManager
 					.changeSceneWithController("/ui/views/dashboards/ManagerDashboard.fxml");
+
 			ctrl.setUtente(utente);
 
 		} else {
 
 			DriverDashboardController ctrl = SceneManager
 					.changeSceneWithController("/ui/views/dashboards/DriverDashboard.fxml");
+
 			ctrl.setUtente(utente);
 		}
 	}
@@ -184,6 +227,11 @@ public class NotificheController {
 	// ============================================================
 	private void mostraErrore(String msg) {
 		Alert alert = new Alert(Alert.AlertType.ERROR, msg, ButtonType.OK);
+		alert.showAndWait();
+	}
+
+	private void mostraInfo(String msg) {
+		Alert alert = new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.OK);
 		alert.showAndWait();
 	}
 }

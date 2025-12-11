@@ -9,7 +9,6 @@ import java.util.List;
 
 import it.fleetmanager.model.Utente;
 import it.fleetmanager.repository.dao.UtenteDAO;
-import it.fleetmanager.repository.util.DatabaseManager;
 import it.fleetmanager.repository.util.H2DatabaseManager;
 import it.fleetmanager.util.RuoloUtente;
 
@@ -181,4 +180,28 @@ public class UtenteDAOImpl implements UtenteDAO {
 
 		return lista;
 	}
+	
+	@Override
+	public Utente getManager() {
+	    String sql = """
+	            SELECT * FROM Utente
+	            WHERE ruoloUtente = 'MANAGER'
+	            ORDER BY idUtente ASC
+	            LIMIT 1
+	            """;
+
+	    try (Connection conn = db.getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql);
+	         ResultSet rs = ps.executeQuery()) {
+
+	        if (rs.next())
+	            return map(rs);
+
+	    } catch (Exception e) {
+	        System.err.println("ERRORE SQL getManager: " + e.getMessage());
+	    }
+
+	    return UTENTE_INESISTENTE;
+	}
+
 }

@@ -8,9 +8,11 @@ import it.fleetmanager.model.Utente;
 import it.fleetmanager.model.Veicolo;
 import it.fleetmanager.repository.dao.ManutenzioneDAO;
 import it.fleetmanager.repository.dao.NotificaDAO;
+import it.fleetmanager.repository.dao.UtenteDAO;
 import it.fleetmanager.repository.dao.VeicoloDAO;
 import it.fleetmanager.repository.impl.ManutenzioneDAOImpl;
 import it.fleetmanager.repository.impl.NotificaDAOImpl;
+import it.fleetmanager.repository.impl.UtenteDAOImpl;
 import it.fleetmanager.repository.impl.VeicoloDAOImpl;
 import it.fleetmanager.repository.util.H2DatabaseManager;
 import it.fleetmanager.service.impl.GestoreManutenzioniImpl;
@@ -35,7 +37,9 @@ public class NuovaManutenzioneController {
     private final ManutenzioneDAO manutDAO = new ManutenzioneDAOImpl(db);
     private final VeicoloDAO veicoloDAO = new VeicoloDAOImpl(db);
     private final NotificaDAO notificaDAO = new NotificaDAOImpl(db);
-    private final SistemaNotifiche sistemaNotifiche = new SistemaNotifiche(notificaDAO);
+    private final UtenteDAO utenteDAO = new UtenteDAOImpl(db);
+
+    private final SistemaNotifiche sistemaNotifiche = new SistemaNotifiche(notificaDAO, utenteDAO);
 
     private final GestoreManutenzioniImpl gestoreManut =
             new GestoreManutenzioniImpl(manutDAO, veicoloDAO, sistemaNotifiche);

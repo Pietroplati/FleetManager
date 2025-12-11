@@ -7,6 +7,7 @@ import it.fleetmanager.model.Scadenza;
 import it.fleetmanager.model.Utente;
 import it.fleetmanager.model.Veicolo;
 import it.fleetmanager.repository.dao.ScadenzaDAO;
+import it.fleetmanager.repository.dao.UtenteDAO;
 import it.fleetmanager.repository.dao.VeicoloDAO;
 import it.fleetmanager.repository.impl.ScadenzaDAOImpl;
 import it.fleetmanager.service.interfaces.GestoreScadenze;
@@ -17,26 +18,27 @@ public class GestoreScadenzeImpl implements GestoreScadenze {
 
 	private final ScadenzaDAO scadenzaDAO;
 	private final VeicoloDAO veicoloDAO;
+	private final UtenteDAO utenteDAO;
 	private final SistemaNotifiche sistemaNotifiche;
 
-	public GestoreScadenzeImpl(ScadenzaDAO scadenzaDAO, VeicoloDAO veicoloDAO, SistemaNotifiche sistemaNotifiche) {
+	public GestoreScadenzeImpl(ScadenzaDAO scadenzaDAO, VeicoloDAO veicoloDAO, UtenteDAO utenteDAO,
+			SistemaNotifiche sistemaNotifiche) {
 		this.scadenzaDAO = scadenzaDAO;
 		this.veicoloDAO = veicoloDAO;
+		this.utenteDAO = utenteDAO;
 		this.sistemaNotifiche = sistemaNotifiche;
 	}
 
 	@Override
 	public Scadenza controllaScadenzeEntro(LocalDate dataLimite) {
 
-		if (dataLimite == null) {
+		if (dataLimite == null)
 			throw new IllegalArgumentException("La data limite non può essere null.");
-		}
 
 		List<Scadenza> scadenze = scadenzaDAO.findProssimeScadenze(dataLimite);
 
-		if (scadenze.isEmpty()) {
+		if (scadenze.isEmpty())
 			return ScadenzaDAOImpl.SCADENZA_INESISTENTE;
-		}
 
 		return scadenze.get(0);
 	}
@@ -44,15 +46,13 @@ public class GestoreScadenzeImpl implements GestoreScadenze {
 	@Override
 	public void marcaComeNotificata(Integer idScadenza) {
 
-		if (idScadenza == null || idScadenza <= 0) {
+		if (idScadenza == null || idScadenza <= 0)
 			throw new IllegalArgumentException("ID scadenza non valido");
-		}
 
 		Scadenza s = scadenzaDAO.getScadenzaById(idScadenza);
 
-		if (s.getIdScadenza() == -1) {
+		if (s.getIdScadenza() == -1)
 			throw new IllegalArgumentException("Scadenza inesistente");
-		}
 
 		s.setNotificata(true);
 		scadenzaDAO.update(s);
@@ -61,9 +61,8 @@ public class GestoreScadenzeImpl implements GestoreScadenze {
 	@Override
 	public void bloccaVeicoloSeScaduta(Veicolo veicolo) {
 
-		if (veicolo == null) {
+		if (veicolo == null)
 			throw new IllegalArgumentException("Veicolo null");
-		}
 
 		List<Scadenza> scadenze = scadenzaDAO.findByVeicolo(veicolo.getTarga());
 
@@ -74,11 +73,8 @@ public class GestoreScadenzeImpl implements GestoreScadenze {
 				veicolo.setStatoVeicolo(StatoVeicolo.NON_DISPONIBILE);
 				veicoloDAO.update(veicolo);
 
-				// NOTIFICA AL MANAGER (Utente #1)
-				Utente manager = new Utente(1, "Manager", "System", "", "", null); // ruolo non serve qui
-
-				sistemaNotifiche.inviaNotifica(manager,
-						"Attenzione: Veicolo " + veicolo.getTarga() + " bloccato per scadenza " + s.getTipoScadenza());
+				// Notifica al manager con il nuovo metodo
+				sistemaNotifiche.inviaNotificaScadenza(s);
 
 				return;
 			}
@@ -94,16 +90,16 @@ public class GestoreScadenzeImpl implements GestoreScadenze {
 
 		for (Scadenza s : scadenze) {
 
+			// invia notifica solo se non già notificata
 			if (!s.getNotificata()) {
 
-				Utente manager = new Utente(1, "Manager", "System", "", "", null);
-
-				sistemaNotifiche.inviaNotificaScadenza(manager, s);
+				sistemaNotifiche.inviaNotificaScadenza(s);
 
 				s.setNotificata(true);
 				scadenzaDAO.update(s);
 			}
 
+			// controlla blocco veicolo
 			Veicolo v = veicoloDAO.getVeicoloByTarga(s.getTarga());
 			if (v != null && v.getStatoVeicolo() != StatoVeicolo.NON_DISPONIBILE) {
 				bloccaVeicoloSeScaduta(v);

@@ -39,7 +39,6 @@
 
 				<TableView fx:id="tableNotifiche" prefHeight="450"
 					prefWidth="1050">
-
 					<columns>
 						<TableColumn fx:id="colId" text="ID" prefWidth="70" />
 						<TableColumn fx:id="colTipo" text="Tipo"
@@ -51,7 +50,6 @@
 						<TableColumn fx:id="colLetta" text="Letta"
 							prefWidth="120" />
 					</columns>
-
 				</TableView>
 
 			</VBox>
@@ -81,7 +79,18 @@
                            -fx-background-color: linear-gradient(to right,#4a76a8,#2f4773);
                         " />
 
-				<!-- Torna alla dashboard -->
+				<!-- 🔥 NUOVO: Segna selezionata come letta -->
+				<Button text="Segna come letta" fx:id="btnSegnaSingola"
+					onAction="#onSegnaComeLetta" prefWidth="180"
+					style="
+                           -fx-background-radius: 10;
+                           -fx-font-size: 16;
+                           -fx-font-weight: bold;
+                           -fx-text-fill: white;
+                           -fx-background-color: linear-gradient(to right,#6ab56f,#4d8f54);
+                        " />
+
+				<!-- Torna alla Dashboard -->
 				<Button text="Torna alla Dashboard" onAction="#onBack"
 					prefWidth="220"
 					style="

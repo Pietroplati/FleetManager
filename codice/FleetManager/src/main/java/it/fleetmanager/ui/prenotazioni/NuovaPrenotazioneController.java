@@ -4,142 +4,134 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-import it.fleetmanager.model.Prenotazione;
 import it.fleetmanager.model.Utente;
 import it.fleetmanager.model.Veicolo;
 import it.fleetmanager.repository.dao.NotificaDAO;
 import it.fleetmanager.repository.dao.PrenotazioneDAO;
+import it.fleetmanager.repository.dao.UtenteDAO;
 import it.fleetmanager.repository.dao.VeicoloDAO;
 import it.fleetmanager.repository.impl.NotificaDAOImpl;
 import it.fleetmanager.repository.impl.PrenotazioneDAOImpl;
+import it.fleetmanager.repository.impl.UtenteDAOImpl;
 import it.fleetmanager.repository.impl.VeicoloDAOImpl;
 import it.fleetmanager.repository.util.H2DatabaseManager;
 import it.fleetmanager.service.impl.GestorePrenotazioniImpl;
 import it.fleetmanager.ui.SceneManager;
 import it.fleetmanager.util.SistemaNotifiche;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
 public class NuovaPrenotazioneController {
 
-    @FXML private ComboBox<Veicolo> comboVeicoli;
-    @FXML private DatePicker dateInizio;
-    @FXML private DatePicker dateFine;
-    @FXML private TextField oraInizio;
-    @FXML private TextField oraFine;
+	@FXML
+	private ComboBox<Veicolo> comboVeicoli;
+	@FXML
+	private DatePicker dateInizio;
+	@FXML
+	private DatePicker dateFine;
+	@FXML
+	private TextField oraInizio;
+	@FXML
+	private TextField oraFine;
 
-    private Utente utente;
+	private Utente utente;
 
- // DAO
-    private final H2DatabaseManager db = H2DatabaseManager.getInstance();
-    private final VeicoloDAO veicoloDAO = new VeicoloDAOImpl(db);
-    private final PrenotazioneDAO prenDAO = new PrenotazioneDAOImpl(db);
-    private final NotificaDAO notificaDAO = new NotificaDAOImpl(db);
+	// DAO
+	private final H2DatabaseManager db = H2DatabaseManager.getInstance();
+	private final VeicoloDAO veicoloDAO = new VeicoloDAOImpl(db);
+	private final PrenotazioneDAO prenDAO = new PrenotazioneDAOImpl(db);
+	private final NotificaDAO notificaDAO = new NotificaDAOImpl(db);
+	private final UtenteDAO utenteDAO = new UtenteDAOImpl(db);
 
-    // Sistema notifiche
-    private final SistemaNotifiche sistemaNotifiche = new SistemaNotifiche(notificaDAO);
+	// Sistema notifiche
+	private final SistemaNotifiche sistemaNotifiche = new SistemaNotifiche(notificaDAO, utenteDAO);
 
-    // Gestore prenotazioni
-    private final GestorePrenotazioniImpl gestorePrenotazioni =
-            new GestorePrenotazioniImpl(prenDAO, veicoloDAO, sistemaNotifiche);
+	// Gestore prenotazioni
+	private final GestorePrenotazioniImpl gestorePrenotazioni = new GestorePrenotazioniImpl(prenDAO, veicoloDAO,
+			utenteDAO, sistemaNotifiche);
 
+	public void setUtente(Utente u) {
+		this.utente = u;
 
-  
-    public void setUtente(Utente u) {
-        this.utente = u;
+		if (comboVeicoli != null) {
+			caricaVeicoliDisponibili();
+		}
+	}
 
-        // se la view è già inizializzata
-        if (comboVeicoli != null) {
-            caricaVeicoliDisponibili();
-        }
-    }
+	private void caricaVeicoliDisponibili() {
+		comboVeicoli.getItems().setAll(veicoloDAO.getTuttiVeicoli());
+	}
 
+	@FXML
+	private void onConferma() {
 
+		if (comboVeicoli.getValue() == null || dateInizio.getValue() == null || dateFine.getValue() == null
+				|| oraInizio.getText().isBlank() || oraFine.getText().isBlank()) {
 
-    private void caricaVeicoliDisponibili() {
-        comboVeicoli.getItems().setAll(veicoloDAO.getTuttiVeicoli());
-    }
+			alertErrore("Compila tutti i campi.");
+			return;
+		}
 
- 
-    @FXML
-    private void onConferma() {
+		try {
+			LocalTime tInizio = LocalTime.parse(oraInizio.getText());
+			LocalTime tFine = LocalTime.parse(oraFine.getText());
 
-        if (comboVeicoli.getValue() == null ||
-            dateInizio.getValue() == null ||
-            dateFine.getValue() == null ||
-            oraInizio.getText().isBlank() ||
-            oraFine.getText().isBlank()) {
+			LocalDate dInizio = dateInizio.getValue();
+			LocalDate dFine = dateFine.getValue();
 
-            alertErrore("Compila tutti i campi.");
-            return;
-        }
+			LocalDateTime dtInizio = LocalDateTime.of(dInizio, tInizio);
+			LocalDateTime dtFine = LocalDateTime.of(dFine, tFine);
 
-        try {
-            // Parsing orari
-            LocalTime tInizio = LocalTime.parse(oraInizio.getText());
-            LocalTime tFine = LocalTime.parse(oraFine.getText());
+			if (dtFine.isBefore(dtInizio)) {
+				alertErrore("La data/ora di fine non può essere prima dell’inizio.");
+				return;
+			}
 
-            LocalDate dInizio = dateInizio.getValue();
-            LocalDate dFine = dateFine.getValue();
+			Veicolo v = comboVeicoli.getValue();
 
-            LocalDateTime dtInizio = LocalDateTime.of(dInizio, tInizio);
-            LocalDateTime dtFine = LocalDateTime.of(dFine, tFine);
+			// 🔥 CREA prenotazione + notifica al manager
+			gestorePrenotazioni.creaPrenotazione(utente, v, dtInizio, dtFine);
 
-            if (dtFine.isBefore(dtInizio)) {
-                alertErrore("La data/ora di fine non può essere prima dell’inizio.");
-                return;
-            }
+			alertInfo("Prenotazione creata con successo.");
 
-            Veicolo v = comboVeicoli.getValue();
+			tornaAllePrenotazioni();
 
-            gestorePrenotazioni.creaPrenotazione(utente, v, dtInizio, dtFine);
+		} catch (Exception e) {
+			alertErrore(e.getMessage());
+		}
+	}
 
-            alertInfo("Prenotazione creata con successo.");
+	@FXML
+	private void onBack() {
+		tornaAllePrenotazioni();
+	}
 
-            tornaAllePrenotazioni();
+	private void tornaAllePrenotazioni() {
 
-        } catch (Exception e) {
-            alertErrore(e.getMessage());
-        }
-    }
+		var ctrl = SceneManager.changeSceneWithController("/ui/views/prenotazioni/PrenotazioniView.fxml");
 
-    @FXML
-    private void onBack() {
-        tornaAllePrenotazioni();
-    }
+		((PrenotazioniController) ctrl).setUtente(utente);
+	}
 
-    private void tornaAllePrenotazioni() {
+	private void alertErrore(String msg) {
+		Alert a = new Alert(Alert.AlertType.ERROR);
+		a.setHeaderText("Errore");
+		a.setContentText(msg);
+		a.show();
+	}
 
-        var ctrl = SceneManager.changeSceneWithController(
-            "/ui/views/prenotazioni/PrenotazioniView.fxml"
-        );
+	private void alertInfo(String msg) {
+		Alert a = new Alert(Alert.AlertType.INFORMATION);
+		a.setHeaderText("Operazione completata");
+		a.setContentText(msg);
+		a.show();
+	}
 
-        ((PrenotazioniController) ctrl).setUtente(utente);
-    }
-
-
- 
-    private void alertErrore(String msg) {
-        Alert a = new Alert(Alert.AlertType.ERROR);
-        a.setHeaderText("Errore");
-        a.setContentText(msg);
-        a.show();
-    }
-
-    private void alertInfo(String msg) {
-        Alert a = new Alert(Alert.AlertType.INFORMATION);
-        a.setHeaderText("Operazione completata");
-        a.setContentText(msg);
-        a.show();
-    }
-    
-    @FXML
-    private void initialize() {
-        // Se utente è già stato passato, carichiamo i veicoli
-        if (utente != null) {
-            caricaVeicoliDisponibili();
-        }
-    }
-
-
+	@FXML
+	private void initialize() {
+		if (utente != null) {
+			caricaVeicoliDisponibili();
+		}
+	}
 }

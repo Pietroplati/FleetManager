@@ -9,32 +9,34 @@ public interface UtenteDAO {
 	/**
 	 * Inserisce un nuovo utente.
 	 */
-	public void save(Utente utente);
+	void save(Utente utente);
 
 	/**
 	 * Aggiorna un utente esistente.
 	 */
-	public void update(Utente utente);
+	void update(Utente utente);
 
 	/**
 	 * Cancella l'utente con id indicato.
 	 */
-	public void delete(int id);
+	void delete(int id);
 
 	/**
 	 * Restituisce l'utente identificato dall'id, se presente.
 	 */
-	public Utente getUtenteById(int id);
+	Utente getUtenteById(int id);
 
 	/**
 	 * Restituisce l'utente con l'email indicata, se presente.
 	 */
-	public Utente getUtenteByEmail(String email);
+	Utente getUtenteByEmail(String email);
 
 	/**
 	 * @return true se esiste già un utente con quella email.
 	 */
-	public boolean existsByEmail(String email);
+	boolean existsByEmail(String email);
 	
-	public List<Utente> getTuttiUtenti();
+	List<Utente> getTuttiUtenti();
+	
+	Utente getManager();
 }
