@@ -169,39 +169,62 @@ public class PrenotazioniController {
 	// ============================================================
 	private void aggiornaBottoni(Prenotazione p) {
 
+		// Nessuna selezione → disabilita tutto
 		if (p == null) {
-			btnConferma.setDisable(true);
-			btnCompleta.setDisable(true);
+			btnConferma.setVisible(false);
+			btnConferma.setManaged(false);
+
+			btnCompleta.setVisible(false);
+			btnCompleta.setManaged(false);
+
 			btnAnnulla.setDisable(true);
 			return;
 		}
 
 		StatoPrenotazione stato = p.getStato();
 
+		// ==========================================================
 		// MANAGER
+		// ==========================================================
 		if (utenteLoggato.getRuoloUtente() == RuoloUtente.MANAGER) {
 
-			btnConferma.setDisable(stato != StatoPrenotazione.RICHIESTA);
+			// CONFERMA → solo richieste
+			boolean confermabile = stato == StatoPrenotazione.RICHIESTA;
+			btnConferma.setVisible(confermabile);
+			btnConferma.setManaged(confermabile);
+			btnConferma.setDisable(!confermabile);
 
-			btnCompleta.setDisable(stato != StatoPrenotazione.ATTIVA);
+			// COMPLETA → solo attiva
+			boolean completabile = stato == StatoPrenotazione.ATTIVA;
+			btnCompleta.setVisible(completabile);
+			btnCompleta.setManaged(completabile);
+			btnCompleta.setDisable(!completabile);
 
-			btnAnnulla.setDisable(!(stato == StatoPrenotazione.RICHIESTA || stato == StatoPrenotazione.CONFERMATA));
+			// ANNULLA → richiesta o confermata
+			boolean annullabile = (stato == StatoPrenotazione.RICHIESTA || stato == StatoPrenotazione.CONFERMATA);
+			btnAnnulla.setDisable(!annullabile);
 
 			return;
 		}
 
+		// ==========================================================
 		// DRIVER
+		// ==========================================================
 		if (utenteLoggato.getRuoloUtente() == RuoloUtente.DRIVER) {
 
-			btnConferma.setDisable(true);
-			btnCompleta.setDisable(true);
+			// Nasconde i pulsanti manager
+			btnConferma.setVisible(false);
+			btnConferma.setManaged(false);
 
+			btnCompleta.setVisible(false);
+			btnCompleta.setManaged(false);
+
+			// Annulla → solo per proprie prenotazioni in stati ammessi
 			if (p.getIdUtente() != utenteLoggato.getIdUtente()) {
 				btnAnnulla.setDisable(true);
 			} else {
-				boolean annullabile = (stato == StatoPrenotazione.RICHIESTA || stato == StatoPrenotazione.CONFERMATA);
-
-				btnAnnulla.setDisable(!annullabile);
+				boolean ann = (stato == StatoPrenotazione.RICHIESTA || stato == StatoPrenotazione.CONFERMATA);
+				btnAnnulla.setDisable(!ann);
 			}
 		}
 	}
