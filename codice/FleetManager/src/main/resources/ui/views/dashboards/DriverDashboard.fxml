@@ -146,11 +146,13 @@
 						<Button text="Segnalazione straordinaria"
 							onAction="#onSegnalazioneStraordinaria" prefWidth="220"
 							style="-fx-background-radius: 10;
-                                       -fx-font-size: 16;
-                                       -fx-font-weight: bold;
-                                       -fx-text-fill: white;
-                                       -fx-padding: 10 20;
-                                       -fx-background-color: linear-gradient(to right,#e45757,#b33030);" />
+						            -fx-font-size: 16;
+						            -fx-font-weight: bold;
+						            -fx-text-fill: white;
+						            -fx-padding: 10 20;
+						            -fx-background-color: linear-gradient(to right,#e45757,#b33030);
+						        " />
+
 
 						<Button text="Logout" onAction="#onLogout" prefWidth="220"
 							style="-fx-background-radius: 10;

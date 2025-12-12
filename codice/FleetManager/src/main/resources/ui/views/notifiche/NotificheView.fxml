@@ -79,7 +79,7 @@
                            -fx-background-color: linear-gradient(to right,#4a76a8,#2f4773);
                         " />
 
-				<!-- 🔥 NUOVO: Segna selezionata come letta -->
+				<!-- Segna singola -->
 				<Button text="Segna come letta" fx:id="btnSegnaSingola"
 					onAction="#onSegnaComeLetta" prefWidth="180"
 					style="
@@ -88,6 +88,18 @@
                            -fx-font-weight: bold;
                            -fx-text-fill: white;
                            -fx-background-color: linear-gradient(to right,#6ab56f,#4d8f54);
+                        " />
+
+				<!-- 🔥 NUOVO: Imposta veicolo NON disponibile -->
+				<Button text="Segna veicolo NON disponibile"
+					fx:id="btnVeicoloNonDisponibile" visible="false"
+					onAction="#onSegnaVeicoloNonDisponibile" prefWidth="260"
+					style="
+                            -fx-background-radius: 10;
+                            -fx-font-size: 16;
+                            -fx-font-weight: bold;
+                            -fx-text-fill: white;
+                            -fx-background-color: linear-gradient(to right,#d9534f,#b52b27);
                         " />
 
 				<!-- Torna alla Dashboard -->

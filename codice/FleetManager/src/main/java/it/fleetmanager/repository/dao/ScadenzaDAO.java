@@ -18,4 +18,6 @@ public interface ScadenzaDAO {
 	List<Scadenza> findProssimeScadenze(LocalDate finoA);
 
 	List<Scadenza> findByVeicolo(String targa);
+
+	List<Scadenza> getTutteScadenze();
 }

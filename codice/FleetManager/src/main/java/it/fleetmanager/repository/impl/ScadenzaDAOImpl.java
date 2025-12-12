@@ -167,4 +167,27 @@ public class ScadenzaDAOImpl implements ScadenzaDAO {
 
 		return lista;
 	}
+	
+	@Override
+	public List<Scadenza> getTutteScadenze() {
+
+	    String sql = "SELECT * FROM Scadenza ORDER BY data ASC";
+
+	    List<Scadenza> lista = new ArrayList<>();
+
+	    try (Connection conn = db.getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql);
+	         ResultSet rs = ps.executeQuery()) {
+
+	        while (rs.next()) {
+	            lista.add(map(rs));
+	        }
+
+	    } catch (Exception e) {
+	        System.err.println("ERRORE SQL getTutteScadenze: " + e.getMessage());
+	    }
+
+	    return lista;
+	}
+
 }

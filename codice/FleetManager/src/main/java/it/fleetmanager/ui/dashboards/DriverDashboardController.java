@@ -15,13 +15,19 @@ import it.fleetmanager.repository.impl.NotificaDAOImpl;
 import it.fleetmanager.repository.impl.PrenotazioneDAOImpl;
 import it.fleetmanager.repository.util.H2DatabaseManager;
 import it.fleetmanager.ui.SceneManager;
+import it.fleetmanager.ui.notifiche.SegnalazioneStraordinariaController;
 import it.fleetmanager.ui.prenotazioni.NuovaPrenotazioneController;
 import it.fleetmanager.ui.prenotazioni.PrenotazioniController;
 import it.fleetmanager.util.StatoPrenotazione;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.shape.Circle;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 public class DriverDashboardController {
 
@@ -155,7 +161,24 @@ public class DriverDashboardController {
 
 	@FXML
 	private void onSegnalazioneStraordinaria() {
-		SceneManager.changeScene("/ui/views/segnalazioni/SegnalazioneStraordinariaView.fxml");
+		try {
+			FXMLLoader loader = new FXMLLoader(
+					getClass().getResource("/ui/views/notifiche/SegnalazioneStraordinariaView.fxml"));
+			Parent root = loader.load();
+
+			SegnalazioneStraordinariaController ctrl = loader.getController();
+			ctrl.setUtente(utente);
+
+			Stage dialog = new Stage();
+			dialog.initModality(Modality.APPLICATION_MODAL);
+			dialog.setTitle("Segnalazione Straordinaria");
+			dialog.setScene(new Scene(root));
+			dialog.setResizable(false);
+			dialog.showAndWait();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@FXML
@@ -168,4 +191,5 @@ public class DriverDashboardController {
 	private void onLogout() {
 		SceneManager.changeScene("/ui/views/LoginView.fxml");
 	}
+
 }

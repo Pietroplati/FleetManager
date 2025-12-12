@@ -10,10 +10,6 @@ import it.fleetmanager.model.Utente;
 import it.fleetmanager.repository.dao.NotificaDAO;
 import it.fleetmanager.repository.dao.UtenteDAO;
 
-/**
- * Sistema centralizzato per la gestione e l’invio delle notifiche. Recupera
- * autonomamente il manager tramite UtenteDAO.
- */
 public class SistemaNotifiche {
 
 	private final NotificaDAO notificaDAO;
@@ -26,10 +22,9 @@ public class SistemaNotifiche {
 		this.utenteDAO = utenteDAO;
 	}
 
-	// ============================================================
-	// UTILITY
-	// ============================================================
-
+	// ------------------------------------------------------------
+	// Utility
+	// ------------------------------------------------------------
 	private void salva(Notifica n) {
 		notificaDAO.save(n);
 	}
@@ -38,111 +33,117 @@ public class SistemaNotifiche {
 		return utenteDAO.getManager();
 	}
 
-	// ============================================================
+	// ------------------------------------------------------------
 	// SCADENZE
-	// ============================================================
-
-	public void inviaNotificaScadenza(Scadenza scadenza) {
+	// ------------------------------------------------------------
+	public void inviaNotificaScadenza(Scadenza s) {
 
 		Utente manager = getManager();
 
-		String msg = "Scadenza " + scadenza.getTipoScadenza() + " del veicolo " + scadenza.getTarga() + ": "
-				+ scadenza.getData();
+		String msg = """
+				📌 Promemoria Scadenza
+				Veicolo: %s
+				Scadenza: %s
+				Data: %s
+				""".formatted(s.getTarga(), s.getTipoScadenza(), s.getData());
 
-		Notifica n = new Notifica(null, TipoNotifica.SCADENZA, msg, LocalDateTime.now(), false, manager.getIdUtente(),
-				scadenza.getIdScadenza());
-
-		salva(n);
+		salva(new Notifica(null, TipoNotifica.SCADENZA, msg, LocalDateTime.now(), false, manager.getIdUtente(),
+				s.getIdScadenza()));
 	}
 
-	// ============================================================
+	// ------------------------------------------------------------
 	// PRENOTAZIONI
-	// ============================================================
+	// ------------------------------------------------------------
 
-	/**
-	 * 1️⃣ DRIVER richiede prenotazione → notifica al MANAGER
-	 */
+	// 1️⃣ Richiesta prenotazione → Manager
 	public void notificaRichiestaPrenotazione(Utente driver, Prenotazione p) {
 
 		Utente manager = getManager();
 
-		String msg = "Nuova richiesta di prenotazione per il veicolo " + p.getTarga() + " da parte di "
-				+ driver.getNome() + " " + driver.getCognome() + ". Periodo: " + p.getDataInizio().format(fmt) + " → "
-				+ p.getDataFine().format(fmt) + ".";
+		String msg = """
+				📝 Richiesta Prenotazione
+				Da: %s %s
+				Veicolo: %s
+				Periodo: %s → %s
+				""".formatted(driver.getNome(), driver.getCognome(), p.getTarga(), p.getDataInizio().format(fmt),
+				p.getDataFine().format(fmt));
 
-		Notifica n = new Notifica(null, TipoNotifica.PRENOTAZIONE, msg, LocalDateTime.now(), false,
-				manager.getIdUtente(), null);
-
-		salva(n);
+		salva(new Notifica(null, TipoNotifica.PRENOTAZIONE, msg, LocalDateTime.now(), false, manager.getIdUtente(),
+				null));
 	}
 
-	/**
-	 * 2️⃣ MANAGER conferma prenotazione → notifica al DRIVER
-	 */
+	// 2️⃣ Conferma → Driver
 	public void notificaConfermaPrenotazione(Utente driver, Prenotazione p) {
 
-		String msg = "La tua prenotazione per il veicolo " + p.getTarga() + " è stata approvata. Periodo: "
-				+ p.getDataInizio().format(fmt) + " → " + p.getDataFine().format(fmt) + ".";
+		String msg = """
+				✔ Prenotazione Approvata
+				Veicolo: %s
+				Periodo: %s → %s
+				""".formatted(p.getTarga(), p.getDataInizio().format(fmt), p.getDataFine().format(fmt));
 
-		Notifica n = new Notifica(null, TipoNotifica.PRENOTAZIONE, msg, LocalDateTime.now(), false,
-				driver.getIdUtente(), null);
-
-		salva(n);
+		salva(new Notifica(null, TipoNotifica.PRENOTAZIONE, msg, LocalDateTime.now(), false, driver.getIdUtente(),
+				null));
 	}
 
-	/**
-	 * 3️⃣ MANAGER rifiuta prenotazione → notifica al DRIVER
-	 */
+	// 3️⃣ Rifiuto → Driver
 	public void notificaRifiutoPrenotazione(Utente driver, Prenotazione p) {
 
-		String msg = "La tua richiesta di prenotazione per il veicolo " + p.getTarga()
-				+ " è stata rifiutata dal manager.";
+		String msg = """
+				❌ Prenotazione Rifiutata
+				Veicolo: %s
+				Richiesta: %s → %s
+				""".formatted(p.getTarga(), p.getDataInizio().format(fmt), p.getDataFine().format(fmt));
 
-		Notifica n = new Notifica(null, TipoNotifica.PRENOTAZIONE, msg, LocalDateTime.now(), false,
-				driver.getIdUtente(), null);
-
-		salva(n);
+		salva(new Notifica(null, TipoNotifica.PRENOTAZIONE, msg, LocalDateTime.now(), false, driver.getIdUtente(),
+				null));
 	}
 
-	/**
-	 * 4️⃣ DRIVER annulla la sua prenotazione → notifica al MANAGER
-	 */
+	// 4️⃣ Driver annulla prenotazione → Manager
 	public void notificaAnnullamentoPrenotazioneDaDriver(Utente driver, Prenotazione p) {
 
 		Utente manager = getManager();
 
-		String msg = "Il driver " + driver.getNome() + " " + driver.getCognome()
-				+ " ha annullato la prenotazione del veicolo " + p.getTarga() + ".";
+		String msg = """
+				🔄 Prenotazione Annullata
+				Driver: %s %s
+				Veicolo: %s
+				""".formatted(driver.getNome(), driver.getCognome(), p.getTarga());
 
-		Notifica n = new Notifica(null, TipoNotifica.PRENOTAZIONE, msg, LocalDateTime.now(), false,
-				manager.getIdUtente(), null);
-
-		salva(n);
+		salva(new Notifica(null, TipoNotifica.PRENOTAZIONE, msg, LocalDateTime.now(), false, manager.getIdUtente(),
+				null));
 	}
 
-	// ============================================================
-	// MANUTENZIONI
-	// ============================================================
-
+	// ------------------------------------------------------------
+	// MANUTENZIONI (stile semplice per ora)
+	// ------------------------------------------------------------
 	public void notificaManutenzioneProgrammata(int idUtente, String targa, LocalDateTime data) {
 
-		String msg = "Manutenzione programmata per il veicolo " + targa + " in data " + data.toLocalDate() + ".";
+		String msg = """
+				🛠 Manutenzione Programmata
+				Veicolo: %s
+				Data: %s
+				""".formatted(targa, data.toLocalDate());
 
 		salva(new Notifica(null, TipoNotifica.MANUTENZIONE, msg, LocalDateTime.now(), false, idUtente, null));
 	}
 
 	public void notificaManutenzioneConclusa(int idUtente, String targa) {
 
-		String msg = "Manutenzione completata per il veicolo " + targa + ".";
+		String msg = """
+				🛠 Manutenzione Completata
+				Veicolo: %s
+				""".formatted(targa);
 
 		salva(new Notifica(null, TipoNotifica.MANUTENZIONE, msg, LocalDateTime.now(), false, idUtente, null));
 	}
 
 	public void notificaInterventoStraordinario(int idUtente, String targa) {
 
-		String msg = "Intervento straordinario segnalato sul veicolo " + targa + ".";
+		String msg = """
+				⚠ Intervento Straordinario
+				Veicolo: %s
+				""".formatted(targa);
 
 		salva(new Notifica(null, TipoNotifica.MANUTENZIONE, msg, LocalDateTime.now(), false, idUtente, null));
 	}
-
 }
