@@ -34,22 +34,25 @@
                      -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 15, 0.2, 0, 4);
                   ">
 
+
 				<TableView fx:id="tableManutenzioni" prefHeight="450"
 					prefWidth="1050">
-
 					<columns>
-						<TableColumn fx:id="colId" text="ID" prefWidth="80" />
+						<TableColumn fx:id="colId" text="ID" prefWidth="70" />
 						<TableColumn fx:id="colTarga" text="Targa"
-							prefWidth="150" />
+							prefWidth="130" />
 						<TableColumn fx:id="colData" text="Data"
-							prefWidth="200" />
+							prefWidth="140" />
+						<TableColumn fx:id="colOraInizio" text="Ora inizio"
+							prefWidth="120" />
 						<TableColumn fx:id="colTipo" text="Tipo"
-							prefWidth="180" />
+							prefWidth="150" />
 						<TableColumn fx:id="colDescrizione" text="Descrizione"
 							prefWidth="300" />
 					</columns>
-
 				</TableView>
+
+
 
 			</VBox>
 

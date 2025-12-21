@@ -1,6 +1,6 @@
 package it.fleetmanager.service.impl;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import it.fleetmanager.model.Manutenzione;
@@ -18,42 +18,46 @@ public class GestoreManutenzioniImpl implements GestoreManutenzioni {
 	private VeicoloDAO veicoloDAO;
 	private SistemaNotifiche sistemaNotifiche;
 
-	// ID manager fisso nel sistema
 	private static final int ID_MANAGER = 1;
 
-	public GestoreManutenzioniImpl(ManutenzioneDAO manutenzioneDAO, VeicoloDAO veicoloDAO,
+	public GestoreManutenzioniImpl(
+			ManutenzioneDAO manutenzioneDAO,
+			VeicoloDAO veicoloDAO,
 			SistemaNotifiche sistemaNotifiche) {
+
 		this.manutenzioneDAO = manutenzioneDAO;
 		this.veicoloDAO = veicoloDAO;
 		this.sistemaNotifiche = sistemaNotifiche;
 	}
 
+	// ============================================================
+	// PROGRAMMAZIONE MANUTENZIONE
+	// ============================================================
+
 	@Override
-	public Manutenzione programmareManutenzione(Veicolo veicolo, LocalDate data, TipoManutenzione tipo,
+	public Manutenzione programmareManutenzione(
+			Veicolo veicolo,
+			LocalDateTime dataInizio,
+			TipoManutenzione tipo,
 			String descrizione) {
 
 		if (veicolo == null)
 			throw new IllegalArgumentException("Veicolo nullo.");
-
-        if (data == null)
-			throw new IllegalArgumentException("La data non può essere nulla.");
-
+		if (dataInizio == null)
+			throw new IllegalArgumentException("Data/ora non valida.");
 		if (tipo == null)
 			throw new IllegalArgumentException("Tipo manutenzione nullo.");
-
 		if (descrizione == null || descrizione.isBlank())
 			throw new IllegalArgumentException("Descrizione non valida.");
 
-		// Cambio stato veicolo
 		veicolo.setStatoVeicolo(StatoVeicolo.IN_MANUTENZIONE);
 		veicoloDAO.update(veicolo);
 
-		// ID manutenzione incrementale
 		int nuovoId = manutenzioneDAO.getMaxId() + 1;
 
 		Manutenzione m = new Manutenzione(
 				nuovoId,
-				data.atStartOfDay(),
+				dataInizio,
 				tipo,
 				descrizione,
 				veicolo.getTarga()
@@ -61,26 +65,28 @@ public class GestoreManutenzioniImpl implements GestoreManutenzioni {
 
 		manutenzioneDAO.save(m);
 
-		// NOTIFICHE ======================================================
-
-		// 1) Notifica al manager
 		sistemaNotifiche.notificaManutenzioneProgrammata(
-				ID_MANAGER, veicolo.getTarga(), m.getData()
+				ID_MANAGER,
+				veicolo.getTarga(),
+				m.getData()
 		);
-
-		// 2) Notifica al driver (OPZIONALE, solo se controller la fornisce)
-		if (veicolo.getKm() >= 0) { // placeholder, puoi aggiungere idDriver al veicolo
-			// sistemaNotifiche.notificaManutenzioneProgrammata(idDriver, veicolo.getTarga(), m.getData());
-		}
 
 		return m;
 	}
 
+	// ============================================================
+	// INTERVENTO STRAORDINARIO
+	// ============================================================
+
 	@Override
-	public Manutenzione segnalareInterventoStraordinario(Veicolo veicolo, String descrizione) {
+	public Manutenzione segnalareInterventoStraordinario(
+			Veicolo veicolo,
+			String descrizione) {
 
 		if (veicolo == null)
 			throw new IllegalArgumentException("Veicolo nullo.");
+		if (descrizione == null || descrizione.isBlank())
+			throw new IllegalArgumentException("Descrizione non valida.");
 
 		veicolo.setStatoVeicolo(StatoVeicolo.IN_MANUTENZIONE);
 		veicoloDAO.update(veicolo);
@@ -89,7 +95,7 @@ public class GestoreManutenzioniImpl implements GestoreManutenzioni {
 
 		Manutenzione m = new Manutenzione(
 				nuovoId,
-				LocalDate.now().atStartOfDay(),
+				LocalDateTime.now(),
 				TipoManutenzione.STRAORDINARIA,
 				descrizione,
 				veicolo.getTarga()
@@ -97,18 +103,17 @@ public class GestoreManutenzioniImpl implements GestoreManutenzioni {
 
 		manutenzioneDAO.save(m);
 
-		// NOTIFICHE ======================================================
-
-		// 1) Manager
 		sistemaNotifiche.notificaInterventoStraordinario(
-				ID_MANAGER, veicolo.getTarga()
+				ID_MANAGER,
+				veicolo.getTarga()
 		);
-
-		// 2) Driver opzionale (placeholder)
-		// sistemaNotifiche.notificaInterventoStraordinario(idDriver, veicolo.getTarga());
 
 		return m;
 	}
+
+	// ============================================================
+	// CHIUSURA MANUTENZIONE
+	// ============================================================
 
 	@Override
 	public void chiudiManutenzione(int idManutenzione) {
@@ -119,28 +124,28 @@ public class GestoreManutenzioniImpl implements GestoreManutenzioni {
 			throw new IllegalArgumentException("Manutenzione inesistente.");
 
 		Veicolo veicolo = veicoloDAO.getVeicoloByTarga(m.getTarga());
-		if (veicolo == null)
-			throw new IllegalStateException("Veicolo associato non trovato.");
 
 		veicolo.setStatoVeicolo(StatoVeicolo.DISPONIBILE);
 		veicoloDAO.update(veicolo);
 
 		m.setDescrizione(m.getDescrizione() + " (CHIUSA)");
+		m.setOraFine(LocalDateTime.now()); // ORA FINE AUTOMATICA
+
 		manutenzioneDAO.update(m);
 
-		// NOTIFICHE ======================================================
-
-		// 1) Manager
 		sistemaNotifiche.notificaManutenzioneConclusa(
-				ID_MANAGER, veicolo.getTarga()
+				ID_MANAGER,
+				veicolo.getTarga()
 		);
-
-		// 2) Driver (placeholder, se vuoi aggiungere campo idDriver)
-		// sistemaNotifiche.notificaManutenzioneConclusa(idDriver, veicolo.getTarga());
 	}
+
+	// ============================================================
+	// QUERY
+	// ============================================================
 
 	@Override
 	public List<Manutenzione> getManutenzioniVeicolo(Veicolo veicolo) {
+
 		if (veicolo == null)
 			throw new IllegalArgumentException("Veicolo nullo.");
 

@@ -7,8 +7,8 @@ import it.fleetmanager.model.Manutenzione;
 import it.fleetmanager.model.Utente;
 import it.fleetmanager.repository.dao.ManutenzioneDAO;
 import it.fleetmanager.repository.dao.NotificaDAO;
-import it.fleetmanager.repository.dao.VeicoloDAO;
 import it.fleetmanager.repository.dao.UtenteDAO;
+import it.fleetmanager.repository.dao.VeicoloDAO;
 import it.fleetmanager.repository.impl.ManutenzioneDAOImpl;
 import it.fleetmanager.repository.impl.NotificaDAOImpl;
 import it.fleetmanager.repository.impl.UtenteDAOImpl;
@@ -27,8 +27,19 @@ public class ManutenzioniController {
 
 	@FXML
 	private TableView<Manutenzione> tableManutenzioni;
+
 	@FXML
-	private TableColumn<Manutenzione, String> colId, colTarga, colData, colTipo, colDescrizione;
+	private TableColumn<Manutenzione, String> colId;
+	@FXML
+	private TableColumn<Manutenzione, String> colTarga;
+	@FXML
+	private TableColumn<Manutenzione, String> colData;
+	@FXML
+	private TableColumn<Manutenzione, String> colOraInizio;
+	@FXML
+	private TableColumn<Manutenzione, String> colTipo;
+	@FXML
+	private TableColumn<Manutenzione, String> colDescrizione;
 
 	@FXML
 	private Button btnNuova, btnChiudi;
@@ -44,12 +55,14 @@ public class ManutenzioniController {
 	private final NotificaDAO notificaDAO = new NotificaDAOImpl(db);
 	private final UtenteDAO utenteDAO = new UtenteDAOImpl(db);
 
-	private final SistemaNotifiche sistemaNotifiche = new SistemaNotifiche(notificaDAO, utenteDAO);
+	private final SistemaNotifiche sistemaNotifiche =
+			new SistemaNotifiche(notificaDAO, utenteDAO);
 
-	private final GestoreManutenzioniImpl gestoreManut = new GestoreManutenzioniImpl(manutDAO, veicoloDAO,
-			sistemaNotifiche);
+	private final GestoreManutenzioniImpl gestoreManut =
+			new GestoreManutenzioniImpl(manutDAO, veicoloDAO, sistemaNotifiche);
 
-	private final DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+	private final DateTimeFormatter fmtData = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+	private final DateTimeFormatter fmtOra  = DateTimeFormatter.ofPattern("HH:mm");
 
 	public void setUtente(Utente user) {
 		this.utenteLoggato = user;
@@ -58,11 +71,44 @@ public class ManutenzioniController {
 	}
 
 	private void configuraUI() {
-		colId.setCellValueFactory(c -> new SimpleStringProperty("" + c.getValue().getIdManutenzione()));
-		colTarga.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getTarga()));
-		colData.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getData().format(fmt)));
-		colTipo.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getTipoManutenzione().name()));
-		colDescrizione.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getDescrizione()));
+
+		colId.setCellValueFactory(
+				c -> new SimpleStringProperty(
+						String.valueOf(c.getValue().getIdManutenzione())
+				)
+		);
+
+		colTarga.setCellValueFactory(
+				c -> new SimpleStringProperty(c.getValue().getTarga())
+		);
+
+		colData.setCellValueFactory(
+				c -> new SimpleStringProperty(
+						c.getValue().getData()
+								.toLocalDate()
+								.format(fmtData)
+				)
+		);
+
+		colOraInizio.setCellValueFactory(
+				c -> new SimpleStringProperty(
+						c.getValue().getData()
+								.toLocalTime()
+								.format(fmtOra)
+				)
+		);
+
+		colTipo.setCellValueFactory(
+				c -> new SimpleStringProperty(
+						c.getValue().getTipoManutenzione().name()
+				)
+		);
+
+		colDescrizione.setCellValueFactory(
+				c -> new SimpleStringProperty(
+						c.getValue().getDescrizione()
+				)
+		);
 
 		if (utenteLoggato.getRuoloUtente() == RuoloUtente.MANAGER) {
 			lblDescrizioneRuolo.setText("Gestione Manutenzioni - Manager");
@@ -85,14 +131,20 @@ public class ManutenzioniController {
 
 	@FXML
 	private void onNuovaManutenzione() {
-		var ctrl = (NuovaManutenzioneController) SceneManager
-				.changeSceneWithController("/ui/views/manutenzioni/NuovaManutenzioneView.fxml");
+		var ctrl = (NuovaManutenzioneController)
+				SceneManager.changeSceneWithController(
+						"/ui/views/manutenzioni/NuovaManutenzioneView.fxml"
+				);
 		ctrl.setUtente(utenteLoggato);
 	}
 
 	@FXML
 	private void onChiudi() {
-		Manutenzione m = tableManutenzioni.getSelectionModel().getSelectedItem();
+
+		Manutenzione m = tableManutenzioni
+				.getSelectionModel()
+				.getSelectedItem();
+
 		if (m == null) {
 			mostraErrore("Seleziona una manutenzione.");
 			return;
@@ -109,8 +161,10 @@ public class ManutenzioniController {
 
 	@FXML
 	private void onBack() {
-		var ctrl = (ManagerDashboardController) SceneManager
-				.changeSceneWithController("/ui/views/dashboards/ManagerDashboard.fxml");
+		var ctrl = (ManagerDashboardController)
+				SceneManager.changeSceneWithController(
+						"/ui/views/dashboards/ManagerDashboard.fxml"
+				);
 		ctrl.setUtente(utenteLoggato);
 	}
 
