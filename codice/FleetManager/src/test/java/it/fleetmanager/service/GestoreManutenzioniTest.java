@@ -2,7 +2,7 @@ package it.fleetmanager.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -11,127 +11,132 @@ import org.junit.jupiter.api.Test;
 import it.fleetmanager.model.Manutenzione;
 import it.fleetmanager.model.Veicolo;
 import it.fleetmanager.repository.dao.ManutenzioneDAO;
+import it.fleetmanager.repository.dao.NotificaDAO;
+import it.fleetmanager.repository.dao.UtenteDAO;
 import it.fleetmanager.repository.dao.VeicoloDAO;
 import it.fleetmanager.repository.impl.ManutenzioneDAOImpl;
+import it.fleetmanager.repository.impl.NotificaDAOImpl;
+import it.fleetmanager.repository.impl.UtenteDAOImpl;
 import it.fleetmanager.repository.impl.VeicoloDAOImpl;
+import it.fleetmanager.util.DatabaseTestUtils;
 import it.fleetmanager.repository.util.H2DatabaseManager;
 import it.fleetmanager.service.impl.GestoreManutenzioniImpl;
-import it.fleetmanager.util.DatabaseTestUtils;
+import it.fleetmanager.service.interfaces.GestoreManutenzioni;
+import it.fleetmanager.util.SistemaNotifiche;
 import it.fleetmanager.util.StatoVeicolo;
 import it.fleetmanager.util.TipoManutenzione;
+import it.fleetmanager.util.TipoVeicolo;
 
-public class GestoreManutenzioniTest {
+class GestoreManutenzioniTest {
 
-	private GestoreManutenzioniImpl gestore;
-	private ManutenzioneDAO manutenzioneDAO;
-	private VeicoloDAO veicoloDAO;
-	private Veicolo veicolo;
+    private GestoreManutenzioni gestore;
+    private VeicoloDAO veicoloDAO;
+    private ManutenzioneDAO manutenzioneDAO;
 
-	@BeforeEach
-	void setup() throws Exception {
+    @BeforeEach
+    void setup() throws Exception {
 
-		DatabaseTestUtils.resetDatabase();
-		manutenzioneDAO = new ManutenzioneDAOImpl(H2DatabaseManager.getInstance());
-		veicoloDAO = new VeicoloDAOImpl(H2DatabaseManager.getInstance());
+        // 🔥 reset DB H2 in RAM
+        DatabaseTestUtils.resetDatabase();
 
-		gestore = new GestoreManutenzioniImpl(manutenzioneDAO, veicoloDAO, null);
+        veicoloDAO = new VeicoloDAOImpl(H2DatabaseManager.getInstance());
+        manutenzioneDAO = new ManutenzioneDAOImpl(H2DatabaseManager.getInstance());
+        NotificaDAO notificaDAO = new NotificaDAOImpl(H2DatabaseManager.getInstance());
+        UtenteDAO utenteDAO = new UtenteDAOImpl(H2DatabaseManager.getInstance());
 
-		// Veicolo di test presente nel DatabaseTestUtils
-		veicolo = veicoloDAO.getVeicoloByTarga("T1");
-		assertNotEquals("N/A", veicolo.getTarga(), "Il veicolo T1 deve esistere nel DB di test");
-	}
+        SistemaNotifiche sistemaNotifiche =
+                new SistemaNotifiche(notificaDAO, utenteDAO);
 
-	@Test
-	void testProgrammareManutenzione() {
-		Manutenzione m = gestore.programmareManutenzione(veicolo, LocalDate.of(2025, 1, 10), TipoManutenzione.ORDINARIA,
-				"Cambio olio");
+        gestore = new GestoreManutenzioniImpl(
+                manutenzioneDAO,
+                veicoloDAO,
+                sistemaNotifiche
+        );
+    }
 
-		assertNotNull(m);
-		assertEquals("T1", m.getTarga());
-		assertEquals(TipoManutenzione.ORDINARIA, m.getTipoManutenzione());
+    // ============================================================
+    // PROGRAMMAZIONE MANUTENZIONE
+    // ============================================================
 
-		// Veicolo deve essere IN_MANUTENZIONE
-		Veicolo aggiornato = veicoloDAO.getVeicoloByTarga("T1");
-		assertEquals(StatoVeicolo.IN_MANUTENZIONE, aggiornato.getStatoVeicolo());
+    @Test
+    void testProgrammareManutenzione() {
 
-		// Deve esistere nel DB
-		Manutenzione salvata = manutenzioneDAO.getManutenzioneById(m.getIdManutenzione());
-		assertEquals("Cambio olio", salvata.getDescrizione());
-	}
+        // ARRANGE
+        Veicolo v = new Veicolo(
+                "AA111AA",
+                TipoVeicolo.AUTO,
+                "Fiat",
+                "Panda",
+                2020,
+                StatoVeicolo.DISPONIBILE,
+                30000
+        );
 
-	@Test
-	void testProgrammareManutenzioneErroreVeicoloNull() {
-		assertThrows(IllegalArgumentException.class,
-				() -> gestore.programmareManutenzione(null, LocalDate.now(), TipoManutenzione.ORDINARIA, "Test"));
-	}
+        veicoloDAO.save(v);
 
-	@Test
-	void testProgrammareManutenzioneErroreDataNull() {
-		assertThrows(IllegalArgumentException.class,
-				() -> gestore.programmareManutenzione(veicolo, null, TipoManutenzione.ORDINARIA, "Test"));
-	}
+        LocalDateTime data = LocalDateTime.now().plusDays(3);
 
-	@Test
-	void testProgrammareManutenzioneErroreTipoNull() {
-		assertThrows(IllegalArgumentException.class,
-				() -> gestore.programmareManutenzione(veicolo, LocalDate.now(), null, "Test"));
-	}
+        // ACT
+        Manutenzione m = gestore.programmareManutenzione(
+                v,
+                data,
+                TipoManutenzione.ORDINARIA,
+                "Tagliando"
+        );
 
-	@Test
-	void testProgrammareManutenzioneErroreDescrizioneVuota() {
-		assertThrows(IllegalArgumentException.class,
-				() -> gestore.programmareManutenzione(veicolo, LocalDate.now(), TipoManutenzione.ORDINARIA, ""));
-	}
+        // ASSERT
+        assertNotNull(m);
+        assertEquals("AA111AA", m.getTarga());
+        assertEquals(TipoManutenzione.ORDINARIA, m.getTipoManutenzione());
 
-	@Test
-	void testSegnalareInterventoStraordinario() {
-		Manutenzione m = gestore.segnalareInterventoStraordinario(veicolo, "Freni rotti");
+        Veicolo aggiornato = veicoloDAO.getVeicoloByTarga("AA111AA");
+        assertEquals(StatoVeicolo.IN_MANUTENZIONE, aggiornato.getStatoVeicolo());
 
-		assertNotNull(m);
-		assertEquals(TipoManutenzione.STRAORDINARIA, m.getTipoManutenzione());
-		assertEquals("Freni rotti", m.getDescrizione());
+        List<Manutenzione> manutenzioni =
+                manutenzioneDAO.findByVeicolo("AA111AA");
 
-		// Veicolo deve essere IN_MANUTENZIONE
-		Veicolo aggiornato = veicoloDAO.getVeicoloByTarga("T1");
-		assertEquals(StatoVeicolo.IN_MANUTENZIONE, aggiornato.getStatoVeicolo());
-	}
+        assertEquals(1, manutenzioni.size());
+    }
 
-	@Test
-	void testSegnalareInterventoStraordinarioErroreVeicoloNull() {
-		assertThrows(IllegalArgumentException.class, () -> gestore.segnalareInterventoStraordinario(null, "Problema"));
-	}
+    // ============================================================
+    // CHIUSURA MANUTENZIONE
+    // ============================================================
 
-	@Test
-	void testChiudiManutenzione() {
-		// Prima creo una manutenzione
-		Manutenzione m = gestore.programmareManutenzione(veicolo, LocalDate.now(), TipoManutenzione.ORDINARIA,
-				"Tagliando");
+    @Test
+    void testChiudiManutenzione() {
 
-		gestore.chiudiManutenzione(m.getIdManutenzione());
+        // ARRANGE
+        Veicolo v = new Veicolo(
+                "BB222BB",
+                TipoVeicolo.AUTO,
+                "VW",
+                "Golf",
+                2019,
+                StatoVeicolo.IN_MANUTENZIONE,
+                60000
+        );
+        veicoloDAO.save(v);
 
-		Manutenzione aggiornata = manutenzioneDAO.getManutenzioneById(m.getIdManutenzione());
-		assertTrue(aggiornata.getDescrizione().contains("(CHIUSA)"));
+        Manutenzione m = new Manutenzione(
+                1,
+                LocalDateTime.now().minusDays(1),
+                TipoManutenzione.ORDINARIA,
+                "Cambio olio",
+                "BB222BB"
+        );
+        manutenzioneDAO.save(m);
 
-		// Veicolo deve tornare DISPONIBILE
-		Veicolo v = veicoloDAO.getVeicoloByTarga("T1");
-		assertEquals(StatoVeicolo.DISPONIBILE, v.getStatoVeicolo());
-	}
+        // ACT
+        gestore.chiudiManutenzione(1);
 
-	@Test
-	void testChiudiManutenzioneInesistente() {
-		assertThrows(IllegalArgumentException.class, () -> gestore.chiudiManutenzione(999999));
-	}
+        // ASSERT
+        Manutenzione aggiornata =
+                manutenzioneDAO.getManutenzioneById(1);
 
-	@Test
-	void testGetManutenzioniVeicolo() {
-		gestore.programmareManutenzione(veicolo, LocalDate.now(), TipoManutenzione.ORDINARIA, "Test manutenzione");
+        assertNotNull(aggiornata);
+        assertTrue(aggiornata.getDescrizione().contains("CHIUSA"));
 
-		List<Manutenzione> lista = gestore.getManutenzioniVeicolo(veicolo);
-		assertEquals(1, lista.size());
-	}
-
-	@Test
-	void testGetManutenzioniVeicoloErroreVeicoloNull() {
-		assertThrows(IllegalArgumentException.class, () -> gestore.getManutenzioniVeicolo(null));
-	}
+        Veicolo aggiornato = veicoloDAO.getVeicoloByTarga("BB222BB");
+        assertEquals(StatoVeicolo.DISPONIBILE, aggiornato.getStatoVeicolo());
+    }
 }

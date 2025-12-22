@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,13 +14,15 @@ import it.fleetmanager.model.Scadenza;
 import it.fleetmanager.model.Veicolo;
 import it.fleetmanager.repository.dao.NotificaDAO;
 import it.fleetmanager.repository.dao.ScadenzaDAO;
+import it.fleetmanager.repository.dao.UtenteDAO;
 import it.fleetmanager.repository.dao.VeicoloDAO;
 import it.fleetmanager.repository.impl.NotificaDAOImpl;
 import it.fleetmanager.repository.impl.ScadenzaDAOImpl;
+import it.fleetmanager.repository.impl.UtenteDAOImpl;
 import it.fleetmanager.repository.impl.VeicoloDAOImpl;
+import it.fleetmanager.util.DatabaseTestUtils;
 import it.fleetmanager.repository.util.H2DatabaseManager;
 import it.fleetmanager.service.impl.GestoreScadenzeImpl;
-import it.fleetmanager.util.DatabaseTestUtils;
 import it.fleetmanager.util.SistemaNotifiche;
 import it.fleetmanager.util.StatoVeicolo;
 import it.fleetmanager.util.TipoScadenza;
@@ -27,97 +30,172 @@ import it.fleetmanager.util.TipoVeicolo;
 
 public class GestoreScadenzeTest {
 
-	private ScadenzaDAO scadenzaDAO;
-	private NotificaDAO notificaDAO;
-	private SistemaNotifiche sistemaNotifiche;
-	private GestoreScadenzeImpl gestore;
+    private ScadenzaDAO scadenzaDAO;
+    private NotificaDAO notificaDAO;
+    private VeicoloDAO veicoloDAO;
 
-	private VeicoloDAO veicoloDAO;
-	private Veicolo veicolo;
+    private SistemaNotifiche sistemaNotifiche;
+    private GestoreScadenzeImpl gestore;
 
-	@BeforeEach
-	void setup() throws Exception {
+    private Veicolo veicolo;
+    private String targaTest;
 
-		DatabaseTestUtils.resetDatabase();
+    @BeforeEach
+    void setup() throws Exception {
 
-		scadenzaDAO = new ScadenzaDAOImpl(H2DatabaseManager.getInstance());
-		notificaDAO = new NotificaDAOImpl(H2DatabaseManager.getInstance());
-		sistemaNotifiche = new SistemaNotifiche(notificaDAO);
-		veicoloDAO = new VeicoloDAOImpl(H2DatabaseManager.getInstance());
+        // 🔥 reset DB H2 in RAM
+        DatabaseTestUtils.resetDatabase();
 
-		gestore = new GestoreScadenzeImpl(scadenzaDAO, veicoloDAO, sistemaNotifiche);
+        scadenzaDAO = new ScadenzaDAOImpl(H2DatabaseManager.getInstance());
+        notificaDAO = new NotificaDAOImpl(H2DatabaseManager.getInstance());
+        veicoloDAO = new VeicoloDAOImpl(H2DatabaseManager.getInstance());
 
-		veicolo = new Veicolo("AB123CD", TipoVeicolo.AUTO, "Fiat", "Panda", 2018, StatoVeicolo.DISPONIBILE, 10000);
+        // UtenteDAO serve solo a SistemaNotifiche
+        UtenteDAO utenteDAO = new UtenteDAOImpl(H2DatabaseManager.getInstance());
+        sistemaNotifiche = new SistemaNotifiche(notificaDAO, utenteDAO);
 
-		veicoloDAO.save(veicolo);
-	}
+        gestore = new GestoreScadenzeImpl(
+                scadenzaDAO,
+                veicoloDAO,
+                utenteDAO, sistemaNotifiche
+        );
 
-	@Test
-	void testControllaScadenzeEntroNessuna() {
+        // ✅ TARGA UNICA e ≤ 10 caratteri
+        targaTest = UUID.randomUUID()
+                .toString()
+                .replace("-", "")
+                .substring(0, 10);
 
-		Scadenza result = gestore.controllaScadenzeEntro(LocalDate.now().minusDays(5));
+        veicolo = new Veicolo(
+                targaTest,
+                TipoVeicolo.AUTO,
+                "Fiat",
+                "Panda",
+                2018,
+                StatoVeicolo.DISPONIBILE,
+                10000
+        );
 
-		assertEquals(-1, result.getIdScadenza());
-	}
+        veicoloDAO.save(veicolo);
+    }
 
-	@Test
-	void testControllaScadenzeEntroSuccess() {
+    // ============================================================
+    // CONTROLLA SCADENZE ENTRO
+    // ============================================================
 
-		Scadenza s = new Scadenza(50, TipoScadenza.BOLLO, LocalDate.now().plusDays(3), false, "AB123CD");
+    @Test
+    void testControllaScadenzeEntroNessuna() {
 
-		scadenzaDAO.save(s);
+        Scadenza result =
+                gestore.controllaScadenzeEntro(LocalDate.now().minusDays(5));
 
-		Scadenza result = gestore.controllaScadenzeEntro(LocalDate.now().plusDays(5));
+        assertEquals(-1, result.getIdScadenza());
+    }
 
-		assertEquals(50, result.getIdScadenza());
-	}
+    @Test
+    void testControllaScadenzeEntroSuccess() {
 
-	@Test
-	void testMarcaComeNotificataSuccess() {
+        Scadenza s = new Scadenza(
+                50,
+                TipoScadenza.BOLLO,
+                LocalDate.now().plusDays(3),
+                false,
+                targaTest
+        );
 
-		Scadenza s = new Scadenza(70, TipoScadenza.REVISIONE, LocalDate.now().plusDays(10), false, "AB123CD");
+        scadenzaDAO.save(s);
 
-		scadenzaDAO.save(s);
+        Scadenza result =
+                gestore.controllaScadenzeEntro(LocalDate.now().plusDays(5));
 
-		gestore.marcaComeNotificata(70);
+        assertEquals(50, result.getIdScadenza());
+    }
 
-		Scadenza updated = scadenzaDAO.getScadenzaById(70);
+    // ============================================================
+    // MARCA COME NOTIFICATA
+    // ============================================================
 
-		assertTrue(updated.getNotificata());
-	}
+    @Test
+    void testMarcaComeNotificataSuccess() {
 
-	@Test
-	void testMarcaComeNotificataInesistente() {
+        Scadenza s = new Scadenza(
+                70,
+                TipoScadenza.REVISIONE,
+                LocalDate.now().plusDays(10),
+                false,
+                targaTest
+        );
 
-		assertThrows(IllegalArgumentException.class, () -> gestore.marcaComeNotificata(9999));
-	}
+        scadenzaDAO.save(s);
 
-	@Test
-	void testBloccaVeicoloSeScaduta() {
+        gestore.marcaComeNotificata(70);
 
-		Scadenza s = new Scadenza(80, TipoScadenza.ASSICURAZIONE, LocalDate.now().minusDays(1), false, "AB123CD");
+        Scadenza updated = scadenzaDAO.getScadenzaById(70);
+        assertTrue(updated.getNotificata());
+    }
 
-		scadenzaDAO.save(s);
+    @Test
+    void testMarcaComeNotificataInesistente() {
 
-		gestore.bloccaVeicoloSeScaduta(veicolo);
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> gestore.marcaComeNotificata(9999)
+        );
+    }
 
-		assertEquals(StatoVeicolo.NON_DISPONIBILE, veicoloDAO.getVeicoloByTarga("AB123CD").getStatoVeicolo());
-	}
+    // ============================================================
+    // BLOCCA VEICOLO SE SCADUTA
+    // ============================================================
 
-	@Test
-	void testEseguiControlloPeriodico() {
+    @Test
+    void testBloccaVeicoloSeScaduta() {
 
-		Scadenza s = new Scadenza(90, TipoScadenza.TAGLIANDO, LocalDate.now().plusDays(4), false, "AB123CD");
+        Scadenza s = new Scadenza(
+                80,
+                TipoScadenza.ASSICURAZIONE,
+                LocalDate.now().minusDays(1),
+                false,
+                targaTest
+        );
 
-		scadenzaDAO.save(s);
+        scadenzaDAO.save(s);
 
-		gestore.eseguiControlloPeriodico();
+        gestore.bloccaVeicoloSeScaduta(veicolo);
 
-		Scadenza updated = scadenzaDAO.getScadenzaById(90);
+        Veicolo aggiornato =
+                veicoloDAO.getVeicoloByTarga(targaTest);
 
-		assertTrue(updated.getNotificata());
+        assertEquals(
+                StatoVeicolo.NON_DISPONIBILE,
+                aggiornato.getStatoVeicolo()
+        );
+    }
 
-		List<Notifica> notifiche = notificaDAO.findByScadenza(90);
-		assertEquals(1, notifiche.size());
-	}
+    // ============================================================
+    // CONTROLLO PERIODICO
+    // ============================================================
+
+    @Test
+    void testEseguiControlloPeriodico() {
+
+        Scadenza s = new Scadenza(
+                90,
+                TipoScadenza.TAGLIANDO,
+                LocalDate.now().plusDays(4),
+                false,
+                targaTest
+        );
+
+        scadenzaDAO.save(s);
+
+        gestore.eseguiControlloPeriodico();
+
+        Scadenza updated = scadenzaDAO.getScadenzaById(90);
+        assertTrue(updated.getNotificata());
+
+        List<Notifica> notifiche =
+                notificaDAO.findByScadenza(90);
+
+        assertEquals(1, notifiche.size());
+    }
 }

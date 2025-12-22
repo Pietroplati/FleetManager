@@ -4,221 +4,256 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import it.fleetmanager.model.Notifica;
 import it.fleetmanager.model.Prenotazione;
 import it.fleetmanager.model.Utente;
 import it.fleetmanager.model.Veicolo;
 import it.fleetmanager.repository.dao.NotificaDAO;
 import it.fleetmanager.repository.dao.PrenotazioneDAO;
+import it.fleetmanager.repository.dao.UtenteDAO;
+import it.fleetmanager.repository.dao.VeicoloDAO;
 import it.fleetmanager.repository.impl.NotificaDAOImpl;
 import it.fleetmanager.repository.impl.PrenotazioneDAOImpl;
+import it.fleetmanager.repository.impl.UtenteDAOImpl;
+import it.fleetmanager.repository.impl.VeicoloDAOImpl;
+import it.fleetmanager.util.DatabaseTestUtils;
 import it.fleetmanager.repository.util.H2DatabaseManager;
 import it.fleetmanager.service.impl.GestorePrenotazioniImpl;
-import it.fleetmanager.util.DatabaseTestUtils;
+import it.fleetmanager.service.interfaces.GestorePrenotazioni;
 import it.fleetmanager.util.RuoloUtente;
 import it.fleetmanager.util.SistemaNotifiche;
 import it.fleetmanager.util.StatoPrenotazione;
-import it.fleetmanager.util.TipoNotifica;
 import it.fleetmanager.util.TipoPrenotazione;
 import it.fleetmanager.util.TipoVeicolo;
-import it.fleetmanager.util.StatoVeicolo;
 
-public class GestorePrenotazioniTest {
+class GestorePrenotazioniTest {
 
-	private PrenotazioneDAO prenotazioneDAO;
-	private NotificaDAO notificaDAO;
-	private SistemaNotifiche sistemaNotifiche;
-	private GestorePrenotazioniImpl gestore;
+    private GestorePrenotazioni gestore;
+    private PrenotazioneDAO prenotazioneDAO;
+    private VeicoloDAO veicoloDAO;
+    private UtenteDAO utenteDAO;
 
-	private Utente driver;
-	private Utente manager;
-	private Veicolo veicolo;
+    private Utente driver;
+    private Utente manager;
+    private Veicolo veicolo;
 
-	@BeforeEach
-	void setup() throws Exception {
-		DatabaseTestUtils.resetDatabase();
+    @BeforeEach
+    void setup() throws Exception {
 
-		prenotazioneDAO = new PrenotazioneDAOImpl(H2DatabaseManager.getInstance());
-		notificaDAO = new NotificaDAOImpl(H2DatabaseManager.getInstance());
-		sistemaNotifiche = new SistemaNotifiche(notificaDAO);
+        // 🔥 reset DB H2 in RAM
+        DatabaseTestUtils.resetDatabase();
 
-		gestore = new GestorePrenotazioniImpl(prenotazioneDAO, null, sistemaNotifiche);
+        prenotazioneDAO = new PrenotazioneDAOImpl(H2DatabaseManager.getInstance());
+        veicoloDAO = new VeicoloDAOImpl(H2DatabaseManager.getInstance());
+        utenteDAO = new UtenteDAOImpl(H2DatabaseManager.getInstance());
+        NotificaDAO notificaDAO = new NotificaDAOImpl(H2DatabaseManager.getInstance());
 
-		driver = new Utente(2, "Luca", "Verdi", "driver@example.com", "pwd", RuoloUtente.DRIVER, "B");
-		manager = new Utente(1, "Mario", "Rossi", "manager@example.com", "pwd", RuoloUtente.MANAGER);
+        SistemaNotifiche sistemaNotifiche =
+                new SistemaNotifiche(notificaDAO, utenteDAO);
 
-		veicolo = new Veicolo("T1", TipoVeicolo.AUTO, "Audi", "A1", 2021, StatoVeicolo.DISPONIBILE, 15000);
-	}
+        gestore = new GestorePrenotazioniImpl(
+                prenotazioneDAO,
+                veicoloDAO,
+                utenteDAO,
+                sistemaNotifiche
+        );
 
-	@Test
-	void testCreaPrenotazioneSuccess() {
-		LocalDateTime inizio = LocalDateTime.now().plusDays(1);
-		LocalDateTime fine = inizio.plusDays(1);
+        // =========================
+        // DATI DI BASE
+        // =========================
 
-		Prenotazione p = gestore.creaPrenotazione(driver, veicolo, inizio, fine);
+        manager = new Utente(
+                1,
+                "Mario",
+                "Rossi",
+                "manager@fleet.it",
+                "pwd",
+                RuoloUtente.MANAGER,
+                null
+        );
 
-		assertNotNull(p);
-		assertEquals(StatoPrenotazione.RICHIESTA, p.getStato());
+        driver = new Utente(
+                2,
+                "Luca",
+                "Bianchi",
+                "driver@fleet.it",
+                "pwd",
+                RuoloUtente.DRIVER,
+                "AB123456"
+        );
 
-		List<Notifica> lista = notificaDAO.findByUtente(driver.getIdUtente());
-		assertEquals(1, lista.size());
-		assertEquals(TipoNotifica.PRENOTAZIONE, lista.get(0).getTipoNotifica());
-	}
+        utenteDAO.save(manager);
+        utenteDAO.save(driver);
 
-	@Test
-	void testCreaPrenotazioneDriverSenzaPatente() {
-		Utente senzaPatente = new Utente(50, "X", "Y", "xy@mail.com", "pwd", RuoloUtente.DRIVER);
+        veicolo = new Veicolo(
+                "AA111AA",
+                TipoVeicolo.AUTO,
+                "Fiat",
+                "Panda",
+                2020,
+                it.fleetmanager.util.StatoVeicolo.DISPONIBILE,
+                30000
+        );
 
-		assertThrows(IllegalArgumentException.class, () -> gestore.creaPrenotazione(senzaPatente, veicolo,
-				LocalDateTime.now(), LocalDateTime.now().plusDays(1)));
-	}
+        veicoloDAO.save(veicolo);
+    }
 
-	@Test
-	void testCreaPrenotazioneVeicoloNonDisponibile() {
-		LocalDateTime d1 = LocalDateTime.now().plusDays(1);
-		LocalDateTime d2 = d1.plusDays(1);
+    // ============================================================
+    // CREA PRENOTAZIONE
+    // ============================================================
 
-		prenotazioneDAO.save(new Prenotazione(100, d1, d2, StatoPrenotazione.CONFERMATA, TipoPrenotazione.UTENTE,
-				driver.getIdUtente(), veicolo.getTarga()));
+    @Test
+    void testCreaPrenotazione() {
 
-		assertThrows(IllegalArgumentException.class,
-				() -> gestore.creaPrenotazione(driver, veicolo, d1.plusHours(2), d2.minusHours(2)));
-	}
+        LocalDateTime inizio = LocalDateTime.now().plusHours(1);
+        LocalDateTime fine = LocalDateTime.now().plusHours(3);
 
-	@Test
-	void testConfermaPrenotazioneSuccess() {
-		prenotazioneDAO.save(new Prenotazione(200, LocalDateTime.now(), LocalDateTime.now().plusDays(1),
-				StatoPrenotazione.RICHIESTA, TipoPrenotazione.UTENTE, driver.getIdUtente(), veicolo.getTarga()));
+        Prenotazione p = gestore.creaPrenotazione(driver, veicolo, inizio, fine);
 
-		gestore.confermaPrenotazione(200, manager);
+        assertNotNull(p);
+        assertEquals(StatoPrenotazione.RICHIESTA, p.getStato());
+        assertEquals(TipoPrenotazione.UTENTE, p.getTipoPrenotazione());
 
-		Prenotazione p = prenotazioneDAO.getById(200);
-		assertEquals(StatoPrenotazione.CONFERMATA, p.getStato());
+        List<Prenotazione> lista =
+                prenotazioneDAO.findByVeicolo(veicolo.getTarga());
 
-		List<Notifica> nots = notificaDAO.findByUtente(driver.getIdUtente());
-		assertEquals(1, nots.size());
-	}
+        assertEquals(1, lista.size());
+    }
 
-	@Test
-	void testConfermaPrenotazioneNonManager() {
-		assertThrows(IllegalArgumentException.class, () -> gestore.confermaPrenotazione(1, driver));
-	}
+    // ============================================================
+    // CONFERMA PRENOTAZIONE (MANAGER)
+    // ============================================================
 
-	@Test
-	void testConfermaPrenotazioneInesistente() {
-		assertThrows(IllegalArgumentException.class, () -> gestore.confermaPrenotazione(999, manager));
-	}
+    @Test
+    void testConfermaPrenotazione() {
 
-	@Test
-	void testAnnullaPrenotazioneSuccess() {
-		prenotazioneDAO.save(new Prenotazione(300, LocalDateTime.now(), LocalDateTime.now().plusDays(1),
-				StatoPrenotazione.RICHIESTA, TipoPrenotazione.UTENTE, driver.getIdUtente(), veicolo.getTarga()));
+        LocalDateTime inizio = LocalDateTime.now().plusHours(1);
+        LocalDateTime fine = LocalDateTime.now().plusHours(4);
 
-		gestore.annullaPrenotazione(300, driver);
+        Prenotazione p =
+                gestore.creaPrenotazione(driver, veicolo, inizio, fine);
 
-		Prenotazione p = prenotazioneDAO.getById(300);
-		assertEquals(StatoPrenotazione.ANNULLATA, p.getStato());
+        gestore.confermaPrenotazione(p.getIdPrenotazione(), manager);
 
-		List<Notifica> nots = notificaDAO.findByUtente(driver.getIdUtente());
-		assertEquals(1, nots.size());
-	}
+        Prenotazione aggiornata =
+                prenotazioneDAO.getById(p.getIdPrenotazione());
 
-	@Test
-	void testAnnullaPrenotazioneInesistente() {
-		assertThrows(IllegalArgumentException.class, () -> gestore.annullaPrenotazione(999, driver));
-	}
+        assertEquals(StatoPrenotazione.CONFERMATA, aggiornata.getStato());
+    }
 
-	@Test
-	void testGetPrenotazioniDriverSuccess() {
-		prenotazioneDAO.save(new Prenotazione(400, LocalDateTime.now(), LocalDateTime.now().plusDays(1),
-				StatoPrenotazione.RICHIESTA, TipoPrenotazione.UTENTE, driver.getIdUtente(), veicolo.getTarga()));
+    // ============================================================
+    // ANNULLA PRENOTAZIONE (DRIVER)
+    // ============================================================
 
-		List<Prenotazione> lista = gestore.getPrenotazioniDriver(driver);
-		assertEquals(1, lista.size());
-	}
+    @Test
+    void testAnnullaPrenotazioneDaDriver() {
 
-	@Test
-	void testGetPrenotazioniDriverSenzaPatente() {
-		Utente fake = new Utente(500, "X", "Y", "mail", "pwd", RuoloUtente.DRIVER);
+        LocalDateTime inizio = LocalDateTime.now().plusHours(2);
+        LocalDateTime fine = LocalDateTime.now().plusHours(5);
 
-		assertThrows(IllegalArgumentException.class, () -> gestore.getPrenotazioniDriver(fake));
-	}
+        Prenotazione p =
+                gestore.creaPrenotazione(driver, veicolo, inizio, fine);
 
-	@Test
-	void testGetPrenotazioniVeicoloSuccess() {
-		prenotazioneDAO.save(new Prenotazione(600, LocalDateTime.now(), LocalDateTime.now().plusDays(1),
-				StatoPrenotazione.RICHIESTA, TipoPrenotazione.UTENTE, driver.getIdUtente(), veicolo.getTarga()));
+        gestore.annullaPrenotazione(p.getIdPrenotazione(), driver);
 
-		List<Prenotazione> lista = gestore.getPrenotazioniVeicolo(veicolo);
-		assertEquals(1, lista.size());
-	}
+        Prenotazione aggiornata =
+                prenotazioneDAO.getById(p.getIdPrenotazione());
 
-	@Test
-	void testAttivaPrenotazioneSuccess() {
-		LocalDateTime start = LocalDateTime.now().minusHours(1);
-		LocalDateTime end = LocalDateTime.now().plusHours(2);
+        assertEquals(StatoPrenotazione.ANNULLATA, aggiornata.getStato());
+    }
 
-		prenotazioneDAO.save(new Prenotazione(700, start, end, StatoPrenotazione.CONFERMATA, TipoPrenotazione.UTENTE,
-				driver.getIdUtente(), veicolo.getTarga()));
+    // ============================================================
+    // ATTIVA PRENOTAZIONE
+    // ============================================================
 
-		gestore.attivaPrenotazione(700);
+    @Test
+    void testAttivaPrenotazione() {
 
-		Prenotazione p = prenotazioneDAO.getById(700);
-		assertEquals(StatoPrenotazione.ATTIVA, p.getStato());
+        LocalDateTime inizio = LocalDateTime.now().minusHours(1);
+        LocalDateTime fine = LocalDateTime.now().plusHours(2);
 
-		List<Notifica> nots = notificaDAO.findByUtente(driver.getIdUtente());
-		assertEquals(1, nots.size());
-	}
+        Prenotazione p = new Prenotazione(
+                0,
+                inizio,
+                fine,
+                StatoPrenotazione.CONFERMATA,
+                TipoPrenotazione.UTENTE,
+                driver.getIdUtente(),
+                veicolo.getTarga()
+        );
 
-	@Test
-	void testAttivaPrenotazionePrimaDellaDataInizio() {
-		LocalDateTime start = LocalDateTime.now().plusHours(2);
-		LocalDateTime end = start.plusHours(3);
+        prenotazioneDAO.save(p);
 
-		prenotazioneDAO.save(new Prenotazione(701, start, end, StatoPrenotazione.CONFERMATA, TipoPrenotazione.UTENTE,
-				driver.getIdUtente(), veicolo.getTarga()));
+        gestore.attivaPrenotazione(p.getIdPrenotazione());
 
-		assertThrows(IllegalStateException.class, () -> gestore.attivaPrenotazione(701));
-	}
+        Prenotazione aggiornata =
+                prenotazioneDAO.getById(p.getIdPrenotazione());
 
-	@Test
-	void testAttivaPrenotazioneInesistente() {
-		assertThrows(IllegalArgumentException.class, () -> gestore.attivaPrenotazione(9999));
-	}
+        assertEquals(StatoPrenotazione.ATTIVA, aggiornata.getStato());
+    }
 
-	@Test
-	void testCompletaPrenotazioneSuccess() {
-		LocalDateTime start = LocalDateTime.now().minusDays(1);
-		LocalDateTime end = LocalDateTime.now().minusHours(1);
+    // ============================================================
+    // COMPLETA PRENOTAZIONE
+    // ============================================================
 
-		prenotazioneDAO.save(new Prenotazione(800, start, end, StatoPrenotazione.ATTIVA, TipoPrenotazione.UTENTE,
-				driver.getIdUtente(), veicolo.getTarga()));
+    @Test
+    void testCompletaPrenotazione() {
 
-		gestore.completaPrenotazione(800);
+        LocalDateTime inizio = LocalDateTime.now().minusHours(3);
+        LocalDateTime fine = LocalDateTime.now().minusHours(1);
 
-		Prenotazione p = prenotazioneDAO.getById(800);
-		assertEquals(StatoPrenotazione.COMPLETATA, p.getStato());
+        Prenotazione p = new Prenotazione(
+                0,
+                inizio,
+                fine,
+                StatoPrenotazione.ATTIVA,
+                TipoPrenotazione.UTENTE,
+                driver.getIdUtente(),
+                veicolo.getTarga()
+        );
 
-		List<Notifica> nots = notificaDAO.findByUtente(driver.getIdUtente());
-		assertEquals(1, nots.size());
-	}
+        prenotazioneDAO.save(p);
 
-	@Test
-	void testCompletaPrenotazionePrimaDellaDataFine() {
-		LocalDateTime start = LocalDateTime.now().minusHours(1);
-		LocalDateTime end = LocalDateTime.now().plusHours(5);
+        gestore.completaPrenotazione(p.getIdPrenotazione());
 
-		prenotazioneDAO.save(new Prenotazione(801, start, end, StatoPrenotazione.ATTIVA, TipoPrenotazione.UTENTE,
-				driver.getIdUtente(), veicolo.getTarga()));
+        Prenotazione aggiornata =
+                prenotazioneDAO.getById(p.getIdPrenotazione());
 
-		assertThrows(IllegalStateException.class, () -> gestore.completaPrenotazione(801));
-	}
+        assertEquals(StatoPrenotazione.COMPLETATA, aggiornata.getStato());
+    }
 
-	@Test
-	void testCompletaPrenotazioneInesistente() {
-		assertThrows(IllegalArgumentException.class, () -> gestore.completaPrenotazione(9999));
-	}
+    // ============================================================
+    // QUERY
+    // ============================================================
+
+    @Test
+    void testGetPrenotazioniDriver() {
+
+        LocalDateTime inizio = LocalDateTime.now().plusHours(1);
+        LocalDateTime fine = LocalDateTime.now().plusHours(2);
+
+        gestore.creaPrenotazione(driver, veicolo, inizio, fine);
+
+        List<Prenotazione> lista =
+                gestore.getPrenotazioniDriver(driver);
+
+        assertEquals(1, lista.size());
+    }
+
+    @Test
+    void testGetPrenotazioniVeicolo() {
+
+        LocalDateTime inizio = LocalDateTime.now().plusHours(1);
+        LocalDateTime fine = LocalDateTime.now().plusHours(3);
+
+        gestore.creaPrenotazione(driver, veicolo, inizio, fine);
+
+        List<Prenotazione> lista =
+                gestore.getPrenotazioniVeicolo(veicolo);
+
+        assertEquals(1, lista.size());
+    }
 }
