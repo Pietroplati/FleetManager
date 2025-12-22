@@ -1,11 +1,15 @@
 package it.fleetmanager.repository;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 import java.time.LocalDateTime;
 import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import it.fleetmanager.model.Notifica;
+import it.fleetmanager.repository.dao.NotificaDAO;
 import it.fleetmanager.repository.impl.NotificaDAOImpl;
 import it.fleetmanager.repository.util.H2DatabaseManager;
 import it.fleetmanager.util.DatabaseTestUtils;
@@ -13,114 +17,187 @@ import it.fleetmanager.util.TipoNotifica;
 
 public class NotificaDAOImplTest {
 
-	private NotificaDAOImpl dao;
+    private NotificaDAO notificaDAO;
 
-	@BeforeEach
-	void setup() throws Exception {
-		DatabaseTestUtils.resetDatabase();
-		dao = new NotificaDAOImpl(H2DatabaseManager.getInstance());
-	}
+    @BeforeEach
+    void setup() throws Exception {
+        // DB H2 in RAM, schema identico a quello reale
+        DatabaseTestUtils.resetDatabase();
+        notificaDAO = new NotificaDAOImpl(H2DatabaseManager.getInstance());
+    }
 
-	@Test
-	void testSaveAndGetById() {
-		Notifica n = new Notifica(1, TipoNotifica.SCADENZA, "Revisione in scadenza", LocalDateTime.now(), false, 1, 1);
+    @Test
+    void testSaveAndGetById() {
+        // Arrange
+        Notifica n = new Notifica(
+                null,
+                TipoNotifica.PRENOTAZIONE,
+                "Prenotazione confermata",
+                LocalDateTime.of(2025, 1, 10, 9, 30),
+                false,
+                2,
+                null
+        );
 
-		dao.save(n);
+        // Act
+        notificaDAO.save(n);
+        Notifica loaded = notificaDAO.getNotificaById(1);
 
-		Notifica letta = dao.getNotificaById(1);
+        // Assert
+        assertEquals(1, loaded.getIdNotifica());
+        assertEquals(TipoNotifica.PRENOTAZIONE, loaded.getTipoNotifica());
+        assertEquals("Prenotazione confermata", loaded.getMessaggio());
+        assertFalse(loaded.getLetta());
+        assertEquals(2, loaded.getIdUtente());
+        assertNull(loaded.getIdScadenza());
+    }
 
-		assertNotNull(letta);
-		assertEquals(1, letta.getIdNotifica());
-		assertEquals(TipoNotifica.SCADENZA, letta.getTipoNotifica());
-		assertEquals("Revisione in scadenza", letta.getMessaggio());
-		assertEquals(1, letta.getIdUtente());
-		assertEquals(1, letta.getIdScadenza());
-	}
+    @Test
+    void testGetNotificaById_NotFound() {
+        Notifica n = notificaDAO.getNotificaById(999);
+        assertEquals(-1, n.getIdNotifica());
+    }
 
-	@Test
-	void testUpdate() {
+    @Test
+    void testUpdate() {
+        // Arrange
+        Notifica n = new Notifica(
+                null,
+                TipoNotifica.MANUTENZIONE,
+                "Manutenzione programmata",
+                false,
+                1,
+                null
+        );
 
-		Notifica n = new Notifica(2, TipoNotifica.MANUTENZIONE, "Messaggio originale", LocalDateTime.now(), false, 2,
-				2);
+        notificaDAO.save(n);
 
-		dao.save(n);
+        // Act
+        Notifica saved = notificaDAO.getNotificaById(1);
+        saved.setLetta(true);
+        saved.setMessaggio("Manutenzione completata");
+        notificaDAO.update(saved);
 
-		n.setMessaggio("Messaggio modificato");
-		n.setLetta(true);
+        Notifica updated = notificaDAO.getNotificaById(1);
 
-		dao.update(n);
+        // Assert
+        assertTrue(updated.getLetta());
+        assertEquals("Manutenzione completata", updated.getMessaggio());
+    }
 
-		Notifica aggiornata = dao.getNotificaById(2);
+    @Test
+    void testDelete() {
+        // Arrange
+        Notifica n = new Notifica(
+                null,
+                TipoNotifica.SEGNALAZIONE,
+                "Segnalazione veicolo",
+                false,
+                1,
+                null
+        );
+        notificaDAO.save(n);
 
-		assertNotNull(aggiornata);
-		assertEquals("Messaggio modificato", aggiornata.getMessaggio());
-		assertTrue(aggiornata.getLetta());
-	}
+        // Act
+        notificaDAO.delete(1);
 
-	@Test
-	void testFindByUtente() {
+        // Assert
+        Notifica deleted = notificaDAO.getNotificaById(1);
+        assertEquals(-1, deleted.getIdNotifica());
+    }
 
-		int idUtente = 1;
+    @Test
+    void testFindByUtente() {
+        // Arrange
+        notificaDAO.save(new Notifica(
+                null,
+                TipoNotifica.PRENOTAZIONE,
+                "N1",
+                LocalDateTime.of(2025, 1, 1, 9, 0),
+                false,
+                2,
+                null
+        ));
 
-		dao.save(new Notifica(3, TipoNotifica.MANUTENZIONE, "Msg1", LocalDateTime.now().minusHours(2), false, idUtente,
-				1));
+        notificaDAO.save(new Notifica(
+                null,
+                TipoNotifica.PRENOTAZIONE,
+                "N2",
+                LocalDateTime.of(2025, 1, 2, 9, 0),
+                false,
+                2,
+                null
+        ));
 
-		dao.save(new Notifica(4, TipoNotifica.MANUTENZIONE, "Msg2", LocalDateTime.now().minusHours(1), false, idUtente,
-				2));
+        // Act
+        List<Notifica> list = notificaDAO.findByUtente(2);
 
-		List<Notifica> lista = dao.findByUtente(idUtente);
+        // Assert
+        assertEquals(2, list.size());
+        assertTrue(list.get(0).getDataInvio().isAfter(list.get(1).getDataInvio()));
+    }
 
-		assertEquals(2, lista.size());
-		assertEquals(4, lista.get(0).getIdNotifica());
-		assertEquals(3, lista.get(1).getIdNotifica());
-	}
+    @Test
+    void testFindNonLette() {
+        // Arrange
+        notificaDAO.save(new Notifica(
+                null,
+                TipoNotifica.SCADENZA,
+                "Scadenza bollo",
+                false,
+                1,
+                1
+        ));
 
-	@Test
-	void testFindNonLette() {
+        notificaDAO.save(new Notifica(
+                null,
+                TipoNotifica.SCADENZA,
+                "Scadenza assicurazione",
+                true,
+                1,
+                2
+        ));
 
-		int idUtente = 2;
+        // Act
+        List<Notifica> list = notificaDAO.findNonLette(1);
 
-		dao.save(new Notifica(5, TipoNotifica.SCADENZA, "Letta", LocalDateTime.now(), true, idUtente, null));
+        // Assert
+        assertEquals(1, list.size());
+        assertFalse(list.get(0).getLetta());
+    }
 
-		dao.save(new Notifica(6, TipoNotifica.SCADENZA, "Non letta 1", LocalDateTime.now().minusMinutes(10), false,
-				idUtente, 1));
+    @Test
+    void testFindByScadenza() {
+        // Arrange
+        notificaDAO.save(new Notifica(
+                null,
+                TipoNotifica.SCADENZA,
+                "Bollo in scadenza",
+                false,
+                1,
+                1
+        ));
 
-		dao.save(new Notifica(7, TipoNotifica.SCADENZA, "Non letta 2", LocalDateTime.now(), false, idUtente, 2));
+        notificaDAO.save(new Notifica(
+                null,
+                TipoNotifica.SCADENZA,
+                "Assicurazione in scadenza",
+                false,
+                1,
+                1
+        ));
 
-		List<Notifica> lista = dao.findNonLette(idUtente);
+        // Act
+        List<Notifica> list = notificaDAO.findByScadenza(1);
 
-		assertEquals(2, lista.size());
-		assertEquals(6, lista.get(0).getIdNotifica()); // più vecchia prima
-		assertEquals(7, lista.get(1).getIdNotifica());
-	}
+        // Assert
+        assertEquals(2, list.size());
+        assertTrue(list.get(0).getDataInvio().isAfter(list.get(1).getDataInvio()));
+    }
 
-	@Test
-	void testFindByScadenza() {
-
-		int idScadenza = 1;
-
-		dao.save(new Notifica(8, TipoNotifica.SCADENZA, "Vecchio msg", LocalDateTime.now().minusHours(3), false, 1,
-				idScadenza));
-
-		dao.save(new Notifica(9, TipoNotifica.SCADENZA, "Ultimo msg", LocalDateTime.now().minusHours(1), false, 1,
-				idScadenza));
-
-		List<Notifica> lista = dao.findByScadenza(idScadenza);
-
-		assertEquals(2, lista.size());
-		assertEquals(9, lista.get(0).getIdNotifica());
-		assertEquals("Ultimo msg", lista.get(0).getMessaggio());
-	}
-
-	@Test
-	void testDelete() {
-
-		dao.save(new Notifica(10, TipoNotifica.SCADENZA, "Da eliminare", LocalDateTime.now(), false, 1, 1));
-
-		dao.delete(10);
-
-		Notifica result = dao.getNotificaById(10);
-
-		assertEquals(NotificaDAOImpl.NOTIFICA_INESISTENTE.toString(), result.toString());
-	}
+    @Test
+    void testFindByScadenza_Null() {
+        List<Notifica> list = notificaDAO.findByScadenza(null);
+        assertTrue(list.isEmpty());
+    }
 }

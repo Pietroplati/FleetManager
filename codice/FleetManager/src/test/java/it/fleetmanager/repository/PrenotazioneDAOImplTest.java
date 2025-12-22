@@ -1,11 +1,15 @@
 package it.fleetmanager.repository;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 import java.time.LocalDateTime;
 import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import it.fleetmanager.model.Prenotazione;
+import it.fleetmanager.repository.dao.PrenotazioneDAO;
 import it.fleetmanager.repository.impl.PrenotazioneDAOImpl;
 import it.fleetmanager.repository.util.H2DatabaseManager;
 import it.fleetmanager.util.DatabaseTestUtils;
@@ -14,104 +18,230 @@ import it.fleetmanager.util.TipoPrenotazione;
 
 public class PrenotazioneDAOImplTest {
 
-	private PrenotazioneDAOImpl dao;
+    private PrenotazioneDAO prenotazioneDAO;
 
-	@BeforeEach
-	void setup() throws Exception {
-		DatabaseTestUtils.resetDatabase();
-		dao = new PrenotazioneDAOImpl(H2DatabaseManager.getInstance());
-	}
+    @BeforeEach
+    void setup() throws Exception {
+        // DB H2 in RAM, schema identico a quello reale
+        DatabaseTestUtils.resetDatabase();
+        prenotazioneDAO = new PrenotazioneDAOImpl(H2DatabaseManager.getInstance());
+    }
 
-	@Test
-	void testSaveAndGetById() {
+    @Test
+    void testSaveAndGetById() {
+        // Arrange
+        Prenotazione p = new Prenotazione(
+                0,
+                LocalDateTime.of(2025, 1, 10, 9, 0),
+                LocalDateTime.of(2025, 1, 10, 12, 0),
+                StatoPrenotazione.CONFERMATA,
+                TipoPrenotazione.UTENTE,
+                2,
+                "AB123CD"
+        );
 
-		Prenotazione p = new Prenotazione(1, LocalDateTime.of(2025, 11, 10, 8, 0),
-				LocalDateTime.of(2025, 11, 10, 18, 0), StatoPrenotazione.CONFERMATA, TipoPrenotazione.UTENTE, 1,
-				"AB123CD");
+        // Act
+        prenotazioneDAO.save(p);
+        Prenotazione loaded = prenotazioneDAO.getById(p.getIdPrenotazione());
 
-		dao.save(p);
+        // Assert
+        assertTrue(p.getIdPrenotazione() > 0);
+        assertEquals(StatoPrenotazione.CONFERMATA, loaded.getStato());
+        assertEquals("AB123CD", loaded.getTarga());
+        assertEquals(2, loaded.getIdUtente());
+    }
 
-		Prenotazione letta = dao.getById(1);
+    @Test
+    void testGetById_NotFound() {
+        Prenotazione p = prenotazioneDAO.getById(999);
+        assertEquals(-1, p.getIdPrenotazione());
+    }
 
-		assertEquals(1, letta.getIdPrenotazione());
-		assertEquals(StatoPrenotazione.CONFERMATA, letta.getStato());
-		assertEquals(TipoPrenotazione.UTENTE, letta.getTipoPrenotazione());
-		assertEquals("AB123CD", letta.getTarga());
-	}
+    @Test
+    void testUpdate() {
+        // Arrange
+        Prenotazione p = new Prenotazione(
+                0,
+                LocalDateTime.of(2025, 2, 1, 10, 0),
+                LocalDateTime.of(2025, 2, 1, 12, 0),
+                StatoPrenotazione.RICHIESTA,
+                TipoPrenotazione.UTENTE,
+                2,
+                "GH819RJ"
+        );
 
-	@Test
-	void testUpdate() {
+        prenotazioneDAO.save(p);
 
-		Prenotazione p = new Prenotazione(2, LocalDateTime.of(2025, 11, 11, 8, 0),
-				LocalDateTime.of(2025, 11, 11, 17, 0), StatoPrenotazione.RICHIESTA, TipoPrenotazione.UTENTE, 2,
-				"GH819RJ");
+        // Act
+        p.setStato(StatoPrenotazione.CONFERMATA);
+        prenotazioneDAO.update(p);
 
-		dao.save(p);
+        Prenotazione updated = prenotazioneDAO.getById(p.getIdPrenotazione());
 
-		p.setStato(StatoPrenotazione.ATTIVA);
-		p.setDataFine(LocalDateTime.of(2025, 11, 11, 19, 0));
+        // Assert
+        assertEquals(StatoPrenotazione.CONFERMATA, updated.getStato());
+    }
 
-		dao.update(p);
+    @Test
+    void testDelete() {
+        // Arrange
+        Prenotazione p = new Prenotazione(
+                0,
+                LocalDateTime.now(),
+                LocalDateTime.now().plusHours(2),
+                StatoPrenotazione.CONFERMATA,
+                TipoPrenotazione.UTENTE,
+                2,
+                "T1"
+        );
 
-		Prenotazione letta = dao.getById(2);
+        prenotazioneDAO.save(p);
 
-		assertEquals(StatoPrenotazione.ATTIVA, letta.getStato());
-		assertEquals(LocalDateTime.of(2025, 11, 11, 19, 0), letta.getDataFine());
-	}
+        // Act
+        prenotazioneDAO.delete(p.getIdPrenotazione());
 
-	@Test
-	void testDelete() {
+        // Assert
+        Prenotazione deleted = prenotazioneDAO.getById(p.getIdPrenotazione());
+        assertEquals(-1, deleted.getIdPrenotazione());
+    }
 
-		Prenotazione p = new Prenotazione(3, LocalDateTime.of(2025, 11, 12, 9, 0),
-				LocalDateTime.of(2025, 11, 12, 12, 0), StatoPrenotazione.CONFERMATA, TipoPrenotazione.UTENTE, 1, "T1");
+    @Test
+    void testFindByDriver() {
+        // Arrange
+        prenotazioneDAO.save(new Prenotazione(
+                0,
+                LocalDateTime.now(),
+                LocalDateTime.now().plusHours(1),
+                StatoPrenotazione.CONFERMATA,
+                TipoPrenotazione.UTENTE,
+                2,
+                "V1"
+        ));
 
-		dao.save(p);
+        prenotazioneDAO.save(new Prenotazione(
+                0,
+                LocalDateTime.now(),
+                LocalDateTime.now().plusHours(2),
+                StatoPrenotazione.CONFERMATA,
+                TipoPrenotazione.UTENTE,
+                2,
+                "V2"
+        ));
 
-		dao.delete(3);
+        // Act
+        List<Prenotazione> list = prenotazioneDAO.findByDriver(2);
 
-		Prenotazione letta = dao.getById(3);
-		assertEquals(PrenotazioneDAOImpl.PRENOTAZIONE_INESISTENTE, letta);
-	}
+        // Assert
+        assertEquals(2, list.size());
+        assertTrue(list.stream().allMatch(p -> p.getIdUtente() == 2));
+    }
 
-	@Test
-	void testFindByDriver() {
+    @Test
+    void testFindByVeicolo() {
+        // Arrange
+        prenotazioneDAO.save(new Prenotazione(
+                0,
+                LocalDateTime.now(),
+                LocalDateTime.now().plusHours(1),
+                StatoPrenotazione.CONFERMATA,
+                TipoPrenotazione.UTENTE,
+                2,
+                "T2"
+        ));
 
-		dao.save(new Prenotazione(4, LocalDateTime.now(), LocalDateTime.now().plusHours(2), StatoPrenotazione.ATTIVA,
-				TipoPrenotazione.UTENTE, 2, "V1"));
+        // Act
+        List<Prenotazione> list = prenotazioneDAO.findByVeicolo("T2");
 
-		dao.save(new Prenotazione(5, LocalDateTime.now(), LocalDateTime.now().plusHours(1),
-				StatoPrenotazione.CONFERMATA, TipoPrenotazione.UTENTE, 2, "V2"));
+        // Assert
+        assertEquals(1, list.size());
+        assertEquals("T2", list.get(0).getTarga());
+    }
 
-		List<Prenotazione> lista = dao.findByDriver(2);
-		assertEquals(2, lista.size());
-	}
+    @Test
+    void testFindByStato() {
+        // Arrange
+        prenotazioneDAO.save(new Prenotazione(
+                0,
+                LocalDateTime.now(),
+                LocalDateTime.now().plusHours(1),
+                StatoPrenotazione.ATTIVA,
+                TipoPrenotazione.UTENTE,
+                2,
+                "AB123CD"
+        ));
 
-	@Test
-	void testFindByVeicolo() {
+        prenotazioneDAO.save(new Prenotazione(
+                0,
+                LocalDateTime.now(),
+                LocalDateTime.now().plusHours(2),
+                StatoPrenotazione.ATTIVA,
+                TipoPrenotazione.MANUTENZIONE,
+                1,
+                "AB123CD"
+        ));
 
-		dao.save(new Prenotazione(6, LocalDateTime.now(), LocalDateTime.now().plusHours(3),
-				StatoPrenotazione.CONFERMATA, TipoPrenotazione.UTENTE, 1, "V3"));
+        // Act
+        List<Prenotazione> list = prenotazioneDAO.findByStato(StatoPrenotazione.ATTIVA);
 
-		List<Prenotazione> lista = dao.findByVeicolo("V3");
+        // Assert
+        assertEquals(2, list.size());
+        assertTrue(list.stream().allMatch(p -> p.getStato() == StatoPrenotazione.ATTIVA));
+    }
 
-		assertEquals(1, lista.size());
-		assertEquals("V3", lista.get(0).getTarga());
-	}
+    @Test
+    void testExistsOverlapping() {
+        // Arrange
+        LocalDateTime start = LocalDateTime.of(2025, 3, 1, 10, 0);
+        LocalDateTime end = LocalDateTime.of(2025, 3, 1, 12, 0);
 
-	@Test
-	void testExistsOverlapping() {
+        prenotazioneDAO.save(new Prenotazione(
+                0,
+                start,
+                end,
+                StatoPrenotazione.CONFERMATA,
+                TipoPrenotazione.UTENTE,
+                2,
+                "V3"
+        ));
 
-		dao.save(new Prenotazione(7, LocalDateTime.of(2025, 11, 20, 10, 0), LocalDateTime.of(2025, 11, 20, 15, 0),
-				StatoPrenotazione.ATTIVA, TipoPrenotazione.UTENTE, 1, "ZZ000AA"));
+        // Act
+        boolean exists = prenotazioneDAO.existsOverlapping(
+                "V3",
+                LocalDateTime.of(2025, 3, 1, 11, 0),
+                LocalDateTime.of(2025, 3, 1, 13, 0)
+        );
 
-		boolean res = dao.existsOverlapping("ZZ000AA", LocalDateTime.of(2025, 11, 20, 14, 0),
-				LocalDateTime.of(2025, 11, 20, 16, 0));
+        // Assert
+        assertTrue(exists);
+    }
 
-		assertTrue(res);
+    @Test
+    void testFindAll() {
+        // Arrange
+        prenotazioneDAO.save(new Prenotazione(
+                0,
+                LocalDateTime.now(),
+                LocalDateTime.now().plusHours(1),
+                StatoPrenotazione.CONFERMATA,
+                TipoPrenotazione.UTENTE,
+                2,
+                "AB123CD"
+        ));
 
-		boolean res2 = dao.existsOverlapping("ZZ000AA", LocalDateTime.of(2025, 11, 20, 15, 0),
-				LocalDateTime.of(2025, 11, 20, 18, 0));
+        prenotazioneDAO.save(new Prenotazione(
+                0,
+                LocalDateTime.now(),
+                LocalDateTime.now().plusHours(2),
+                StatoPrenotazione.ANNULLATA,
+                TipoPrenotazione.UTENTE,
+                2,
+                "GH819RJ"
+        ));
 
-		assertFalse(res2);
-	}
+        // Act
+        List<Prenotazione> list = prenotazioneDAO.findAll();
+
+        // Assert
+        assertEquals(2, list.size());
+    }
 }

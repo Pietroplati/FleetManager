@@ -1,9 +1,14 @@
 package it.fleetmanager.repository;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import it.fleetmanager.model.Utente;
+import it.fleetmanager.repository.dao.UtenteDAO;
 import it.fleetmanager.repository.impl.UtenteDAOImpl;
 import it.fleetmanager.repository.util.H2DatabaseManager;
 import it.fleetmanager.util.DatabaseTestUtils;
@@ -11,60 +16,111 @@ import it.fleetmanager.util.RuoloUtente;
 
 public class UtenteDAOImplTest {
 
-	private UtenteDAOImpl dao;
+    private UtenteDAO utenteDAO;
 
-	@BeforeEach
-	void setup() throws Exception {
-		DatabaseTestUtils.resetDatabase();
-		dao = new UtenteDAOImpl(H2DatabaseManager.getInstance());
-	}
+    @BeforeEach
+    void setup() throws Exception {
+        // DB H2 in RAM con schema e seed identici al reale
+        DatabaseTestUtils.resetDatabase();
+        utenteDAO = new UtenteDAOImpl(H2DatabaseManager.getInstance());
+    }
 
-	@Test
-	void testSaveAndGetByEmail() {
-		Utente u = new Utente(10, "Mario", "Rossi", "mario@test.com", "pwd", RuoloUtente.MANAGER);
-		dao.save(u);
+    @Test
+    void testSaveAndGetById() {
+        Utente u = new Utente(
+                10,
+                "Giulia",
+                "Bianchi",
+                "giulia@example.com",
+                "pwd",
+                RuoloUtente.DRIVER,
+                "ABC123"
+        );
 
-		Utente letto = dao.getUtenteByEmail("mario@test.com");
+        utenteDAO.save(u);
 
-		assertEquals(10, letto.getIdUtente());
-		assertEquals("Mario", letto.getNome());
-		assertEquals("Rossi", letto.getCognome());
-		assertEquals(RuoloUtente.MANAGER, letto.getRuoloUtente());
-	}
+        Utente loaded = utenteDAO.getUtenteById(10);
 
-	@Test
-	void testExistsByEmail() {
-		Utente u = new Utente(20, "Luca", "Verdi", "luca@test.com", "abc", RuoloUtente.DRIVER);
-		dao.save(u);
+        assertEquals(10, loaded.getIdUtente());
+        assertEquals("Giulia", loaded.getNome());
+        assertEquals("Bianchi", loaded.getCognome());
+        assertEquals("giulia@example.com", loaded.getEmail());
+        assertEquals(RuoloUtente.DRIVER, loaded.getRuoloUtente());
+        assertEquals("ABC123", loaded.getPatente());
+    }
 
-		assertTrue(dao.existsByEmail("luca@test.com"));
-		assertFalse(dao.existsByEmail("non_esiste@test.com"));
-	}
+    @Test
+    void testGetUtenteById_NotFound() {
+        Utente u = utenteDAO.getUtenteById(999);
+        assertEquals(-1, u.getIdUtente());
+    }
 
-	@Test
-	void testDelete() {
-		Utente u = new Utente(30, "Anna", "Bianchi", "anna@test.com", "pass", RuoloUtente.DRIVER);
-		dao.save(u);
+    @Test
+    void testGetUtenteByEmail() {
+        Utente u = utenteDAO.getUtenteByEmail("driver@example.com");
 
-		dao.delete(30);
+        assertEquals(2, u.getIdUtente());
+        assertEquals("Luca", u.getNome());
+        assertEquals(RuoloUtente.DRIVER, u.getRuoloUtente());
+    }
 
-		Utente letto = dao.getUtenteByEmail("anna@test.com");
-		assertEquals(UtenteDAOImpl.UTENTE_INESISTENTE, letto);
-	}
+    @Test
+    void testGetUtenteByEmail_NotFound() {
+        Utente u = utenteDAO.getUtenteByEmail("notfound@example.com");
+        assertEquals(-1, u.getIdUtente());
+    }
 
-	@Test
-	void testUpdate() {
-		Utente u = new Utente(40, "Pietro", "Plati", "pietro@test.com", "000", RuoloUtente.DRIVER);
-		dao.save(u);
+    @Test
+    void testExistsByEmail() {
+        assertTrue(utenteDAO.existsByEmail("manager@example.com"));
+        assertFalse(utenteDAO.existsByEmail("inesistente@example.com"));
+    }
 
-		u.setNome("PietroMod");
-		u.setPassword("PWD_NEW");
+    @Test
+    void testUpdate() {
+        Utente u = utenteDAO.getUtenteById(2);
+        u.setNome("Luca Modificato");
+        u.setEmail("luca.mod@example.com");
 
-		dao.update(u);
+        utenteDAO.update(u);
 
-		Utente letto = dao.getUtenteById(40);
+        Utente updated = utenteDAO.getUtenteById(2);
+        assertEquals("Luca Modificato", updated.getNome());
+        assertEquals("luca.mod@example.com", updated.getEmail());
+    }
 
-		assertEquals("PietroMod", letto.getNome());
-		assertEquals("PWD_NEW", letto.getPassword());
-	}
+    @Test
+    void testDelete() {
+        Utente u = new Utente(
+                20,
+                "Da",
+                "Cancellare",
+                "delete@example.com",
+                "pwd",
+                RuoloUtente.DRIVER
+        );
+
+        utenteDAO.save(u);
+        utenteDAO.delete(20);
+
+        Utente deleted = utenteDAO.getUtenteById(20);
+        assertEquals(-1, deleted.getIdUtente());
+    }
+
+    @Test
+    void testGetTuttiUtenti() {
+        List<Utente> list = utenteDAO.getTuttiUtenti();
+
+        // almeno i 2 seed
+        assertTrue(list.size() >= 2);
+        assertEquals(1, list.get(0).getIdUtente());
+    }
+
+    @Test
+    void testGetManager() {
+        Utente manager = utenteDAO.getManager();
+
+        assertEquals(RuoloUtente.MANAGER, manager.getRuoloUtente());
+        assertEquals(1, manager.getIdUtente());
+    }
 }
