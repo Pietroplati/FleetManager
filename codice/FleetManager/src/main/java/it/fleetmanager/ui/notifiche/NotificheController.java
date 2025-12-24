@@ -36,285 +36,308 @@ import javafx.beans.property.SimpleStringProperty;
 
 public class NotificheController {
 
-	// ============================================================
-	// UI
-	// ============================================================
-	@FXML
-	private TableView<Notifica> tableNotifiche;
+    // ============================================================
+    // UI
+    // ============================================================
+    @FXML
+    private TableView<Notifica> tableNotifiche;
 
-	@FXML
-	private TableColumn<Notifica, String> colId;
-	@FXML
-	private TableColumn<Notifica, String> colTipo;
-	@FXML
-	private TableColumn<Notifica, String> colMessaggio;
-	@FXML
-	private TableColumn<Notifica, String> colData;
-	@FXML
-	private TableColumn<Notifica, String> colLetta;
+    @FXML
+    private TableColumn<Notifica, String> colId;
+    @FXML
+    private TableColumn<Notifica, String> colTipo;
+    @FXML
+    private TableColumn<Notifica, String> colMessaggio;
+    @FXML
+    private TableColumn<Notifica, String> colData;
+    @FXML
+    private TableColumn<Notifica, String> colLetta;
 
-	@FXML
-	private Label lblDescrizioneUtente;
-	@FXML
-	private ProgressIndicator loadingIndicator;
+    @FXML
+    private Label lblDescrizioneUtente;
+    @FXML
+    private ProgressIndicator loadingIndicator;
 
-	// 🔥 NUOVO BOTTONE
-	@FXML
-	private Button btnVeicoloNonDisponibile;
+    @FXML
+    private Button btnVeicoloNonDisponibile;
 
-	// ============================================================
-	// DAO
-	// ============================================================
-	private final NotificaDAO notificaDAO = new NotificaDAOImpl(H2DatabaseManager.getInstance());
-	private final VeicoloDAO veicoloDAO = new VeicoloDAOImpl(H2DatabaseManager.getInstance());
+    // ============================================================
+    // DAO
+    // ============================================================
+    private final NotificaDAO notificaDAO =
+            new NotificaDAOImpl(H2DatabaseManager.getInstance());
 
-	private Utente utente;
-	private final ObservableList<Notifica> notificheList = FXCollections.observableArrayList();
+    private final VeicoloDAO veicoloDAO =
+            new VeicoloDAOImpl(H2DatabaseManager.getInstance());
 
-	private final DateTimeFormatter fmt = DateTimeFormatter.ofPattern("d MMMM yyyy HH:mm", new Locale("it", "IT"));
+    private Utente utente;
+    private final ObservableList<Notifica> notificheList =
+            FXCollections.observableArrayList();
 
-	// ============================================================
-	// INITIALIZE
-	// ============================================================
-	@FXML
-	private void initialize() {
-		tableNotifiche.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-		setupColumns();
-		setupSelectionListener();
+    private final DateTimeFormatter fmt =
+            DateTimeFormatter.ofPattern("d MMMM yyyy HH:mm", new Locale("it", "IT"));
 
-		// 🔥 IL BOTTONE È NASCOSTO DI DEFAULT
-		btnVeicoloNonDisponibile.setVisible(false);
-	}
+    // ============================================================
+    // INITIALIZE
+    // ============================================================
+    @FXML
+    private void initialize() {
+        tableNotifiche.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        setupColumns();
+        setupSelectionListener();
+        btnVeicoloNonDisponibile.setVisible(false);
+    }
 
-	// ============================================================
-	// SET UTENTE
-	// ============================================================
-	public void setUtente(Utente u) {
-		this.utente = u;
-		lblDescrizioneUtente.setText("Notifiche di: " + u.getNome() + " " + u.getCognome());
-		caricaNotifiche();
-	}
+    // ============================================================
+    // SET UTENTE
+    // ============================================================
+    public void setUtente(Utente u) {
+        this.utente = u;
+        lblDescrizioneUtente.setText(
+                "Notifiche di: " + u.getNome() + " " + u.getCognome()
+        );
+        caricaNotifiche();
+    }
 
-	// ============================================================
-	// CONFIGURA COLONNE
-	// ============================================================
-	private void setupColumns() {
+    // ============================================================
+    // CONFIGURA COLONNE
+    // ============================================================
+    private void setupColumns() {
 
-		colId.setCellValueFactory(n -> new SimpleStringProperty(String.valueOf(n.getValue().getIdNotifica())));
+        colId.setCellValueFactory(
+                n -> new SimpleStringProperty(String.valueOf(n.getValue().getIdNotifica()))
+        );
 
-		colTipo.setCellValueFactory(n -> new SimpleStringProperty(n.getValue().getTipoNotifica().name()));
+        colTipo.setCellValueFactory(
+                n -> new SimpleStringProperty(n.getValue().getTipoNotifica().name())
+        );
 
-		colMessaggio.setCellValueFactory(n -> new SimpleStringProperty(n.getValue().getMessaggio()));
+        colMessaggio.setCellValueFactory(
+                n -> new SimpleStringProperty(n.getValue().getMessaggio())
+        );
 
-		colData.setCellValueFactory(n -> new SimpleStringProperty(n.getValue().getDataInvio().format(fmt)));
+        colData.setCellValueFactory(
+                n -> new SimpleStringProperty(n.getValue().getDataInvio().format(fmt))
+        );
 
-		colLetta.setCellValueFactory(n -> new SimpleStringProperty(n.getValue().getLetta() ? "SI" : "NO"));
-	}
+        colLetta.setCellValueFactory(
+                n -> new SimpleStringProperty(n.getValue().getLetta() ? "SI" : "NO")
+        );
+    }
 
-	// ============================================================
-	// LISTENER SELEZIONE → MOSTRARE IL BOTTONE SPECIALE
-	// ============================================================
-	private void setupSelectionListener() {
+    // ============================================================
+    // LISTENER SELEZIONE
+    // ============================================================
+    private void setupSelectionListener() {
 
-		tableNotifiche.getSelectionModel().selectedItemProperty().addListener((obs, old, sel) -> {
+        tableNotifiche.getSelectionModel()
+                .selectedItemProperty()
+                .addListener((obs, old, sel) -> {
 
-			if (sel == null) {
-				btnVeicoloNonDisponibile.setVisible(false);
-				return;
-			}
+                    if (sel == null || sel.getTipoNotifica() != TipoNotifica.SEGNALAZIONE) {
+                        btnVeicoloNonDisponibile.setVisible(false);
+                        return;
+                    }
 
-			// Se non è una segnalazione → nascondi
-			if (sel.getTipoNotifica() != TipoNotifica.SEGNALAZIONE) {
-				btnVeicoloNonDisponibile.setVisible(false);
-				return;
-			}
+                    String targa = estraiTarga(sel.getMessaggio());
+                    btnVeicoloNonDisponibile.setVisible(targa != null);
+                });
+    }
 
-			// Se la segnalazione NON contiene una targa riconoscibile → nascondi
-			String targa = estraiTarga(sel.getMessaggio());
-			btnVeicoloNonDisponibile.setVisible(targa != null);
-		});
-	}
+    // ============================================================
+    // ESTRARRE TARGA
+    // ============================================================
+    private String estraiTarga(String msg) {
+        String regex = "\\b[A-Z]{2}\\d{3}[A-Z]{2}\\b";
+        var matcher = java.util.regex.Pattern.compile(regex).matcher(msg);
+        return matcher.find() ? matcher.group() : null;
+    }
 
-	// ============================================================
-	// ESTRARRE TARGA DA UNA SEGNALAZIONE
-	// ============================================================
-	private String estraiTarga(String msg) {
+    // ============================================================
+    // CARICAMENTO NOTIFICHE
+    // ============================================================
+    private void caricaNotifiche() {
 
-		// Pattern classico targa italiana (es. AB123CD)
-		String regex = "\\b[A-Z]{2}\\d{3}[A-Z]{2}\\b";
+        loadingIndicator.setVisible(true);
 
-		var matcher = java.util.regex.Pattern.compile(regex).matcher(msg);
+        Task<Void> task = new Task<>() {
+            @Override
+            protected Void call() {
+                caricaNotificheInterno();
+                return null;
+            }
+        };
 
-		if (matcher.find())
-			return matcher.group();
+        task.setOnSucceeded(e -> loadingIndicator.setVisible(false));
+        task.setOnFailed(e -> {
+            loadingIndicator.setVisible(false);
+            mostraErrore("Errore durante il caricamento delle notifiche.");
+        });
 
-		return null;
-	}
+        new Thread(task).start();
+    }
 
-	// ============================================================
-	// CARICAMENTO NOTIFICHE
-	// ============================================================
-	private void caricaNotifiche() {
+    /**
+     * 🔥 LOGICA DEFINITIVA:
+     * - MANAGER → tutte le notifiche
+     * - DRIVER  → solo le proprie
+     */
+    private void caricaNotificheInterno() {
+        try {
+            List<Notifica> tutte;
 
-		loadingIndicator.setVisible(true);
+            if (utente.getRuoloUtente() == RuoloUtente.MANAGER) {
+                tutte = notificaDAO.findAll();
+            } else {
+                tutte = notificaDAO.findByUtente(utente.getIdUtente());
+            }
 
-		Task<Void> task = new Task<>() {
-			@Override
-			protected Void call() {
-				caricaNotificheInterno();
-				return null;
-			}
-		};
+            List<Notifica> ordinate = tutte.stream()
+                    .sorted(
+                            Comparator.comparing(Notifica::getLetta)
+                                    .thenComparing(Notifica::getDataInvio, Comparator.reverseOrder())
+                    )
+                    .collect(Collectors.toList());
 
-		task.setOnSucceeded(e -> loadingIndicator.setVisible(false));
-		task.setOnFailed(e -> {
-			loadingIndicator.setVisible(false);
-			mostraErrore("Errore durante il caricamento delle notifiche.");
-		});
+            Platform.runLater(() -> {
+                notificheList.setAll(ordinate);
+                tableNotifiche.setItems(notificheList);
+            });
 
-		new Thread(task).start();
-	}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-	private void caricaNotificheInterno() {
-		try {
-			List<Notifica> tutte = notificaDAO.findByUtente(utente.getIdUtente());
+    // ============================================================
+    // SUPPORTO
+    // ============================================================
+    private Notifica getSel() {
+        Notifica n = tableNotifiche.getSelectionModel().getSelectedItem();
+        if (n == null)
+            mostraErrore("Seleziona una notifica.");
+        return n;
+    }
 
-			List<Notifica> ordinate = tutte.stream().sorted(Comparator.comparing(Notifica::getLetta)
-					.thenComparing(Notifica::getDataInvio, Comparator.reverseOrder())).collect(Collectors.toList());
+    // ============================================================
+    // REFRESH
+    // ============================================================
+    @FXML
+    private void onRefresh() {
+        caricaNotifiche();
+    }
 
-			Platform.runLater(() -> {
-				notificheList.setAll(ordinate);
-				tableNotifiche.setItems(notificheList);
-			});
+    // ============================================================
+    // SEGNA TUTTE COME LETTE
+    // ============================================================
+    @FXML
+    private void onSegnaTutteComeLette() {
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+        try {
+            List<Notifica> target;
 
-	// ============================================================
-	// SUPPORTO
-	// ============================================================
-	private Notifica getSel() {
-		Notifica n = tableNotifiche.getSelectionModel().getSelectedItem();
-		if (n == null)
-			mostraErrore("Seleziona una notifica.");
-		return n;
-	}
+            if (utente.getRuoloUtente() == RuoloUtente.MANAGER) {
+                target = notificaDAO.findAll();
+            } else {
+                target = notificaDAO.findNonLette(utente.getIdUtente());
+            }
 
-	// ============================================================
-	// REFRESH
-	// ============================================================
-	@FXML
-	private void onRefresh() {
-		caricaNotifiche();
-	}
+            for (Notifica n : target) {
+                if (!n.getLetta()) {
+                    n.setLetta(true);
+                    notificaDAO.update(n);
+                }
+            }
 
-	// ============================================================
-	// SEGNA TUTTE COME LETTE
-	// ============================================================
-	@FXML
-	private void onSegnaTutteComeLette() {
-		try {
-			List<Notifica> nonLette = notificaDAO.findNonLette(utente.getIdUtente());
+            caricaNotifiche();
 
-			for (Notifica n : nonLette) {
-				n.setLetta(true);
-				notificaDAO.update(n);
-			}
+        } catch (Exception e) {
+            mostraErrore("Errore durante l'aggiornamento delle notifiche.");
+        }
+    }
 
-			caricaNotifiche();
+    // ============================================================
+    // SEGNA COME LETTA
+    // ============================================================
+    @FXML
+    private void onSegnaComeLetta() {
 
-		} catch (Exception e) {
-			mostraErrore("Errore durante l'aggiornamento delle notifiche.");
-		}
-	}
+        Notifica n = getSel();
+        if (n == null)
+            return;
 
-	// ============================================================
-	// SEGNA SOLO LA SELEZIONATA COME LETTA
-	// ============================================================
-	@FXML
-	private void onSegnaComeLetta() {
-		Notifica n = getSel();
-		if (n == null)
-			return;
+        if (n.getLetta()) {
+            mostraInfo("La notifica è già segnata come letta.");
+            return;
+        }
 
-		if (n.getLetta()) {
-			mostraInfo("La notifica è già segnata come letta.");
-			return;
-		}
+        n.setLetta(true);
+        notificaDAO.update(n);
 
-		n.setLetta(true);
-		notificaDAO.update(n);
+        caricaNotifiche();
+    }
 
-		mostraInfo("Notifica segnata come letta.");
-		caricaNotifiche();
-	}
+    // ============================================================
+    // IMPOSTA VEICOLO NON DISPONIBILE
+    // ============================================================
+    @FXML
+    private void onSegnaVeicoloNonDisponibile() {
 
-	// ============================================================
-	// 🔥 IMPOSTA VEICOLO COME NON DISPONIBILE
-	// ============================================================
-	@FXML
-	private void onSegnaVeicoloNonDisponibile() {
+        Notifica n = getSel();
+        if (n == null)
+            return;
 
-		Notifica n = getSel();
-		if (n == null)
-			return;
+        String targa = estraiTarga(n.getMessaggio());
+        if (targa == null) {
+            mostraErrore("Targa non trovata nella segnalazione.");
+            return;
+        }
 
-		String targa = estraiTarga(n.getMessaggio());
+        Veicolo v = veicoloDAO.getVeicoloByTarga(targa);
+        if (v == null || "N/A".equals(v.getTarga())) {
+            mostraErrore("Veicolo non trovato nel database.");
+            return;
+        }
 
-		if (targa == null) {
-			mostraErrore("Targa non trovata nella segnalazione.");
-			return;
-		}
+        v.setStatoVeicolo(StatoVeicolo.NON_DISPONIBILE);
+        veicoloDAO.update(v);
 
-		Veicolo v = veicoloDAO.getVeicoloByTarga(targa);
+        mostraInfo("Il veicolo " + targa + " è stato impostato come NON DISPONIBILE.");
+        caricaNotifiche();
+    }
 
-		if (v == null || v.getTarga().equals("N/A")) {
-			mostraErrore("Veicolo non trovato nel database.");
-			return;
-		}
+    // ============================================================
+    // BACK
+    // ============================================================
+    @FXML
+    private void onBack() {
 
-		v.setStatoVeicolo(StatoVeicolo.NON_DISPONIBILE);
-		veicoloDAO.update(v);
+        if (utente.getRuoloUtente() == RuoloUtente.MANAGER) {
 
-		mostraInfo("Il veicolo " + targa + " è stato impostato come NON DISPONIBILE.");
+            ManagerDashboardController ctrl =
+                    SceneManager.changeSceneWithController(
+                            "/ui/views/dashboards/ManagerDashboard.fxml");
 
-		caricaNotifiche();
-	}
+            ctrl.setUtente(utente);
 
-	// ============================================================
-	// BACK
-	// ============================================================
-	@FXML
-	private void onBack() {
+        } else {
 
-		if (utente.getRuoloUtente() == RuoloUtente.MANAGER) {
+            DriverDashboardController ctrl =
+                    SceneManager.changeSceneWithController(
+                            "/ui/views/dashboards/DriverDashboard.fxml");
 
-			ManagerDashboardController ctrl = SceneManager
-					.changeSceneWithController("/ui/views/dashboards/ManagerDashboard.fxml");
+            ctrl.setUtente(utente);
+        }
+    }
 
-			ctrl.setUtente(utente);
+    // ============================================================
+    // ALERT
+    // ============================================================
+    private void mostraErrore(String msg) {
+        new Alert(Alert.AlertType.ERROR, msg, ButtonType.OK).showAndWait();
+    }
 
-		} else {
-
-			DriverDashboardController ctrl = SceneManager
-					.changeSceneWithController("/ui/views/dashboards/DriverDashboard.fxml");
-
-			ctrl.setUtente(utente);
-		}
-	}
-
-	// ============================================================
-	// ALERT
-	// ============================================================
-	private void mostraErrore(String msg) {
-		Alert a = new Alert(Alert.AlertType.ERROR, msg, ButtonType.OK);
-		a.showAndWait();
-	}
-
-	private void mostraInfo(String msg) {
-		Alert a = new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.OK);
-		a.showAndWait();
-	}
+    private void mostraInfo(String msg) {
+        new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.OK).showAndWait();
+    }
 }

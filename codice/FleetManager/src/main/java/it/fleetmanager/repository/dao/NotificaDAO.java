@@ -18,5 +18,7 @@ public interface NotificaDAO {
 	List<Notifica> findNonLette(int idUtente);
 
 	List<Notifica> findByScadenza(Integer idScadenza);
+	List<Notifica> findAll();
+
 
 }

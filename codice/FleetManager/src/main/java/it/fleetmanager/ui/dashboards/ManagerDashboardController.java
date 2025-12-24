@@ -30,7 +30,6 @@ import it.fleetmanager.ui.scadenze.ScadenzeController;
 import it.fleetmanager.ui.veicoli.VeicoliController;
 import it.fleetmanager.util.SistemaNotifiche;
 import it.fleetmanager.util.StatoPrenotazione;
-import it.fleetmanager.util.TipoNotifica;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -39,155 +38,160 @@ import javafx.scene.shape.Circle;
 
 public class ManagerDashboardController {
 
-	// ===================== UI ELEMENTS =====================
-	@FXML
-	private Label lblTotVeicoli;
-	@FXML
-	private Label lblPrenotazioniAttive;
-	@FXML
-	private Label lblManutenzioni;
+    // ===================== UI ELEMENTS =====================
+    @FXML
+    private Label lblTotVeicoli;
+    @FXML
+    private Label lblPrenotazioniAttive;
+    @FXML
+    private Label lblManutenzioni;
 
-	@FXML
-	private Button btnNotifiche;
-	@FXML
-	private Circle badgeNotifiche;
+    @FXML
+    private Button btnNotifiche;
+    @FXML
+    private Circle badgeNotifiche;
 
-	// ===================== DAO =====================
-	private final VeicoloDAO veicoloDAO = new VeicoloDAOImpl(H2DatabaseManager.getInstance());
-	private final PrenotazioneDAO prenotazioneDAO = new PrenotazioneDAOImpl(H2DatabaseManager.getInstance());
-	private final ManutenzioneDAO manutenzioneDAO = new ManutenzioneDAOImpl(H2DatabaseManager.getInstance());
-	private final NotificaDAO notificaDAO = new NotificaDAOImpl(H2DatabaseManager.getInstance());
-	private final ScadenzaDAO scadenzaDAO = new ScadenzaDAOImpl(H2DatabaseManager.getInstance());
-	// ===================== SISTEMA NOTIFICHE =====================
-	private final SistemaNotifiche sistemaNotifiche =
-	        new SistemaNotifiche(notificaDAO, new UtenteDAOImpl(H2DatabaseManager.getInstance()));
+    // ===================== DAO =====================
+    private final VeicoloDAO veicoloDAO = new VeicoloDAOImpl(H2DatabaseManager.getInstance());
+    private final PrenotazioneDAO prenotazioneDAO = new PrenotazioneDAOImpl(H2DatabaseManager.getInstance());
+    private final ManutenzioneDAO manutenzioneDAO = new ManutenzioneDAOImpl(H2DatabaseManager.getInstance());
+    private final NotificaDAO notificaDAO = new NotificaDAOImpl(H2DatabaseManager.getInstance());
+    private final ScadenzaDAO scadenzaDAO = new ScadenzaDAOImpl(H2DatabaseManager.getInstance());
 
-	
-	// ===================== UTENTE CORRENTE =====================
-	private Utente utente;
+    // ===================== SISTEMA NOTIFICHE =====================
+    private final SistemaNotifiche sistemaNotifiche =
+            new SistemaNotifiche(notificaDAO, new UtenteDAOImpl(H2DatabaseManager.getInstance()));
 
-	// ============================================================
-	// SET UTENTE
-	// ============================================================
-	public void setUtente(Utente utente) {
-		this.utente = utente;
+    // ===================== UTENTE CORRENTE =====================
+    private Utente utente;
 
-		aggiornaWidgets();
-		aggiornaBadgeNotifiche();
-		controllaScadenze(); // 🔥 NUOVO: controllo automatico scadenze
-	}
+    // ============================================================
+    // SET UTENTE
+    // ============================================================
+    public void setUtente(Utente utente) {
+        this.utente = utente;
 
-	// ============================================================
-	// AGGIORNA WIDGETS
-	// ============================================================
-	private void aggiornaWidgets() {
-		aggiornaVeicoli();
-		aggiornaPrenotazioniAttive();
-		aggiornaManutenzioni();
-	}
+        aggiornaWidgets();
+        aggiornaBadgeNotifiche();
+        controllaScadenze();
+    }
 
-	private void aggiornaVeicoli() {
-		try {
-			lblTotVeicoli.setText(String.valueOf(veicoloDAO.getTuttiVeicoli().size()));
-		} catch (Exception e) {
-			lblTotVeicoli.setText("ERR");
-		}
-	}
+    // ============================================================
+    // AGGIORNA WIDGETS
+    // ============================================================
+    private void aggiornaWidgets() {
+        aggiornaVeicoli();
+        aggiornaPrenotazioniAttive();
+        aggiornaManutenzioni();
+    }
 
-	private void aggiornaPrenotazioniAttive() {
-		try {
-			lblPrenotazioniAttive.setText(String.valueOf(prenotazioneDAO.findByStato(StatoPrenotazione.ATTIVA).size()));
-		} catch (Exception e) {
-			lblPrenotazioniAttive.setText("ERR");
-		}
-	}
+    private void aggiornaVeicoli() {
+        try {
+            lblTotVeicoli.setText(String.valueOf(veicoloDAO.getTuttiVeicoli().size()));
+        } catch (Exception e) {
+            lblTotVeicoli.setText("ERR");
+        }
+    }
 
-	private void aggiornaManutenzioni() {
-		try {
-			lblManutenzioni.setText(String.valueOf(manutenzioneDAO.getTutteManutenzioni().size()));
-		} catch (Exception e) {
-			lblManutenzioni.setText("ERR");
-		}
-	}
+    private void aggiornaPrenotazioniAttive() {
+        try {
+            lblPrenotazioniAttive.setText(
+                    String.valueOf(prenotazioneDAO.findByStato(StatoPrenotazione.ATTIVA).size())
+            );
+        } catch (Exception e) {
+            lblPrenotazioniAttive.setText("ERR");
+        }
+    }
 
-	// ============================================================
-	// BADGE NOTIFICHE
-	// ============================================================
-	private void aggiornaBadgeNotifiche() {
-		List<Notifica> nonLette = notificaDAO.findNonLette(utente.getIdUtente());
-		badgeNotifiche.setVisible(!nonLette.isEmpty());
-	}
+    private void aggiornaManutenzioni() {
+        try {
+            lblManutenzioni.setText(String.valueOf(manutenzioneDAO.getTutteManutenzioni().size()));
+        } catch (Exception e) {
+            lblManutenzioni.setText("ERR");
+        }
+    }
 
-	// ============================================================
-	// 🔥 CONTROLLO AUTOMATICO SCADENZE
-	// ============================================================
-	private void controllaScadenze() {
-		try {
-			List<Scadenza> scadenze = scadenzaDAO.getTutteScadenze();
+    // ============================================================
+    // BADGE NOTIFICHE  🔥 (MODIFICA QUI)
+    // ============================================================
+    private void aggiornaBadgeNotifiche() {
 
-			LocalDate oggi = LocalDate.now();
-			LocalDate limite = oggi.plusDays(7);
+        boolean mostraBadge;
 
-			for (Scadenza s : scadenze) {
+        // 🔥 MANAGER → notifiche globali non lette
+        mostraBadge = notificaDAO.findAll()
+                .stream()
+                .anyMatch(n -> !n.getLetta());
 
-				// già notificata → salta
-				if (s.getNotificata())
-					continue;
+        badgeNotifiche.setVisible(mostraBadge);
+    }
 
-				// scade entro 7 giorni?
-				if (!s.getData().isAfter(limite)) {
+    // ============================================================
+    // 🔥 CONTROLLO AUTOMATICO SCADENZE
+    // ============================================================
+    private void controllaScadenze() {
+        try {
+            List<Scadenza> scadenze = scadenzaDAO.getTutteScadenze();
 
-					// 🔥 usa SistemaNotifiche (stile uniforme, messaggio già pronto)
-					sistemaNotifiche.inviaNotificaScadenza(s);
+            LocalDate oggi = LocalDate.now();
+            LocalDate limite = oggi.plusDays(7);
 
-					// marca come notificata
-					s.setNotificata(true);
-					scadenzaDAO.update(s);
-				}
-			}
+            for (Scadenza s : scadenze) {
 
-			aggiornaBadgeNotifiche();
+                if (s.getNotificata())
+                    continue;
 
-		} catch (Exception e) {
-			System.err.println("ERRORE controllo scadenze: " + e.getMessage());
-		}
-	}
+                if (!s.getData().isAfter(limite)) {
 
-	// ============================================================
-	// NAVIGAZIONE
-	// ============================================================
-	@FXML
-	private void onGestisciVeicoli() {
-		var ctrl = SceneManager.changeSceneWithController("/ui/views/veicoli/VeicoliView.fxml");
-		((VeicoliController) ctrl).setUtente(utente);
-	}
+                    sistemaNotifiche.inviaNotificaScadenza(s);
 
-	@FXML
-	private void onGestisciPrenotazioni() {
-		var ctrl = SceneManager.changeSceneWithController("/ui/views/prenotazioni/PrenotazioniView.fxml");
-		((PrenotazioniController) ctrl).setUtente(utente);
-	}
+                    s.setNotificata(true);
+                    scadenzaDAO.update(s);
+                }
+            }
 
-	@FXML
-	private void onGestisciManutenzioni() {
-		var ctrl = SceneManager.changeSceneWithController("/ui/views/manutenzioni/ManutenzioniView.fxml");
-		((ManutenzioniController) ctrl).setUtente(utente);
-	}
+            aggiornaBadgeNotifiche();
 
-	@FXML
-	private void onGestisciScadenze() {
-		var ctrl = SceneManager.changeSceneWithController("/ui/views/scadenze/ScadenzeView.fxml");
-		((ScadenzeController) ctrl).setUtente(utente);
-	}
+        } catch (Exception e) {
+            System.err.println("ERRORE controllo scadenze: " + e.getMessage());
+        }
+    }
 
-	@FXML
-	private void onApriNotifiche() {
-		var ctrl = SceneManager.changeSceneWithController("/ui/views/notifiche/NotificheView.fxml");
-		((NotificheController) ctrl).setUtente(utente);
-	}
+    // ============================================================
+    // NAVIGAZIONE
+    // ============================================================
+    @FXML
+    private void onGestisciVeicoli() {
+        var ctrl = SceneManager.changeSceneWithController("/ui/views/veicoli/VeicoliView.fxml");
+        ((VeicoliController) ctrl).setUtente(utente);
+    }
 
-	@FXML
-	private void onLogout() {
-		SceneManager.changeScene("/ui/views/LoginView.fxml");
-	}
+    @FXML
+    private void onGestisciPrenotazioni() {
+        var ctrl = SceneManager.changeSceneWithController("/ui/views/prenotazioni/PrenotazioniView.fxml");
+        ((PrenotazioniController) ctrl).setUtente(utente);
+    }
+
+    @FXML
+    private void onGestisciManutenzioni() {
+        var ctrl = SceneManager.changeSceneWithController("/ui/views/manutenzioni/ManutenzioniView.fxml");
+        ((ManutenzioniController) ctrl).setUtente(utente);
+    }
+
+    @FXML
+    private void onGestisciScadenze() {
+        var ctrl = SceneManager.changeSceneWithController("/ui/views/scadenze/ScadenzeView.fxml");
+        ((ScadenzeController) ctrl).setUtente(utente);
+    }
+
+    @FXML
+    private void onApriNotifiche() {
+        var ctrl = SceneManager.changeSceneWithController("/ui/views/notifiche/NotificheView.fxml");
+        ((NotificheController) ctrl).setUtente(utente);
+    }
+
+    @FXML
+    private void onLogout() {
+        SceneManager.changeScene("/ui/views/LoginView.fxml");
+    }
 }

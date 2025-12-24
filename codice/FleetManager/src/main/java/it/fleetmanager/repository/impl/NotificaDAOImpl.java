@@ -16,229 +16,274 @@ import it.fleetmanager.util.TipoNotifica;
 
 public class NotificaDAOImpl implements NotificaDAO {
 
-	private final H2DatabaseManager db;
+    private final H2DatabaseManager db;
 
-	public static final Notifica NOTIFICA_INESISTENTE = new Notifica(-1, TipoNotifica.PRENOTAZIONE, "N/A",
-			LocalDateTime.MIN, false, -1, null) {
-		@Override
-		public String toString() {
-			return "Notifica inesistente";
-		}
-	};
+    public static final Notifica NOTIFICA_INESISTENTE = new Notifica(
+            -1,
+            TipoNotifica.PRENOTAZIONE,
+            "N/A",
+            LocalDateTime.MIN,
+            false,
+            -1,
+            null
+    ) {
+        @Override
+        public String toString() {
+            return "Notifica inesistente";
+        }
+    };
 
-	public NotificaDAOImpl(H2DatabaseManager db) {
-		this.db = db;
-	}
+    public NotificaDAOImpl(H2DatabaseManager db) {
+        this.db = db;
+    }
 
-	private Notifica mapResultSet(ResultSet rs) throws Exception {
+    // ============================================================
+    // MAPPING
+    // ============================================================
+    private Notifica mapResultSet(ResultSet rs) throws Exception {
 
-		int id = rs.getInt("idNotifica");
-		TipoNotifica tipo = TipoNotifica.valueOf(rs.getString("tipoNotifica"));
-		String messaggio = rs.getString("messaggio");
-		LocalDateTime dataInvio = rs.getTimestamp("dataInvio").toLocalDateTime();
-		boolean letta = rs.getBoolean("letta");
-		int idUtente = rs.getInt("idUtente");
+        int id = rs.getInt("idNotifica");
+        TipoNotifica tipo = TipoNotifica.valueOf(rs.getString("tipoNotifica"));
+        String messaggio = rs.getString("messaggio");
+        LocalDateTime dataInvio = rs.getTimestamp("dataInvio").toLocalDateTime();
+        boolean letta = rs.getBoolean("letta");
+        int idUtente = rs.getInt("idUtente");
 
-		Integer idScadenza = rs.getObject("idScadenza", Integer.class);
+        Integer idScadenza = rs.getObject("idScadenza", Integer.class);
 
-		return new Notifica(id, tipo, messaggio, dataInvio, letta, idUtente, idScadenza);
-	}
+        return new Notifica(id, tipo, messaggio, dataInvio, letta, idUtente, idScadenza);
+    }
 
-	@Override
-	public void save(Notifica n) {
+    // ============================================================
+    // CRUD
+    // ============================================================
+    @Override
+    public void save(Notifica n) {
 
-		String sql = """
-					            INSERT INTO Notifica
-				(tipoNotifica, messaggio, dataInvio, letta, idUtente, idScadenza)
-				VALUES (?, ?, ?, ?, ?, ?)
+        String sql = """
+            INSERT INTO Notifica
+            (tipoNotifica, messaggio, dataInvio, letta, idUtente, idScadenza)
+            VALUES (?, ?, ?, ?, ?, ?)
+            """;
 
-					            """;
+        try (Connection conn = db.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
-		try (Connection conn = db.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, n.getTipoNotifica().name());
+            ps.setString(2, n.getMessaggio());
+            ps.setTimestamp(3, java.sql.Timestamp.valueOf(n.getDataInvio()));
+            ps.setBoolean(4, n.getLetta());
+            ps.setInt(5, n.getIdUtente());
 
-			// NIENTE ID → lo genera il DB
-			ps.setString(1, n.getTipoNotifica().name());
-			ps.setString(2, n.getMessaggio());
-			ps.setTimestamp(3, java.sql.Timestamp.valueOf(n.getDataInvio()));
-			ps.setBoolean(4, n.getLetta());
-			ps.setInt(5, n.getIdUtente());
+            if (n.getIdScadenza() != null)
+                ps.setInt(6, n.getIdScadenza());
+            else
+                ps.setNull(6, Types.INTEGER);
 
-			if (n.getIdScadenza() != null)
-				ps.setInt(6, n.getIdScadenza());
-			else
-				ps.setNull(6, Types.INTEGER);
+            ps.executeUpdate();
 
-			ps.executeUpdate();
+        } catch (Exception e) {
+            System.err.println("ERRORE SQL during save(): " + e.getMessage());
+        }
+    }
 
-		} catch (Exception e) {
-			System.err.println("ERRORE SQL during save(): " + e.getMessage());
-		}
-	}
+    @Override
+    public void update(Notifica n) {
 
-	@Override
-	public void update(Notifica n) {
+        String sql = """
+            UPDATE Notifica SET
+                tipoNotifica = ?,
+                messaggio = ?,
+                dataInvio = ?,
+                letta = ?,
+                idUtente = ?,
+                idScadenza = ?
+            WHERE idNotifica = ?
+            """;
 
-		String sql = """
-				UPDATE Notifica SET
-				    tipoNotifica = ?,
-				    messaggio = ?,
-				    dataInvio = ?,
-				    letta = ?,
-				    idUtente = ?,
-				    idScadenza = ?
-				WHERE idNotifica = ?
-				""";
+        try (Connection conn = db.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
-		try (Connection conn = db.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, n.getTipoNotifica().name());
+            ps.setString(2, n.getMessaggio());
+            ps.setTimestamp(3, java.sql.Timestamp.valueOf(n.getDataInvio()));
+            ps.setBoolean(4, n.getLetta());
+            ps.setInt(5, n.getIdUtente());
 
-			ps.setString(1, n.getTipoNotifica().name());
-			ps.setString(2, n.getMessaggio());
-			ps.setTimestamp(3, java.sql.Timestamp.valueOf(n.getDataInvio()));
-			ps.setBoolean(4, n.getLetta());
-			ps.setInt(5, n.getIdUtente());
+            if (n.getIdScadenza() != null)
+                ps.setInt(6, n.getIdScadenza());
+            else
+                ps.setNull(6, Types.INTEGER);
 
-			if (n.getIdScadenza() != null)
-				ps.setInt(6, n.getIdScadenza());
-			else
-				ps.setNull(6, Types.INTEGER);
+            ps.setInt(7, n.getIdNotifica());
 
-			ps.setInt(7, n.getIdNotifica());
+            ps.executeUpdate();
 
-			ps.executeUpdate();
+        } catch (Exception e) {
+            System.err.println("ERRORE SQL during update(): " + e.getMessage());
+        }
+    }
 
-		} catch (Exception e) {
-			System.err.println("ERRORE SQL during update(): " + e.getMessage());
-		}
-	}
+    @Override
+    public void delete(int idNotifica) {
 
-	@Override
-	public void delete(int idNotifica) {
+        String sql = "DELETE FROM Notifica WHERE idNotifica = ?";
 
-		String sql = "DELETE FROM Notifica WHERE idNotifica = ?";
+        try (Connection conn = db.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
-		try (Connection conn = db.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idNotifica);
+            ps.executeUpdate();
 
-			ps.setInt(1, idNotifica);
-			ps.executeUpdate();
+        } catch (Exception e) {
+            System.err.println("ERRORE SQL during delete(): " + e.getMessage());
+        }
+    }
 
-		} catch (Exception e) {
-			System.err.println("ERRORE SQL during delete(): " + e.getMessage());
-		}
-	}
+    // ============================================================
+    // QUERY
+    // ============================================================
+    @Override
+    public Notifica getNotificaById(int idNotifica) {
 
-	@Override
-	public Notifica getNotificaById(int idNotifica) {
+        String sql = """
+            SELECT *
+            FROM Notifica
+            WHERE idNotifica = ?
+            """;
 
-		String sql = """
-				SELECT *
-				FROM Notifica
-				WHERE idNotifica = ?
-				""";
+        try (Connection conn = db.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
-		try (Connection conn = db.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idNotifica);
 
-			ps.setInt(1, idNotifica);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next())
+                    return mapResultSet(rs);
+            }
 
-			try (ResultSet rs = ps.executeQuery()) {
-				if (rs.next()) {
-					return mapResultSet(rs);
-				}
-			}
+        } catch (Exception e) {
+            System.err.println("ERRORE SQL during getNotificaById(): " + e.getMessage());
+        }
 
-		} catch (Exception e) {
-			System.err.println("ERRORE SQL during getNotificaById(): " + e.getMessage());
-		}
+        return NOTIFICA_INESISTENTE;
+    }
 
-		return NOTIFICA_INESISTENTE;
-	}
+    @Override
+    public List<Notifica> findByUtente(int idUtente) {
 
-	@Override
-	public List<Notifica> findByUtente(int idUtente) {
+        String sql = """
+            SELECT *
+            FROM Notifica
+            WHERE idUtente = ?
+            ORDER BY dataInvio DESC
+            """;
 
-		String sql = """
-				SELECT *
-				FROM Notifica
-				WHERE idUtente = ?
-				ORDER BY dataInvio DESC
-				""";
+        List<Notifica> list = new ArrayList<>();
 
-		List<Notifica> list = new ArrayList<>();
+        try (Connection conn = db.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
-		try (Connection conn = db.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idUtente);
 
-			ps.setInt(1, idUtente);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next())
+                    list.add(mapResultSet(rs));
+            }
 
-			try (ResultSet rs = ps.executeQuery()) {
-				while (rs.next())
-					list.add(mapResultSet(rs));
-			}
+        } catch (Exception e) {
+            System.err.println("ERRORE SQL during findByUtente(): " + e.getMessage());
+        }
 
-		} catch (Exception e) {
-			System.err.println("ERRORE SQL during findByUtente(): " + e.getMessage());
-		}
+        return list;
+    }
 
-		return list;
-	}
+    @Override
+    public List<Notifica> findNonLette(int idUtente) {
 
-	/*
-	 * ---------------------------- FIND NON LETTE ----------------------------
-	 */
-	@Override
-	public List<Notifica> findNonLette(int idUtente) {
+        String sql = """
+            SELECT *
+            FROM Notifica
+            WHERE idUtente = ? AND letta = FALSE
+            ORDER BY dataInvio ASC
+            """;
 
-		String sql = """
-				SELECT *
-				FROM Notifica
-				WHERE idUtente = ? AND letta = FALSE
-				ORDER BY dataInvio ASC
-				""";
+        List<Notifica> list = new ArrayList<>();
 
-		List<Notifica> list = new ArrayList<>();
+        try (Connection conn = db.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
-		try (Connection conn = db.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idUtente);
 
-			ps.setInt(1, idUtente);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next())
+                    list.add(mapResultSet(rs));
+            }
 
-			try (ResultSet rs = ps.executeQuery()) {
-				while (rs.next())
-					list.add(mapResultSet(rs));
-			}
+        } catch (Exception e) {
+            System.err.println("ERRORE SQL during findNonLette(): " + e.getMessage());
+        }
 
-		} catch (Exception e) {
-			System.err.println("ERRORE SQL during findNonLette(): " + e.getMessage());
-		}
+        return list;
+    }
 
-		return list;
-	}
+    @Override
+    public List<Notifica> findByScadenza(Integer idScadenza) {
 
-	@Override
-	public List<Notifica> findByScadenza(Integer idScadenza) {
+        if (idScadenza == null)
+            return Collections.emptyList();
 
-		if (idScadenza == null)
-			return Collections.emptyList();
+        String sql = """
+            SELECT *
+            FROM Notifica
+            WHERE idScadenza = ?
+            ORDER BY dataInvio DESC
+            """;
 
-		String sql = """
-				SELECT *
-				FROM Notifica
-				WHERE idScadenza = ?
-				ORDER BY dataInvio DESC
-				""";
+        List<Notifica> list = new ArrayList<>();
 
-		List<Notifica> list = new ArrayList<>();
+        try (Connection conn = db.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
-		try (Connection conn = db.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idScadenza);
 
-			ps.setInt(1, idScadenza);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next())
+                    list.add(mapResultSet(rs));
+            }
 
-			try (ResultSet rs = ps.executeQuery()) {
-				while (rs.next())
-					list.add(mapResultSet(rs));
-			}
+        } catch (Exception e) {
+            System.err.println("ERRORE SQL during findByScadenza(): " + e.getMessage());
+        }
 
-		} catch (Exception e) {
-			System.err.println("ERRORE SQL during findByScadenza(): " + e.getMessage());
-		}
+        return list;
+    }
 
-		return list;
-	}
+    // ============================================================
+    // 🔥 PER I MANAGER: TUTTE LE NOTIFICHE
+    // ============================================================
+    @Override
+    public List<Notifica> findAll() {
+
+        String sql = """
+            SELECT *
+            FROM Notifica
+            ORDER BY dataInvio DESC
+            """;
+
+        List<Notifica> list = new ArrayList<>();
+
+        try (Connection conn = db.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next())
+                list.add(mapResultSet(rs));
+
+        } catch (Exception e) {
+            System.err.println("ERRORE SQL during findAll(): " + e.getMessage());
+        }
+
+        return list;
+    }
 }
