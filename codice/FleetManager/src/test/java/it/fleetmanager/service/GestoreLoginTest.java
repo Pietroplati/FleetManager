@@ -1,8 +1,10 @@
 package it.fleetmanager.service;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import it.fleetmanager.model.Utente;
 import it.fleetmanager.repository.dao.UtenteDAO;
 import it.fleetmanager.repository.impl.UtenteDAOImpl;
@@ -13,134 +15,207 @@ import it.fleetmanager.util.RuoloUtente;
 
 public class GestoreLoginTest {
 
-	private GestoreLoginImpl gestoreLogin;
-	private UtenteDAO utenteDAO;
+    private GestoreLoginImpl gestoreLogin;
+    private UtenteDAO utenteDAO;
 
-	@BeforeEach
-	void setupDatabase() throws Exception {
-		DatabaseTestUtils.resetDatabase();
-		utenteDAO = new UtenteDAOImpl(H2DatabaseManager.getInstance());
-		gestoreLogin = new GestoreLoginImpl(utenteDAO);
-	}
+    @BeforeEach
+    void setupDatabase() throws Exception {
+        DatabaseTestUtils.resetDatabase();
+        utenteDAO = new UtenteDAOImpl(H2DatabaseManager.getInstance());
+        gestoreLogin = new GestoreLoginImpl(utenteDAO);
+    }
 
-	@Test
-	void testLoginSuccess() {
-		Utente u = gestoreLogin.login("manager@example.com", "pwd");
-		assertNotNull(u);
-		assertEquals(1, u.getIdUtente());
-	}
+    // ============================================================
+    // LOGIN
+    // ============================================================
 
-	@Test
-	void testLoginWrongPassword() {
-		Utente u = gestoreLogin.login("manager@example.com", "wrong");
-		assertNull(u);
-	}
+    @Test
+    void testLoginSuccess() {
+        Utente u = gestoreLogin.login("manager@test.it", "pwd");
+        assertNotNull(u);
+        assertEquals(1, u.getIdUtente());
+    }
 
-	@Test
-	void testLoginEmailInesistente() {
-		Utente u = gestoreLogin.login("fake@example.com", "abc");
-		assertNull(u);
-	}
+    @Test
+    void testLoginWrongPassword() {
+        Utente u = gestoreLogin.login("manager@test.it", "wrong");
+        assertNull(u);
+    }
 
-	@Test
-	void testLoginEmailVuota() {
-		assertNull(gestoreLogin.login("", "abc"));
-		assertNull(gestoreLogin.login("   ", "abc"));
-	}
+    @Test
+    void testLoginEmailInesistente() {
+        Utente u = gestoreLogin.login("fake@test.it", "abc");
+        assertNull(u);
+    }
 
-	@Test
-	void testLoginNull() {
-		assertNull(gestoreLogin.login(null, "abc"));
-		assertNull(gestoreLogin.login("manager@example.com", null));
-	}
+    @Test
+    void testLoginEmailVuota() {
+        assertNull(gestoreLogin.login("", "abc"));
+        assertNull(gestoreLogin.login("   ", "abc"));
+    }
 
-	@Test
-	void testCreateUtenteSuccess() {
-		Utente nuovo = new Utente(100, "Anna", "Verdi", "anna@example.com", "pwd", RuoloUtente.DRIVER, "A");
+    @Test
+    void testLoginNull() {
+        assertNull(gestoreLogin.login(null, "abc"));
+        assertNull(gestoreLogin.login("manager@test.it", null));
+    }
 
-		boolean created = gestoreLogin.createUtente(nuovo);
-		assertTrue(created);
+    // ============================================================
+    // CREATE UTENTE
+    // ============================================================
 
-		Utente u = utenteDAO.getUtenteByEmail("anna@example.com");
-		assertEquals(100, u.getIdUtente());
-	}
+    @Test
+    void testCreateUtenteSuccess() {
 
-	@Test
-	void testCreateUtenteEmailEsistente() {
-		Utente dup = new Utente(200, "Mario2", "Rossi2", "manager@example.com", "pwd", RuoloUtente.DRIVER);
+        Utente nuovo = new Utente(
+                100,
+                "Anna",
+                "Verdi",
+                "anna@test.it",
+                "pwd",
+                RuoloUtente.DRIVER,
+                "A"
+        );
 
-		assertFalse(gestoreLogin.createUtente(dup));
-	}
+        boolean created = gestoreLogin.createUtente(nuovo);
+        assertTrue(created);
 
-	@Test
-	void testCreateUtenteEmailNull() {
-		Utente bad = new Utente(201, "X", "Y", null, "pwd", RuoloUtente.MANAGER);
-		assertFalse(gestoreLogin.createUtente(bad));
-	}
+        Utente u = utenteDAO.getUtenteByEmail("anna@test.it");
+        assertEquals(100, u.getIdUtente());
+    }
 
-	@Test
-	void testAggiornaProfiloSuccess() {
-		Utente u = utenteDAO.getUtenteById(1);
-		u.setNome("MarioModificato");
+    @Test
+    void testCreateUtenteEmailEsistente() {
 
-		boolean ok = gestoreLogin.aggiornaProfilo(u);
-		assertTrue(ok);
+        Utente dup = new Utente(
+                200,
+                "Mario2",
+                "Rossi2",
+                "manager@test.it",
+                "pwd",
+                RuoloUtente.DRIVER
+        );
 
-		Utente updated = utenteDAO.getUtenteById(1);
-		assertEquals("MarioModificato", updated.getNome());
-	}
+        assertFalse(gestoreLogin.createUtente(dup));
+    }
 
-	@Test
-	void testAggiornaProfiloIdInvalido() {
-		Utente fake = new Utente(-1, "X", "Y", "z@z", "pwd", RuoloUtente.DRIVER);
-		assertFalse(gestoreLogin.aggiornaProfilo(fake));
-	}
+    @Test
+    void testCreateUtenteEmailNull() {
 
-	@Test
-	void testEliminaUtenteSuccess() {
-		Utente nuovo = new Utente(150, "Test", "User", "delete@test.com", "pwd", RuoloUtente.DRIVER);
-		gestoreLogin.createUtente(nuovo);
+        Utente bad = new Utente(
+                201,
+                "X",
+                "Y",
+                null,
+                "pwd",
+                RuoloUtente.MANAGER
+        );
 
-		boolean ok = gestoreLogin.eliminaUtente(150);
-		assertTrue(ok);
+        assertFalse(gestoreLogin.createUtente(bad));
+    }
 
-		Utente deleted = utenteDAO.getUtenteById(150);
-		assertEquals(UtenteDAOImpl.UTENTE_INESISTENTE, deleted);
-	}
+    // ============================================================
+    // AGGIORNA PROFILO
+    // ============================================================
 
-	@Test
-	void testEliminaUtenteIdInesistente() {
-		assertFalse(gestoreLogin.eliminaUtente(999));
-	}
+    @Test
+    void testAggiornaProfiloSuccess() {
 
-	@Test
-	void testEliminaUtenteIdNegativo() {
-		assertFalse(gestoreLogin.eliminaUtente(-5));
-	}
+        Utente u = utenteDAO.getUtenteById(1);
+        u.setNome("MarioModificato");
 
-	@Test
-	void testGetUtenteByEmailSuccess() {
-		Utente u = gestoreLogin.getUtenteByEmail("manager@example.com");
-		assertNotNull(u);
-		assertEquals("Mario", u.getNome());
-	}
+        boolean ok = gestoreLogin.aggiornaProfilo(u);
+        assertTrue(ok);
 
-	@Test
-	void testGetUtenteByEmailInvalid() {
-		assertNull(gestoreLogin.getUtenteByEmail("notfound@mail.com"));
-	}
+        Utente updated = utenteDAO.getUtenteById(1);
+        assertEquals("MarioModificato", updated.getNome());
+    }
 
-	@Test
-	void testGetUtenteByEmailNull() {
-		assertNull(gestoreLogin.getUtenteByEmail(null));
-		assertNull(gestoreLogin.getUtenteByEmail("   "));
-	}
+    @Test
+    void testAggiornaProfiloIdInvalido() {
 
-	@Test
-	void testGetTuttiUtenti() {
-		var lista = gestoreLogin.getTuttiUtenti();
-		assertTrue(lista.size() >= 2);
-		assertTrue(lista.stream().anyMatch(u -> u.getEmail().equals("manager@example.com")));
-		assertTrue(lista.stream().anyMatch(u -> u.getEmail().equals("driver@example.com")));
-	}
+        Utente fake = new Utente(
+                -1,
+                "X",
+                "Y",
+                "z@test.it",
+                "pwd",
+                RuoloUtente.DRIVER
+        );
+
+        assertFalse(gestoreLogin.aggiornaProfilo(fake));
+    }
+
+    // ============================================================
+    // ELIMINA UTENTE
+    // ============================================================
+
+    @Test
+    void testEliminaUtenteSuccess() {
+
+        Utente nuovo = new Utente(
+                150,
+                "Test",
+                "User",
+                "delete@test.it",
+                "pwd",
+                RuoloUtente.DRIVER
+        );
+
+        gestoreLogin.createUtente(nuovo);
+
+        boolean ok = gestoreLogin.eliminaUtente(150);
+        assertTrue(ok);
+
+        Utente deleted = utenteDAO.getUtenteById(150);
+        assertEquals(UtenteDAOImpl.UTENTE_INESISTENTE, deleted);
+    }
+
+    @Test
+    void testEliminaUtenteIdInesistente() {
+        assertFalse(gestoreLogin.eliminaUtente(999));
+    }
+
+    @Test
+    void testEliminaUtenteIdNegativo() {
+        assertFalse(gestoreLogin.eliminaUtente(-5));
+    }
+
+    // ============================================================
+    // GET UTENTE BY EMAIL
+    // ============================================================
+
+    @Test
+    void testGetUtenteByEmailSuccess() {
+
+        Utente u = gestoreLogin.getUtenteByEmail("manager@test.it");
+
+        assertNotNull(u);
+        assertEquals("Mario", u.getNome());
+    }
+
+    @Test
+    void testGetUtenteByEmailInvalid() {
+        assertNull(gestoreLogin.getUtenteByEmail("notfound@test.it"));
+    }
+
+    @Test
+    void testGetUtenteByEmailNull() {
+        assertNull(gestoreLogin.getUtenteByEmail(null));
+        assertNull(gestoreLogin.getUtenteByEmail("   "));
+    }
+
+    // ============================================================
+    // GET TUTTI UTENTI
+    // ============================================================
+
+    @Test
+    void testGetTuttiUtenti() {
+
+        var lista = gestoreLogin.getTuttiUtenti();
+
+        assertTrue(lista.size() >= 2);
+        assertTrue(lista.stream().anyMatch(u -> u.getEmail().equals("manager@test.it")));
+        assertTrue(lista.stream().anyMatch(u -> u.getEmail().equals("driver@test.it")));
+    }
 }

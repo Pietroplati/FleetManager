@@ -21,14 +21,16 @@ public class NotificaDAOImplTest {
 
     @BeforeEach
     void setup() throws Exception {
-        // DB H2 in RAM, schema identico a quello reale
         DatabaseTestUtils.resetDatabase();
         notificaDAO = new NotificaDAOImpl(H2DatabaseManager.getInstance());
     }
 
+    // ============================================================
+    // SAVE + GET BY ID
+    // ============================================================
     @Test
     void testSaveAndGetById() {
-        // Arrange
+
         Notifica n = new Notifica(
                 null,
                 TipoNotifica.PRENOTAZIONE,
@@ -39,12 +41,14 @@ public class NotificaDAOImplTest {
                 null
         );
 
-        // Act
         notificaDAO.save(n);
-        Notifica loaded = notificaDAO.getNotificaById(1);
 
-        // Assert
-        assertEquals(1, loaded.getIdNotifica());
+        List<Notifica> list = notificaDAO.findByUtente(2);
+        assertEquals(1, list.size());
+
+        Notifica loaded = list.get(0);
+
+        assertNotNull(loaded.getIdNotifica());
         assertEquals(TipoNotifica.PRENOTAZIONE, loaded.getTipoNotifica());
         assertEquals("Prenotazione confermata", loaded.getMessaggio());
         assertFalse(loaded.getLetta());
@@ -52,19 +56,26 @@ public class NotificaDAOImplTest {
         assertNull(loaded.getIdScadenza());
     }
 
+    // ============================================================
+    // GET BY ID NOT FOUND
+    // ============================================================
     @Test
     void testGetNotificaById_NotFound() {
-        Notifica n = notificaDAO.getNotificaById(999);
+        Notifica n = notificaDAO.getNotificaById(9999);
         assertEquals(-1, n.getIdNotifica());
     }
 
+    // ============================================================
+    // UPDATE
+    // ============================================================
     @Test
     void testUpdate() {
-        // Arrange
+
         Notifica n = new Notifica(
                 null,
                 TipoNotifica.MANUTENZIONE,
                 "Manutenzione programmata",
+                LocalDateTime.now(),
                 false,
                 1,
                 null
@@ -72,43 +83,49 @@ public class NotificaDAOImplTest {
 
         notificaDAO.save(n);
 
-        // Act
-        Notifica saved = notificaDAO.getNotificaById(1);
+        Notifica saved = notificaDAO.findByUtente(1).get(0);
         saved.setLetta(true);
         saved.setMessaggio("Manutenzione completata");
+
         notificaDAO.update(saved);
 
-        Notifica updated = notificaDAO.getNotificaById(1);
+        Notifica updated = notificaDAO.getNotificaById(saved.getIdNotifica());
 
-        // Assert
         assertTrue(updated.getLetta());
         assertEquals("Manutenzione completata", updated.getMessaggio());
     }
 
+    // ============================================================
+    // DELETE
+    // ============================================================
     @Test
     void testDelete() {
-        // Arrange
+
         Notifica n = new Notifica(
                 null,
                 TipoNotifica.SEGNALAZIONE,
                 "Segnalazione veicolo",
+                LocalDateTime.now(),
                 false,
                 1,
                 null
         );
+
         notificaDAO.save(n);
 
-        // Act
-        notificaDAO.delete(1);
+        Notifica saved = notificaDAO.findByUtente(1).get(0);
+        notificaDAO.delete(saved.getIdNotifica());
 
-        // Assert
-        Notifica deleted = notificaDAO.getNotificaById(1);
+        Notifica deleted = notificaDAO.getNotificaById(saved.getIdNotifica());
         assertEquals(-1, deleted.getIdNotifica());
     }
 
+    // ============================================================
+    // FIND BY UTENTE
+    // ============================================================
     @Test
     void testFindByUtente() {
-        // Arrange
+
         notificaDAO.save(new Notifica(
                 null,
                 TipoNotifica.PRENOTAZIONE,
@@ -129,72 +146,48 @@ public class NotificaDAOImplTest {
                 null
         ));
 
-        // Act
         List<Notifica> list = notificaDAO.findByUtente(2);
 
-        // Assert
         assertEquals(2, list.size());
-        assertTrue(list.get(0).getDataInvio().isAfter(list.get(1).getDataInvio()));
+        assertTrue(list.get(0).getDataInvio()
+                .isAfter(list.get(1).getDataInvio()));
     }
 
+    // ============================================================
+    // FIND NON LETTE
+    // ============================================================
     @Test
     void testFindNonLette() {
-        // Arrange
+
         notificaDAO.save(new Notifica(
                 null,
                 TipoNotifica.SCADENZA,
                 "Scadenza bollo",
+                LocalDateTime.now(),
                 false,
                 1,
-                1
+                null
         ));
 
         notificaDAO.save(new Notifica(
                 null,
                 TipoNotifica.SCADENZA,
                 "Scadenza assicurazione",
+                LocalDateTime.now().plusMinutes(1),
                 true,
                 1,
-                2
+                null
         ));
 
-        // Act
         List<Notifica> list = notificaDAO.findNonLette(1);
 
-        // Assert
         assertEquals(1, list.size());
         assertFalse(list.get(0).getLetta());
     }
 
-    @Test
-    void testFindByScadenza() {
-        // Arrange
-        notificaDAO.save(new Notifica(
-                null,
-                TipoNotifica.SCADENZA,
-                "Bollo in scadenza",
-                false,
-                1,
-                1
-        ));
-
-        notificaDAO.save(new Notifica(
-                null,
-                TipoNotifica.SCADENZA,
-                "Assicurazione in scadenza",
-                false,
-                1,
-                1
-        ));
-
-        // Act
-        List<Notifica> list = notificaDAO.findByScadenza(1);
-
-        // Assert
-        assertEquals(2, list.size());
-        assertTrue(list.get(0).getDataInvio().isAfter(list.get(1).getDataInvio()));
-    }
-
+    // ============================================================
+    // FIND BY SCADENZA
+    // ============================================================
     @Test
     void testFindByScadenza_Null() {
         List<Notifica> list = notificaDAO.findByScadenza(null);

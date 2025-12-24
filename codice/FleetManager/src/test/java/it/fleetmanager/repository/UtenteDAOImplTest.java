@@ -20,18 +20,21 @@ public class UtenteDAOImplTest {
 
     @BeforeEach
     void setup() throws Exception {
-        // DB H2 in RAM con schema e seed identici al reale
         DatabaseTestUtils.resetDatabase();
         utenteDAO = new UtenteDAOImpl(H2DatabaseManager.getInstance());
     }
 
+    // ============================================================
+    // SAVE + GET BY ID
+    // ============================================================
     @Test
     void testSaveAndGetById() {
+
         Utente u = new Utente(
                 10,
                 "Giulia",
                 "Bianchi",
-                "giulia@example.com",
+                "giulia@test.it",
                 "pwd",
                 RuoloUtente.DRIVER,
                 "ABC123"
@@ -44,20 +47,27 @@ public class UtenteDAOImplTest {
         assertEquals(10, loaded.getIdUtente());
         assertEquals("Giulia", loaded.getNome());
         assertEquals("Bianchi", loaded.getCognome());
-        assertEquals("giulia@example.com", loaded.getEmail());
+        assertEquals("giulia@test.it", loaded.getEmail());
         assertEquals(RuoloUtente.DRIVER, loaded.getRuoloUtente());
         assertEquals("ABC123", loaded.getPatente());
     }
 
+    // ============================================================
+    // GET BY ID NOT FOUND
+    // ============================================================
     @Test
     void testGetUtenteById_NotFound() {
-        Utente u = utenteDAO.getUtenteById(999);
+        Utente u = utenteDAO.getUtenteById(9999);
         assertEquals(-1, u.getIdUtente());
     }
 
+    // ============================================================
+    // GET BY EMAIL (SEED)
+    // ============================================================
     @Test
     void testGetUtenteByEmail() {
-        Utente u = utenteDAO.getUtenteByEmail("driver@example.com");
+
+        Utente u = utenteDAO.getUtenteByEmail("driver@test.it");
 
         assertEquals(2, u.getIdUtente());
         assertEquals("Luca", u.getNome());
@@ -66,36 +76,49 @@ public class UtenteDAOImplTest {
 
     @Test
     void testGetUtenteByEmail_NotFound() {
-        Utente u = utenteDAO.getUtenteByEmail("notfound@example.com");
+        Utente u = utenteDAO.getUtenteByEmail("notfound@test.it");
         assertEquals(-1, u.getIdUtente());
     }
 
+    // ============================================================
+    // EXISTS BY EMAIL
+    // ============================================================
     @Test
     void testExistsByEmail() {
-        assertTrue(utenteDAO.existsByEmail("manager@example.com"));
-        assertFalse(utenteDAO.existsByEmail("inesistente@example.com"));
+        assertTrue(utenteDAO.existsByEmail("manager@test.it"));
+        assertFalse(utenteDAO.existsByEmail("inesistente@test.it"));
     }
 
+    // ============================================================
+    // UPDATE
+    // ============================================================
     @Test
     void testUpdate() {
+
         Utente u = utenteDAO.getUtenteById(2);
+
         u.setNome("Luca Modificato");
-        u.setEmail("luca.mod@example.com");
+        u.setEmail("luca.mod@test.it");
 
         utenteDAO.update(u);
 
         Utente updated = utenteDAO.getUtenteById(2);
+
         assertEquals("Luca Modificato", updated.getNome());
-        assertEquals("luca.mod@example.com", updated.getEmail());
+        assertEquals("luca.mod@test.it", updated.getEmail());
     }
 
+    // ============================================================
+    // DELETE
+    // ============================================================
     @Test
     void testDelete() {
+
         Utente u = new Utente(
                 20,
                 "Da",
                 "Cancellare",
-                "delete@example.com",
+                "delete@test.it",
                 "pwd",
                 RuoloUtente.DRIVER
         );
@@ -107,17 +130,24 @@ public class UtenteDAOImplTest {
         assertEquals(-1, deleted.getIdUtente());
     }
 
+    // ============================================================
+    // GET TUTTI UTENTI
+    // ============================================================
     @Test
     void testGetTuttiUtenti() {
+
         List<Utente> list = utenteDAO.getTuttiUtenti();
 
-        // almeno i 2 seed
         assertTrue(list.size() >= 2);
         assertEquals(1, list.get(0).getIdUtente());
     }
 
+    // ============================================================
+    // GET MANAGER
+    // ============================================================
     @Test
     void testGetManager() {
+
         Utente manager = utenteDAO.getManager();
 
         assertEquals(RuoloUtente.MANAGER, manager.getRuoloUtente());

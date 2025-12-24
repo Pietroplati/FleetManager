@@ -19,15 +19,16 @@ import it.fleetmanager.repository.impl.NotificaDAOImpl;
 import it.fleetmanager.repository.impl.PrenotazioneDAOImpl;
 import it.fleetmanager.repository.impl.UtenteDAOImpl;
 import it.fleetmanager.repository.impl.VeicoloDAOImpl;
-import it.fleetmanager.util.DatabaseTestUtils;
 import it.fleetmanager.repository.util.H2DatabaseManager;
 import it.fleetmanager.service.impl.GestorePrenotazioniImpl;
 import it.fleetmanager.service.interfaces.GestorePrenotazioni;
+import it.fleetmanager.util.DatabaseTestUtils;
 import it.fleetmanager.util.RuoloUtente;
 import it.fleetmanager.util.SistemaNotifiche;
 import it.fleetmanager.util.StatoPrenotazione;
 import it.fleetmanager.util.TipoPrenotazione;
 import it.fleetmanager.util.TipoVeicolo;
+import it.fleetmanager.util.StatoVeicolo;
 
 class GestorePrenotazioniTest {
 
@@ -43,7 +44,6 @@ class GestorePrenotazioniTest {
     @BeforeEach
     void setup() throws Exception {
 
-        // 🔥 reset DB H2 in RAM
         DatabaseTestUtils.resetDatabase();
 
         prenotazioneDAO = new PrenotazioneDAOImpl(H2DatabaseManager.getInstance());
@@ -61,41 +61,22 @@ class GestorePrenotazioniTest {
                 sistemaNotifiche
         );
 
-        // =========================
-        // DATI DI BASE
-        // =========================
+        // 🔹 UTENTI GIÀ SEEDATI
+        manager = utenteDAO.getUtenteById(1);
+        driver = utenteDAO.getUtenteById(2);
 
-        manager = new Utente(
-                1,
-                "Mario",
-                "Rossi",
-                "manager@fleet.it",
-                "pwd",
-                RuoloUtente.MANAGER,
-                null
-        );
+        assertEquals(RuoloUtente.MANAGER, manager.getRuoloUtente());
+        assertEquals(RuoloUtente.DRIVER, driver.getRuoloUtente());
 
-        driver = new Utente(
-                2,
-                "Luca",
-                "Bianchi",
-                "driver@fleet.it",
-                "pwd",
-                RuoloUtente.DRIVER,
-                "AB123456"
-        );
-
-        utenteDAO.save(manager);
-        utenteDAO.save(driver);
-
+        // 🔹 VEICOLO DI TEST
         veicolo = new Veicolo(
-                "AA111AA",
+                "TEST123",
                 TipoVeicolo.AUTO,
                 "Fiat",
                 "Panda",
-                2020,
-                it.fleetmanager.util.StatoVeicolo.DISPONIBILE,
-                30000
+                2021,
+                StatoVeicolo.DISPONIBILE,
+                20000
         );
 
         veicoloDAO.save(veicolo);
@@ -108,8 +89,8 @@ class GestorePrenotazioniTest {
     @Test
     void testCreaPrenotazione() {
 
-        LocalDateTime inizio = LocalDateTime.now().plusHours(1);
-        LocalDateTime fine = LocalDateTime.now().plusHours(3);
+        LocalDateTime inizio = LocalDateTime.now().plusDays(1);
+        LocalDateTime fine = LocalDateTime.now().plusDays(1).plusHours(2);
 
         Prenotazione p = gestore.creaPrenotazione(driver, veicolo, inizio, fine);
 
@@ -124,17 +105,18 @@ class GestorePrenotazioniTest {
     }
 
     // ============================================================
-    // CONFERMA PRENOTAZIONE (MANAGER)
+    // CONFERMA PRENOTAZIONE
     // ============================================================
 
     @Test
     void testConfermaPrenotazione() {
 
-        LocalDateTime inizio = LocalDateTime.now().plusHours(1);
-        LocalDateTime fine = LocalDateTime.now().plusHours(4);
-
-        Prenotazione p =
-                gestore.creaPrenotazione(driver, veicolo, inizio, fine);
+        Prenotazione p = gestore.creaPrenotazione(
+                driver,
+                veicolo,
+                LocalDateTime.now().plusDays(1),
+                LocalDateTime.now().plusDays(1).plusHours(3)
+        );
 
         gestore.confermaPrenotazione(p.getIdPrenotazione(), manager);
 
@@ -151,11 +133,12 @@ class GestorePrenotazioniTest {
     @Test
     void testAnnullaPrenotazioneDaDriver() {
 
-        LocalDateTime inizio = LocalDateTime.now().plusHours(2);
-        LocalDateTime fine = LocalDateTime.now().plusHours(5);
-
-        Prenotazione p =
-                gestore.creaPrenotazione(driver, veicolo, inizio, fine);
+        Prenotazione p = gestore.creaPrenotazione(
+                driver,
+                veicolo,
+                LocalDateTime.now().plusDays(2),
+                LocalDateTime.now().plusDays(2).plusHours(2)
+        );
 
         gestore.annullaPrenotazione(p.getIdPrenotazione(), driver);
 
@@ -172,13 +155,10 @@ class GestorePrenotazioniTest {
     @Test
     void testAttivaPrenotazione() {
 
-        LocalDateTime inizio = LocalDateTime.now().minusHours(1);
-        LocalDateTime fine = LocalDateTime.now().plusHours(2);
-
         Prenotazione p = new Prenotazione(
                 0,
-                inizio,
-                fine,
+                LocalDateTime.now().minusHours(1),
+                LocalDateTime.now().plusHours(1),
                 StatoPrenotazione.CONFERMATA,
                 TipoPrenotazione.UTENTE,
                 driver.getIdUtente(),
@@ -202,13 +182,10 @@ class GestorePrenotazioniTest {
     @Test
     void testCompletaPrenotazione() {
 
-        LocalDateTime inizio = LocalDateTime.now().minusHours(3);
-        LocalDateTime fine = LocalDateTime.now().minusHours(1);
-
         Prenotazione p = new Prenotazione(
                 0,
-                inizio,
-                fine,
+                LocalDateTime.now().minusHours(3),
+                LocalDateTime.now().minusHours(1),
                 StatoPrenotazione.ATTIVA,
                 TipoPrenotazione.UTENTE,
                 driver.getIdUtente(),
@@ -232,10 +209,12 @@ class GestorePrenotazioniTest {
     @Test
     void testGetPrenotazioniDriver() {
 
-        LocalDateTime inizio = LocalDateTime.now().plusHours(1);
-        LocalDateTime fine = LocalDateTime.now().plusHours(2);
-
-        gestore.creaPrenotazione(driver, veicolo, inizio, fine);
+        gestore.creaPrenotazione(
+                driver,
+                veicolo,
+                LocalDateTime.now().plusDays(1),
+                LocalDateTime.now().plusDays(1).plusHours(1)
+        );
 
         List<Prenotazione> lista =
                 gestore.getPrenotazioniDriver(driver);
@@ -246,10 +225,12 @@ class GestorePrenotazioniTest {
     @Test
     void testGetPrenotazioniVeicolo() {
 
-        LocalDateTime inizio = LocalDateTime.now().plusHours(1);
-        LocalDateTime fine = LocalDateTime.now().plusHours(3);
-
-        gestore.creaPrenotazione(driver, veicolo, inizio, fine);
+        gestore.creaPrenotazione(
+                driver,
+                veicolo,
+                LocalDateTime.now().plusDays(1),
+                LocalDateTime.now().plusDays(1).plusHours(2)
+        );
 
         List<Prenotazione> lista =
                 gestore.getPrenotazioniVeicolo(veicolo);
