@@ -14,7 +14,11 @@ import it.fleetmanager.ui.SceneManager;
 import it.fleetmanager.ui.dashboards.ManagerDashboardController;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.beans.property.SimpleStringProperty;
 
 public class ScadenzeController {
@@ -102,16 +106,21 @@ public class ScadenzeController {
 	// ============================================================
 	@FXML
 	private void onAggiungi() {
-		mostraInfo("Funzione aggiungi scadenza in preparazione (serve il form).");
+		apriFormScadenza(null);
 	}
+
+
 
 	@FXML
 	private void onModifica() {
-		if (getSel() == null)
+		Scadenza s = getSel();
+		if (s == null)
 			return;
 
-		mostraInfo("Funzione modifica scadenza in preparazione (serve il form).");
+		apriFormScadenza(s);
 	}
+
+
 
 	@FXML
 	private void onElimina() {
@@ -148,4 +157,36 @@ public class ScadenzeController {
 	private void mostraInfo(String msg) {
 		new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.OK).showAndWait();
 	}
+	
+	
+	private void apriFormScadenza(Scadenza scadenza) {
+		try {
+			FXMLLoader loader = new FXMLLoader(
+					getClass().getResource("/ui/views/scadenze/ScadenzaForm.fxml"));
+
+			Scene scene = new Scene(loader.load());
+			Stage stage = new Stage();
+
+			stage.setTitle("Gestione Scadenza");
+			stage.setScene(scene);
+			stage.initOwner(tableScadenze.getScene().getWindow());
+			stage.initModality(Modality.APPLICATION_MODAL);
+			stage.setResizable(false);
+
+			ScadenzaFormController ctrl = loader.getController();
+
+			if (scadenza == null) {
+				ctrl.nuovaScadenza();
+			} else {
+				ctrl.modificaScadenza(scadenza);
+			}
+
+			stage.showAndWait();   // ⬅ BLOCCA finché non chiudi
+			caricaScadenze();     // ⬅ refresh dopo save/update
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 }

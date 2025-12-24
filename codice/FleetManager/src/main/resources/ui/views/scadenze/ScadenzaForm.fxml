@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="it.fleetmanager.ui.scadenze.ScadenzaFormController"
+      spacing="15"
+      style="-fx-padding: 25; -fx-background-color: white;">
+
+    <Label fx:id="lblTitolo"
+           text="Nuova Scadenza"
+           style="-fx-font-size: 22; -fx-font-weight: bold;" />
+
+    <!-- TARGA -->
+    <ComboBox fx:id="cbTarga"
+              promptText="Seleziona veicolo"/>
+
+    <!-- TIPO -->
+    <ComboBox fx:id="cmbTipo"
+              promptText="Tipo scadenza"/>
+
+    <!-- DATA -->
+    <DatePicker fx:id="dpData"/>
+
+    <!-- NOTIFICATA -->
+    <CheckBox fx:id="chkNotificata"
+              text="Notificata"/>
+
+    <HBox spacing="15">
+        <Button text="Salva" onAction="#onSalva"/>
+        <Button text="Annulla" onAction="#onAnnulla"/>
+    </HBox>
+
+</VBox>

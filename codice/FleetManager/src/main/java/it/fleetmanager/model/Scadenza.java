@@ -11,7 +11,13 @@ public class Scadenza {
 	private boolean notificata;
 	private String targa;
 
-	public Scadenza(int idScadenza, TipoScadenza tipoScadenza, LocalDate data, boolean notificata, String targa) {
+
+	public Scadenza() {
+	}
+
+
+	public Scadenza(int idScadenza, TipoScadenza tipoScadenza,
+	                LocalDate data, boolean notificata, String targa) {
 		this.idScadenza = idScadenza;
 		this.tipoScadenza = tipoScadenza;
 		this.data = data;
@@ -19,12 +25,21 @@ public class Scadenza {
 		this.targa = targa;
 	}
 
+
 	public int getIdScadenza() {
 		return idScadenza;
 	}
 
+	public void setIdScadenza(int idScadenza) {
+		this.idScadenza = idScadenza;
+	}
+
 	public TipoScadenza getTipoScadenza() {
 		return tipoScadenza;
+	}
+
+	public void setTipoScadenza(TipoScadenza tipoScadenza) {
+		this.tipoScadenza = tipoScadenza;
 	}
 
 	public LocalDate getData() {
@@ -47,10 +62,18 @@ public class Scadenza {
 		return targa;
 	}
 
-	@Override
-	public String toString() {
-		return "Scadenza {" + "idScadenza=" + idScadenza + ", tipoScadenza=" + tipoScadenza + ", data=" + data
-				+ ", notificata=" + notificata + ", targa='" + targa + '\'' + '}';
+	public void setTarga(String targa) {
+		this.targa = targa;
 	}
 
+	@Override
+	public String toString() {
+		return "Scadenza{" +
+				"idScadenza=" + idScadenza +
+				", tipoScadenza=" + tipoScadenza +
+				", data=" + data +
+				", notificata=" + notificata +
+				", targa='" + targa + '\'' +
+				'}';
+	}
 }
