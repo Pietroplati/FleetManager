@@ -2,129 +2,98 @@ package it.fleetmanager.ui.notifiche;
 
 import java.util.List;
 
-import it.fleetmanager.model.Notifica;
+import it.fleetmanager.app.AppContext;
 import it.fleetmanager.model.Utente;
 import it.fleetmanager.model.Veicolo;
-import it.fleetmanager.repository.dao.NotificaDAO;
-import it.fleetmanager.repository.dao.UtenteDAO;
-import it.fleetmanager.repository.dao.VeicoloDAO;
-import it.fleetmanager.repository.impl.NotificaDAOImpl;
-import it.fleetmanager.repository.impl.UtenteDAOImpl;
-import it.fleetmanager.repository.impl.VeicoloDAOImpl;
-import it.fleetmanager.repository.util.H2DatabaseManager;
-import it.fleetmanager.util.TipoNotifica;
-import it.fleetmanager.util.RuoloUtente;
-
+import it.fleetmanager.service.interfaces.UiFacade;
+import it.fleetmanager.ui.UserAwareController;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 
-public class SegnalazioneStraordinariaController {
+public class SegnalazioneStraordinariaController implements UserAwareController {
 
-	// =================== UI ===================
-	@FXML
-	private ComboBox<Veicolo> comboVeicoli;
-	@FXML
-	private TextArea txtDescrizione;
+    @FXML private ComboBox<Veicolo> comboVeicoli;
+    @FXML private TextArea txtDescrizione;
 
-	// =================== DAO ===================
-	private final VeicoloDAO veicoloDAO = new VeicoloDAOImpl(H2DatabaseManager.getInstance());
-	private final NotificaDAO notificaDAO = new NotificaDAOImpl(H2DatabaseManager.getInstance());
-	private final UtenteDAO utenteDAO = new UtenteDAOImpl(H2DatabaseManager.getInstance());
+    //solo Facade
+    private final UiFacade ui = AppContext.getInstance().getUiFacade();
 
-	// =================== UTENTE ===================
-	private Utente driver;
+    private Utente driver;
 
-	public void setUtente(Utente utente) {
-		this.driver = utente;
-		caricaVeicoli();
-	}
+    @Override
+    public void setUtente(Utente utente) {
+        this.driver = utente;
+        caricaVeicoli();
+    }
 
-	// =================== CARICA VEICOLI ===================
-	private void caricaVeicoli() {
+    private void caricaVeicoli() {
 
-		List<Veicolo> list = veicoloDAO.getTuttiVeicoli();
-		comboVeicoli.getItems().setAll(list);
+        List<Veicolo> list = ui.getTuttiVeicoli();
+        comboVeicoli.getItems().setAll(list);
 
-		comboVeicoli.setCellFactory(lv -> new ListCell<>() {
-			@Override
-			protected void updateItem(Veicolo v, boolean empty) {
-				super.updateItem(v, empty);
-				setText(empty || v == null ? "" : v.getTarga() + " - " + v.getMarca() + " " + v.getModello());
-			}
-		});
+        comboVeicoli.setCellFactory(lv -> new ListCell<>() {
+            @Override
+            protected void updateItem(Veicolo v, boolean empty) {
+                super.updateItem(v, empty);
+                setText(formatVeicolo(v, empty));
+            }
+        });
 
-		comboVeicoli.setButtonCell(new ListCell<>() {
-			@Override
-			protected void updateItem(Veicolo v, boolean empty) {
-				super.updateItem(v, empty);
-				setText(empty || v == null ? "" : v.getTarga() + " - " + v.getMarca() + " " + v.getModello());
-			}
-		});
-	}
+        comboVeicoli.setButtonCell(new ListCell<>() {
+            @Override
+            protected void updateItem(Veicolo v, boolean empty) {
+                super.updateItem(v, empty);
+                setText(formatVeicolo(v, empty));
+            }
+        });
+    }
 
-	// =================== INVIA SEGNALAZIONE ===================
-	@FXML
-	private void onInvia() {
+    private String formatVeicolo(Veicolo v, boolean empty) {
+        if (empty || v == null) return "";
+        return v.getTarga() + " - " + v.getMarca() + " " + v.getModello();
+    }
 
-		Veicolo selezionato = comboVeicoli.getValue();
-		String descrizione = txtDescrizione.getText().trim();
+    @FXML
+    private void onInvia() {
 
-		if (selezionato == null) {
-			mostraErrore("Seleziona un veicolo.");
-			return;
-		}
+        Veicolo selezionato = comboVeicoli.getValue();
+        String descrizione = (txtDescrizione.getText() == null) ? "" : txtDescrizione.getText().trim();
 
-		if (descrizione.isEmpty()) {
-			mostraErrore("Inserisci una descrizione del problema.");
-			return;
-		}
+        if (selezionato == null) {
+            mostraErrore("Seleziona un veicolo.");
+            return;
+        }
 
-		// Trova manager
-		Utente manager = utenteDAO.getTuttiUtenti().stream().filter(u -> u.getRuoloUtente() == RuoloUtente.MANAGER)
-				.findFirst().orElse(null);
+        if (descrizione.isEmpty()) {
+            mostraErrore("Inserisci una descrizione del problema.");
+            return;
+        }
 
-		if (manager == null) {
-			mostraErrore("Nessun manager presente nel sistema.");
-			return;
-		}
+        try {
+            ui.inviaSegnalazioneStraordinaria(driver, selezionato, descrizione);
+            mostraInfo("Segnalazione inviata correttamente.");
+            chiudiFinestra();
+        } catch (Exception e) {
+            mostraErrore(e.getMessage());
+        }
+    }
 
-		// Crea messaggio
-		String messaggio = """
-				Segnalazione straordinaria da %s %s
-				Veicolo: %s (%s %s)
-				Problema: %s
-				""".formatted(driver.getNome(), driver.getCognome(), selezionato.getTarga(), selezionato.getMarca(),
-				selezionato.getModello(), descrizione);
+    @FXML
+    private void onAnnulla() {
+        chiudiFinestra();
+    }
 
-		Notifica n = new Notifica(null, TipoNotifica.SEGNALAZIONE, messaggio, false, manager.getIdUtente(), null);
+    private void chiudiFinestra() {
+        Stage stage = (Stage) txtDescrizione.getScene().getWindow();
+        stage.close();
+    }
 
-		notificaDAO.save(n);
+    private void mostraErrore(String msg) {
+        new Alert(Alert.AlertType.ERROR, msg, ButtonType.OK).showAndWait();
+    }
 
-		mostraInfo("Segnalazione inviata correttamente.");
-
-		chiudiFinestra();
-	}
-
-	// =================== ANNULLA ===================
-	@FXML
-	private void onAnnulla() {
-		chiudiFinestra();
-	}
-
-	private void chiudiFinestra() {
-		Stage stage = (Stage) txtDescrizione.getScene().getWindow();
-		stage.close();
-	}
-
-	// =================== ALERTS ===================
-	private void mostraErrore(String msg) {
-		Alert alert = new Alert(Alert.AlertType.ERROR, msg, ButtonType.OK);
-		alert.showAndWait();
-	}
-
-	private void mostraInfo(String msg) {
-		Alert alert = new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.OK);
-		alert.showAndWait();
-	}
+    private void mostraInfo(String msg) {
+        new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.OK).showAndWait();
+    }
 }

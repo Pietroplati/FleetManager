@@ -1,7 +1,10 @@
 package it.fleetmanager.service.impl;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import it.fleetmanager.model.Prenotazione;
 import it.fleetmanager.model.Utente;
@@ -11,166 +14,229 @@ import it.fleetmanager.repository.dao.UtenteDAO;
 import it.fleetmanager.repository.dao.VeicoloDAO;
 import it.fleetmanager.service.interfaces.GestorePrenotazioni;
 import it.fleetmanager.util.RuoloUtente;
-import it.fleetmanager.util.SistemaNotifiche;
 import it.fleetmanager.util.StatoPrenotazione;
 import it.fleetmanager.util.TipoPrenotazione;
 
 public class GestorePrenotazioniImpl implements GestorePrenotazioni {
 
-	private final PrenotazioneDAO prenotazioneDAO;
-	private final VeicoloDAO veicoloDAO;
-	private final UtenteDAO utenteDAO;
-	private final SistemaNotifiche sistemaNotifiche;
+    private final PrenotazioneDAO prenotazioneDAO;
+    private final VeicoloDAO veicoloDAO;
+    private final UtenteDAO utenteDAO;
+    private final SistemaNotifiche sistemaNotifiche;
 
-	public GestorePrenotazioniImpl(PrenotazioneDAO prenotazioneDAO, VeicoloDAO veicoloDAO, UtenteDAO utenteDAO,
-			SistemaNotifiche sistemaNotifiche) {
-		this.prenotazioneDAO = prenotazioneDAO;
-		this.veicoloDAO = veicoloDAO;
-		this.utenteDAO = utenteDAO;
-		this.sistemaNotifiche = sistemaNotifiche;
-	}
+    public GestorePrenotazioniImpl(
+            PrenotazioneDAO prenotazioneDAO,
+            VeicoloDAO veicoloDAO,
+            UtenteDAO utenteDAO,
+            SistemaNotifiche sistemaNotifiche
+    ) {
+        this.prenotazioneDAO = prenotazioneDAO;
+        this.veicoloDAO = veicoloDAO;
+        this.utenteDAO = utenteDAO;
+        this.sistemaNotifiche = sistemaNotifiche;
+    }
 
-	@Override
-	public Prenotazione creaPrenotazione(Utente driver, Veicolo veicolo, LocalDateTime dataInizio,
-			LocalDateTime dataFine) {
 
-		if (driver.getPatente() == null)
-			throw new IllegalArgumentException("L’utente non ha la patente, non può prenotare veicoli.");
+    @Override
+    public List<Prenotazione> getPrenotazioniVisibiliOrdinare(Utente utenteLoggato) {
+        List<Prenotazione> tutte = prenotazioneDAO.findAll();
 
-		if (!validadisponibilita(veicolo, dataInizio, dataFine))
-			throw new IllegalArgumentException(
-					"Il veicolo " + veicolo.getTarga() + " non è disponibile nelle date richieste.");
+        if (utenteLoggato.getRuoloUtente() != RuoloUtente.MANAGER) {
+            tutte = tutte.stream()
+                    .filter(p -> p.getIdUtente() == utenteLoggato.getIdUtente())
+                    .collect(Collectors.toList());
+        }
 
-		Prenotazione p = new Prenotazione(0, dataInizio, dataFine, StatoPrenotazione.RICHIESTA, TipoPrenotazione.UTENTE,
-				driver.getIdUtente(), veicolo.getTarga());
+        tutte.sort((a, b) -> {
+            int cmp = Integer.compare(priorita(a, utenteLoggato), priorita(b, utenteLoggato));
+            return (cmp != 0) ? cmp : confrontoTemporale(a, b);
+        });
 
-		prenotazioneDAO.save(p);
+        return tutte;
+    }
 
-		// 🔥 Notifica al manager: nuova richiesta
-		sistemaNotifiche.notificaRichiestaPrenotazione(driver, p);
+    @Override
+    public Map<Integer, Utente> getUtentiById() {
+        Map<Integer, Utente> map = new HashMap<>();
+        for (Utente u : utenteDAO.getTuttiUtenti()) {
+            map.put(u.getIdUtente(), u);
+        }
+        return map;
+    }
 
-		return p;
-	}
+    private int priorita(Prenotazione p, Utente utenteLoggato) {
+        StatoPrenotazione s = p.getStato();
+        boolean isManager = (utenteLoggato.getRuoloUtente() == RuoloUtente.MANAGER);
 
-	@Override
-	public boolean validadisponibilita(Veicolo veicolo, LocalDateTime dataInizio, LocalDateTime dataFine) {
+        if (isManager) {
+            return switch (s) {
+                case RICHIESTA -> 1;
+                case ATTIVA -> 2;
+                case CONFERMATA -> 3;
+                case COMPLETATA -> 4;
+                case ANNULLATA -> 5;
+            };
+        }
 
-		List<Prenotazione> prenotazioni = prenotazioneDAO.findByVeicolo(veicolo.getTarga());
+        return switch (s) {
+            case ATTIVA -> 1;
+            case RICHIESTA -> 2;
+            case CONFERMATA -> 3;
+            case COMPLETATA -> 4;
+            case ANNULLATA -> 5;
+        };
+    }
 
-		for (Prenotazione p : prenotazioni) {
-			boolean overlap = dataInizio.isBefore(p.getDataFine()) && dataFine.isAfter(p.getDataInizio());
+    private int confrontoTemporale(Prenotazione a, Prenotazione b) {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime ta = a.getDataInizio().isAfter(now) ? a.getDataInizio() : a.getDataFine();
+        LocalDateTime tb = b.getDataInizio().isAfter(now) ? b.getDataInizio() : b.getDataFine();
+        return ta.compareTo(tb);
+    }
 
-			if (overlap && p.getStato() != StatoPrenotazione.ANNULLATA)
-				return false;
-		}
-		return true;
-	}
 
-	@Override
-	public void confermaPrenotazione(int idPrenotazione, Utente manager) {
+    @Override
+    public Prenotazione creaPrenotazione(Utente driver, Veicolo veicolo, LocalDateTime dataInizio,
+                                        LocalDateTime dataFine) {
 
-		if (manager.getRuoloUtente() != RuoloUtente.MANAGER)
-			throw new IllegalArgumentException("Solo un manager può confermare una prenotazione.");
+        if (driver.getPatente() == null)
+            throw new IllegalArgumentException("L’utente non ha la patente, non può prenotare veicoli.");
 
-		Prenotazione p = prenotazioneDAO.getById(idPrenotazione);
+        if (!validadisponibilita(veicolo, dataInizio, dataFine))
+            throw new IllegalArgumentException(
+                    "Il veicolo " + veicolo.getTarga() + " non è disponibile nelle date richieste.");
 
-		if (p == null || p.getIdPrenotazione() == -1)
-			throw new IllegalArgumentException("Prenotazione non trovata");
+        Prenotazione p = new Prenotazione(0, dataInizio, dataFine, StatoPrenotazione.RICHIESTA, TipoPrenotazione.UTENTE,
+                driver.getIdUtente(), veicolo.getTarga());
 
-		p.setStato(StatoPrenotazione.CONFERMATA);
-		prenotazioneDAO.update(p);
+        prenotazioneDAO.save(p);
 
-		// 🔥 Recupero il driver vero e lo notifico
-		Utente driver = utenteDAO.getUtenteById(p.getIdUtente());
-		sistemaNotifiche.notificaConfermaPrenotazione(driver, p);
-	}
+        sistemaNotifiche.notificaRichiestaPrenotazione(driver, p);
 
-	@Override
-	public void annullaPrenotazione(int idPrenotazione, Utente utente) {
+        return p;
+    }
 
-		Prenotazione p = prenotazioneDAO.getById(idPrenotazione);
+    @Override
+    public boolean validadisponibilita(Veicolo veicolo, LocalDateTime dataInizio, LocalDateTime dataFine) {
 
-		if (p == null || p.getIdPrenotazione() == -1)
-			throw new IllegalArgumentException("Prenotazione non trovata");
+        List<Prenotazione> prenotazioni = prenotazioneDAO.findByVeicolo(veicolo.getTarga());
 
-		p.setStato(StatoPrenotazione.ANNULLATA);
-		prenotazioneDAO.update(p);
+        for (Prenotazione p : prenotazioni) {
+            boolean overlap = dataInizio.isBefore(p.getDataFine()) && dataFine.isAfter(p.getDataInizio());
 
-		Utente driver = utenteDAO.getUtenteById(p.getIdUtente());
+            if (overlap && p.getStato() != StatoPrenotazione.ANNULLATA)
+                return false;
+        }
+        return true;
+    }
 
-		if (utente.getRuoloUtente() == RuoloUtente.MANAGER) {
+    @Override
+    public void confermaPrenotazione(int idPrenotazione, Utente manager) {
 
-			// 🔥 Manager rifiuta LA RICHIESTA
-			sistemaNotifiche.notificaRifiutoPrenotazione(driver, p);
+        if (manager.getRuoloUtente() != RuoloUtente.MANAGER)
+            throw new IllegalArgumentException("Solo un manager può confermare una prenotazione.");
 
-		} else if (utente.getRuoloUtente() == RuoloUtente.DRIVER) {
+        Prenotazione p = prenotazioneDAO.getById(idPrenotazione);
 
-			// 🔥 Driver annulla la prenotazione
-			sistemaNotifiche.notificaAnnullamentoPrenotazioneDaDriver(driver, p);
-		}
-	}
+        if (p == null || p.getIdPrenotazione() == -1)
+            throw new IllegalArgumentException("Prenotazione non trovata");
 
-	@Override
-	public void attivaPrenotazione(int idPrenotazione) {
-		Prenotazione p = prenotazioneDAO.getById(idPrenotazione);
+        p.setStato(StatoPrenotazione.CONFERMATA);
+        prenotazioneDAO.update(p);
 
-		if (p == null || p.getIdPrenotazione() == -1)
-			throw new IllegalArgumentException("Prenotazione non trovata");
+        Utente driver = utenteDAO.getUtenteById(p.getIdUtente());
+        sistemaNotifiche.notificaConfermaPrenotazione(driver, p);
+    }
 
-		if (LocalDateTime.now().isBefore(p.getDataInizio()))
-			throw new IllegalStateException("Non è possibile attivare la prenotazione prima della data di inizio.");
+    @Override
+    public void annullaPrenotazione(int idPrenotazione, Utente utente) {
 
-		p.setStato(StatoPrenotazione.ATTIVA);
-		prenotazioneDAO.update(p);
-	}
+        Prenotazione p = prenotazioneDAO.getById(idPrenotazione);
 
-	@Override
-	public void completaPrenotazione(int idPrenotazione) {
+        if (p == null || p.getIdPrenotazione() == -1)
+            throw new IllegalArgumentException("Prenotazione non trovata");
 
-		Prenotazione p = prenotazioneDAO.getById(idPrenotazione);
+        p.setStato(StatoPrenotazione.ANNULLATA);
+        prenotazioneDAO.update(p);
 
-		if (p == null || p.getIdPrenotazione() == -1)
-			throw new IllegalArgumentException("Prenotazione non trovata");
+        Utente driver = utenteDAO.getUtenteById(p.getIdUtente());
 
-		if (LocalDateTime.now().isBefore(p.getDataFine()))
-			throw new IllegalStateException("Non è possibile completare la prenotazione prima della data di fine.");
+        if (utente.getRuoloUtente() == RuoloUtente.MANAGER) {
+            sistemaNotifiche.notificaRifiutoPrenotazione(driver, p);
+        } else if (utente.getRuoloUtente() == RuoloUtente.DRIVER) {
+            sistemaNotifiche.notificaAnnullamentoPrenotazioneDaDriver(driver, p);
+        }
+    }
 
-		p.setStato(StatoPrenotazione.COMPLETATA);
-		prenotazioneDAO.update(p);
-	}
+    @Override
+    public void attivaPrenotazione(int idPrenotazione) {
+        Prenotazione p = prenotazioneDAO.getById(idPrenotazione);
 
-	@Override
-	public List<Prenotazione> getPrenotazioniDriver(Utente driver) {
-		if (driver.getPatente() == null)
-			throw new IllegalArgumentException("Questo utente non è un driver.");
+        if (p == null || p.getIdPrenotazione() == -1)
+            throw new IllegalArgumentException("Prenotazione non trovata");
 
-		return prenotazioneDAO.findByDriver(driver.getIdUtente());
-	}
+        if (LocalDateTime.now().isBefore(p.getDataInizio()))
+            throw new IllegalStateException("Non è possibile attivare la prenotazione prima della data di inizio.");
 
-	@Override
-	public List<Prenotazione> getPrenotazioniVeicolo(Veicolo veicolo) {
-		return prenotazioneDAO.findByVeicolo(veicolo.getTarga());
-	}
+        p.setStato(StatoPrenotazione.ATTIVA);
+        prenotazioneDAO.update(p);
+    }
 
-	@Override
-	public void aggiornaStatiPrenotazioni() {
+    @Override
+    public void completaPrenotazione(int idPrenotazione) {
 
-		LocalDateTime now = LocalDateTime.now();
+        Prenotazione p = prenotazioneDAO.getById(idPrenotazione);
 
-		// CONFERMATE → ATTIVE
-		for (Prenotazione p : prenotazioneDAO.findByStato(StatoPrenotazione.CONFERMATA)) {
-			if (!now.isBefore(p.getDataInizio()) && now.isBefore(p.getDataFine())) {
-				p.setStato(StatoPrenotazione.ATTIVA);
-				prenotazioneDAO.update(p);
-			}
-		}
+        if (p == null || p.getIdPrenotazione() == -1)
+            throw new IllegalArgumentException("Prenotazione non trovata");
 
-		// ATTIVE → COMPLETATE
-		for (Prenotazione p : prenotazioneDAO.findByStato(StatoPrenotazione.ATTIVA)) {
-			if (!now.isBefore(p.getDataFine())) {
-				p.setStato(StatoPrenotazione.COMPLETATA);
-				prenotazioneDAO.update(p);
-			}
-		}
-	}
+        if (LocalDateTime.now().isBefore(p.getDataFine()))
+            throw new IllegalStateException("Non è possibile completare la prenotazione prima della data di fine.");
+
+        p.setStato(StatoPrenotazione.COMPLETATA);
+        prenotazioneDAO.update(p);
+    }
+
+    @Override
+    public List<Prenotazione> getPrenotazioniDriver(Utente driver) {
+        if (driver.getPatente() == null)
+            throw new IllegalArgumentException("Questo utente non è un driver.");
+
+        return prenotazioneDAO.findByDriver(driver.getIdUtente());
+    }
+
+    @Override
+    public List<Prenotazione> getPrenotazioniVeicolo(Veicolo veicolo) {
+        return prenotazioneDAO.findByVeicolo(veicolo.getTarga());
+    }
+
+    @Override
+    public void aggiornaStatiPrenotazioni() {
+
+        LocalDateTime now = LocalDateTime.now();
+
+        for (Prenotazione p : prenotazioneDAO.findByStato(StatoPrenotazione.CONFERMATA)) {
+            if (!now.isBefore(p.getDataInizio()) && now.isBefore(p.getDataFine())) {
+                p.setStato(StatoPrenotazione.ATTIVA);
+                prenotazioneDAO.update(p);
+            }
+        }
+
+        for (Prenotazione p : prenotazioneDAO.findByStato(StatoPrenotazione.ATTIVA)) {
+            if (!now.isBefore(p.getDataFine())) {
+                p.setStato(StatoPrenotazione.COMPLETATA);
+                prenotazioneDAO.update(p);
+            }
+        }
+    }
+
+    @Override
+    public List<Prenotazione> getTuttePrenotazioni() {
+        return prenotazioneDAO.findAll();
+    }
+
+    @Override
+    public List<Utente> getTuttiUtenti() {
+        return utenteDAO.getTuttiUtenti();
+    }
 }

@@ -8,7 +8,6 @@ import it.fleetmanager.model.Veicolo;
 import it.fleetmanager.repository.dao.ManutenzioneDAO;
 import it.fleetmanager.repository.dao.VeicoloDAO;
 import it.fleetmanager.service.interfaces.GestoreManutenzioni;
-import it.fleetmanager.util.SistemaNotifiche;
 import it.fleetmanager.util.StatoVeicolo;
 import it.fleetmanager.util.TipoManutenzione;
 
@@ -30,9 +29,8 @@ public class GestoreManutenzioniImpl implements GestoreManutenzioni {
 		this.sistemaNotifiche = sistemaNotifiche;
 	}
 
-	// ============================================================
 	// PROGRAMMAZIONE MANUTENZIONE
-	// ============================================================
+
 
 	@Override
 	public Manutenzione programmareManutenzione(
@@ -74,9 +72,8 @@ public class GestoreManutenzioniImpl implements GestoreManutenzioni {
 		return m;
 	}
 
-	// ============================================================
+
 	// INTERVENTO STRAORDINARIO
-	// ============================================================
 
 	@Override
 	public Manutenzione segnalareInterventoStraordinario(
@@ -111,9 +108,8 @@ public class GestoreManutenzioniImpl implements GestoreManutenzioni {
 		return m;
 	}
 
-	// ============================================================
+
 	// CHIUSURA MANUTENZIONE
-	// ============================================================
 
 	@Override
 	public void chiudiManutenzione(int idManutenzione) {
@@ -139,9 +135,8 @@ public class GestoreManutenzioniImpl implements GestoreManutenzioni {
 		);
 	}
 
-	// ============================================================
+
 	// QUERY
-	// ============================================================
 
 	@Override
 	public List<Manutenzione> getManutenzioniVeicolo(Veicolo veicolo) {

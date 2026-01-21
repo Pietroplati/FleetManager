@@ -1,4 +1,4 @@
-package it.fleetmanager.repository.util;
+package it.fleetmanager.bootstrap.tools;
 
 import java.io.File;
 import java.io.IOException;

@@ -1,9 +1,11 @@
-package it.fleetmanager.repository.util;
+package it.fleetmanager.repository.db.tools;
 
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
+
+import it.fleetmanager.repository.db.H2DatabaseManager;
 
 public class CreateDB {
 

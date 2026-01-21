@@ -1,8 +1,10 @@
-package it.fleetmanager.repository.util;
+package it.fleetmanager.bootstrap.tools;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+
+import it.fleetmanager.repository.db.H2DatabaseManager;
 
 /**
  * Classe creata per eseguire le operazioni sul database tramite codice SQL

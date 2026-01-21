@@ -11,12 +11,12 @@ import java.util.List;
 
 import it.fleetmanager.model.Notifica;
 import it.fleetmanager.repository.dao.NotificaDAO;
-import it.fleetmanager.repository.util.H2DatabaseManager;
+import it.fleetmanager.repository.db.ConnectionProvider;
 import it.fleetmanager.util.TipoNotifica;
 
 public class NotificaDAOImpl implements NotificaDAO {
 
-    private final H2DatabaseManager db;
+	private final ConnectionProvider db;
 
     public static final Notifica NOTIFICA_INESISTENTE = new Notifica(
             -1,
@@ -33,13 +33,10 @@ public class NotificaDAOImpl implements NotificaDAO {
         }
     };
 
-    public NotificaDAOImpl(H2DatabaseManager db) {
+    public NotificaDAOImpl(ConnectionProvider db) {
         this.db = db;
     }
 
-    // ============================================================
-    // MAPPING
-    // ============================================================
     private Notifica mapResultSet(ResultSet rs) throws Exception {
 
         int id = rs.getInt("idNotifica");
@@ -54,9 +51,7 @@ public class NotificaDAOImpl implements NotificaDAO {
         return new Notifica(id, tipo, messaggio, dataInvio, letta, idUtente, idScadenza);
     }
 
-    // ============================================================
     // CRUD
-    // ============================================================
     @Override
     public void save(Notifica n) {
 
@@ -140,9 +135,7 @@ public class NotificaDAOImpl implements NotificaDAO {
         }
     }
 
-    // ============================================================
     // QUERY
-    // ============================================================
     @Override
     public Notifica getNotificaById(int idNotifica) {
 
@@ -259,9 +252,7 @@ public class NotificaDAOImpl implements NotificaDAO {
         return list;
     }
 
-    // ============================================================
-    // 🔥 PER I MANAGER: TUTTE LE NOTIFICHE
-    // ============================================================
+    //PER I MANAGER: TUTTE LE NOTIFICHE
     @Override
     public List<Notifica> findAll() {
 

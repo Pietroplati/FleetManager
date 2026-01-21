@@ -10,19 +10,19 @@ import org.junit.jupiter.api.Test;
 
 import it.fleetmanager.model.Manutenzione;
 import it.fleetmanager.model.Veicolo;
+import it.fleetmanager.repository.DatabaseTestUtils;
 import it.fleetmanager.repository.dao.ManutenzioneDAO;
 import it.fleetmanager.repository.dao.NotificaDAO;
 import it.fleetmanager.repository.dao.UtenteDAO;
 import it.fleetmanager.repository.dao.VeicoloDAO;
+import it.fleetmanager.repository.db.H2DatabaseManager;
 import it.fleetmanager.repository.impl.ManutenzioneDAOImpl;
 import it.fleetmanager.repository.impl.NotificaDAOImpl;
 import it.fleetmanager.repository.impl.UtenteDAOImpl;
 import it.fleetmanager.repository.impl.VeicoloDAOImpl;
-import it.fleetmanager.util.DatabaseTestUtils;
-import it.fleetmanager.repository.util.H2DatabaseManager;
 import it.fleetmanager.service.impl.GestoreManutenzioniImpl;
+import it.fleetmanager.service.impl.SistemaNotifiche;
 import it.fleetmanager.service.interfaces.GestoreManutenzioni;
-import it.fleetmanager.util.SistemaNotifiche;
 import it.fleetmanager.util.StatoVeicolo;
 import it.fleetmanager.util.TipoManutenzione;
 import it.fleetmanager.util.TipoVeicolo;
@@ -36,7 +36,7 @@ class GestoreManutenzioniTest {
     @BeforeEach
     void setup() throws Exception {
 
-        // 🔥 reset DB H2 in RAM
+        //reset DB H2 in RAM
         DatabaseTestUtils.resetDatabase();
 
         veicoloDAO = new VeicoloDAOImpl(H2DatabaseManager.getInstance());

@@ -11,20 +11,20 @@ import org.junit.jupiter.api.Test;
 import it.fleetmanager.model.Prenotazione;
 import it.fleetmanager.model.Utente;
 import it.fleetmanager.model.Veicolo;
+import it.fleetmanager.repository.DatabaseTestUtils;
 import it.fleetmanager.repository.dao.NotificaDAO;
 import it.fleetmanager.repository.dao.PrenotazioneDAO;
 import it.fleetmanager.repository.dao.UtenteDAO;
 import it.fleetmanager.repository.dao.VeicoloDAO;
+import it.fleetmanager.repository.db.H2DatabaseManager;
 import it.fleetmanager.repository.impl.NotificaDAOImpl;
 import it.fleetmanager.repository.impl.PrenotazioneDAOImpl;
 import it.fleetmanager.repository.impl.UtenteDAOImpl;
 import it.fleetmanager.repository.impl.VeicoloDAOImpl;
-import it.fleetmanager.repository.util.H2DatabaseManager;
 import it.fleetmanager.service.impl.GestorePrenotazioniImpl;
+import it.fleetmanager.service.impl.SistemaNotifiche;
 import it.fleetmanager.service.interfaces.GestorePrenotazioni;
-import it.fleetmanager.util.DatabaseTestUtils;
 import it.fleetmanager.util.RuoloUtente;
-import it.fleetmanager.util.SistemaNotifiche;
 import it.fleetmanager.util.StatoPrenotazione;
 import it.fleetmanager.util.TipoPrenotazione;
 import it.fleetmanager.util.TipoVeicolo;
@@ -61,14 +61,14 @@ class GestorePrenotazioniTest {
                 sistemaNotifiche
         );
 
-        // 🔹 UTENTI GIÀ SEEDATI
+        //UTENTI GIÀ SEEDATI
         manager = utenteDAO.getUtenteById(1);
         driver = utenteDAO.getUtenteById(2);
 
         assertEquals(RuoloUtente.MANAGER, manager.getRuoloUtente());
         assertEquals(RuoloUtente.DRIVER, driver.getRuoloUtente());
 
-        // 🔹 VEICOLO DI TEST
+        //VEICOLO DI TEST
         veicolo = new Veicolo(
                 "TEST123",
                 TipoVeicolo.AUTO,

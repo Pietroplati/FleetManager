@@ -1,7 +1,9 @@
-package it.fleetmanager.repository.util;
+package it.fleetmanager.repository.db.tools;
 
 import java.sql.Connection;
 import java.sql.Statement;
+
+import it.fleetmanager.repository.db.H2DatabaseManager;
 
 public class ResetDatabase {
 

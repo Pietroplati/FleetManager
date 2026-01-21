@@ -4,14 +4,12 @@ import java.time.LocalDate;
 import java.util.List;
 
 import it.fleetmanager.model.Scadenza;
-import it.fleetmanager.model.Utente;
 import it.fleetmanager.model.Veicolo;
 import it.fleetmanager.repository.dao.ScadenzaDAO;
 import it.fleetmanager.repository.dao.UtenteDAO;
 import it.fleetmanager.repository.dao.VeicoloDAO;
 import it.fleetmanager.repository.impl.ScadenzaDAOImpl;
 import it.fleetmanager.service.interfaces.GestoreScadenze;
-import it.fleetmanager.util.SistemaNotifiche;
 import it.fleetmanager.util.StatoVeicolo;
 
 public class GestoreScadenzeImpl implements GestoreScadenze {

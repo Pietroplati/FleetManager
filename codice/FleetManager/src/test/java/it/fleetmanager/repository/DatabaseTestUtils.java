@@ -1,10 +1,10 @@
-package it.fleetmanager.util;
+package it.fleetmanager.repository;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import it.fleetmanager.repository.util.H2DatabaseManager;
+import it.fleetmanager.repository.db.H2DatabaseManager;
 
 public class DatabaseTestUtils {
 

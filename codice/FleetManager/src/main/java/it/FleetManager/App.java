@@ -16,18 +16,18 @@ public class App extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 
-		// 1️⃣ Calcolare le dimensioni dello schermo una volta sola
+		// 1 Calcolare le dimensioni dello schermo una volta sola
 		SceneManager.initializeScreenSize();
 
-		// 2️⃣ Registrare lo stage nel SceneManager
+		// 2 Registrare lo stage nel SceneManager
 		SceneManager.setPrimaryStage(primaryStage);
 
-		// 3️⃣ Caricare la login già con dimensioni schermo
+		// 3 Caricare la login già con dimensioni schermo
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/ui/views/LoginView.fxml"));
 
 		Scene scene = new Scene(loader.load(), SceneManager.getScreenWidth(), SceneManager.getScreenHeight());
 
-		// 4️⃣ Applicazione finestra fullscreen senza flash
+		// 4 Applicazione finestra fullscreen senza flash
 		primaryStage.setScene(scene);
 		primaryStage.setResizable(true);
 		primaryStage.show();

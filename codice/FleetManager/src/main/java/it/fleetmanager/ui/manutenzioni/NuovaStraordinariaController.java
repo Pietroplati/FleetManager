@@ -1,44 +1,30 @@
 package it.fleetmanager.ui.manutenzioni;
 
+import it.fleetmanager.app.AppContext;
 import it.fleetmanager.model.Utente;
 import it.fleetmanager.model.Veicolo;
-import it.fleetmanager.repository.dao.ManutenzioneDAO;
-import it.fleetmanager.repository.dao.NotificaDAO;
-import it.fleetmanager.repository.dao.UtenteDAO;
-import it.fleetmanager.repository.dao.VeicoloDAO;
-import it.fleetmanager.repository.impl.ManutenzioneDAOImpl;
-import it.fleetmanager.repository.impl.NotificaDAOImpl;
-import it.fleetmanager.repository.impl.UtenteDAOImpl;
-import it.fleetmanager.repository.impl.VeicoloDAOImpl;
-import it.fleetmanager.repository.util.H2DatabaseManager;
-import it.fleetmanager.service.impl.GestoreManutenzioniImpl;
+import it.fleetmanager.service.interfaces.UiFacade;
 import it.fleetmanager.ui.SceneManager;
-import it.fleetmanager.util.SistemaNotifiche;
+import it.fleetmanager.ui.UserAwareController;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
-public class NuovaStraordinariaController {
+public class NuovaStraordinariaController implements UserAwareController {
 
     @FXML private ComboBox<String> cbTarga;
     @FXML private TextArea txtDescrizione;
 
     private Utente utenteLoggato;
 
-    private final H2DatabaseManager db = H2DatabaseManager.getInstance();
-    private final VeicoloDAO veicoloDAO = new VeicoloDAOImpl(db);
-    private final ManutenzioneDAO manutDAO = new ManutenzioneDAOImpl(db);
-    private final NotificaDAO notificaDAO = new NotificaDAOImpl(db);
-    private final UtenteDAO utenteDAO = new UtenteDAOImpl(db);
-    
-    private final SistemaNotifiche sistemaNotifiche = new SistemaNotifiche(notificaDAO, utenteDAO);
+    //SOLO facade
+    private final UiFacade ui = AppContext.getInstance().getUiFacade();
 
-    private final GestoreManutenzioniImpl gestoreManut =
-            new GestoreManutenzioniImpl(manutDAO, veicoloDAO, sistemaNotifiche);
-
+    @Override
     public void setUtente(Utente u) {
         this.utenteLoggato = u;
 
-        for (Veicolo v : veicoloDAO.getTuttiVeicoli()) {
+        cbTarga.getItems().clear();
+        for (Veicolo v : ui.getTuttiVeicoli()) {
             cbTarga.getItems().add(v.getTarga());
         }
     }
@@ -47,14 +33,16 @@ public class NuovaStraordinariaController {
     private void onConferma() {
         try {
             String targa = cbTarga.getValue();
+            if (targa == null || targa.isBlank()) {
+                throw new IllegalArgumentException("Seleziona una targa.");
+            }
+
             String descrizione = txtDescrizione.getText();
-            Veicolo v = veicoloDAO.getVeicoloByTarga(targa);
+            Veicolo v = ui.getVeicoloByTarga(targa);
 
-            gestoreManut.segnalareInterventoStraordinario(v, descrizione);
+            ui.segnalareInterventoStraordinario(v, descrizione);
 
-            var ctrl = (ManutenzioniController)
-                SceneManager.changeSceneWithController("/ui/views/manutenzioni/ManutenzioniView.fxml");
-            ctrl.setUtente(utenteLoggato);
+            SceneManager.changeScene("/ui/views/manutenzioni/ManutenzioniView.fxml", utenteLoggato);
 
         } catch (Exception e) {
             mostraErrore(e.getMessage());
@@ -63,9 +51,7 @@ public class NuovaStraordinariaController {
 
     @FXML
     private void onAnnulla() {
-        var ctrl = (ManutenzioniController)
-            SceneManager.changeSceneWithController("/ui/views/manutenzioni/ManutenzioniView.fxml");
-        ctrl.setUtente(utenteLoggato);
+        SceneManager.changeScene("/ui/views/manutenzioni/ManutenzioniView.fxml", utenteLoggato);
     }
 
     private void mostraErrore(String msg) {

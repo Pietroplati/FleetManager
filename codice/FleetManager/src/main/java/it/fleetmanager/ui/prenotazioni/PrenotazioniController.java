@@ -1,341 +1,142 @@
 package it.fleetmanager.ui.prenotazioni;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import it.fleetmanager.app.AppContext;
 import it.fleetmanager.model.Prenotazione;
 import it.fleetmanager.model.Utente;
-import it.fleetmanager.repository.dao.*;
-import it.fleetmanager.repository.impl.*;
-import it.fleetmanager.repository.util.H2DatabaseManager;
-import it.fleetmanager.service.impl.GestorePrenotazioniImpl;
+import it.fleetmanager.service.interfaces.UiFacade;
 import it.fleetmanager.ui.SceneManager;
-import it.fleetmanager.ui.dashboards.DriverDashboardController;
-import it.fleetmanager.ui.dashboards.ManagerDashboardController;
-import it.fleetmanager.util.*;
-import javafx.beans.property.SimpleStringProperty;
+import it.fleetmanager.ui.UserAwareController;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
-public class PrenotazioniController {
+public class PrenotazioniController implements UserAwareController {
 
-	// UI
-	@FXML
-	private TableView<Prenotazione> tablePrenotazioni;
-	@FXML
-	private TableColumn<Prenotazione, String> colId, colVeicolo, colDriver, colInizio, colFine, colStato, colTipo;
+    @FXML private TableView<Prenotazione> tablePrenotazioni;
+    @FXML private TableColumn<Prenotazione, String> colId, colVeicolo, colDriver, colInizio, colFine, colStato, colTipo;
 
-	@FXML
-	private Button btnNuova, btnConferma, btnCompleta, btnAnnulla;
-	@FXML
-	private Label lblDescrizioneRuolo;
-	@FXML
-	private ProgressIndicator loadingIndicator;
+    @FXML private Button btnNuova, btnConferma, btnCompleta, btnAnnulla;
+    @FXML private Label lblDescrizioneRuolo;
+    @FXML private ProgressIndicator loadingIndicator;
 
-	// UTENTE LOGGATO
-	private Utente utenteLoggato;
+    private Utente utenteLoggato;
 
-	// DAO
-	private final H2DatabaseManager db = H2DatabaseManager.getInstance();
-	private final PrenotazioneDAO prenDAO = new PrenotazioneDAOImpl(db);
-	private final UtenteDAO utenteDAO = new UtenteDAOImpl(db);
-	private final VeicoloDAO veicoloDAO = new VeicoloDAOImpl(db);
-	private final NotificaDAO notificaDAO = new NotificaDAOImpl(db);
+    //SOLO FACADE
+    private final UiFacade ui = AppContext.getInstance().getUiFacade();
 
-	// SERVIZIO
-	private final GestorePrenotazioniImpl gestorePrenotazioni = new GestorePrenotazioniImpl(prenDAO, veicoloDAO,
-			utenteDAO, new SistemaNotifiche(notificaDAO, utenteDAO));
+    private final Map<Integer, Utente> cacheUtenti = new HashMap<>();
+    private PrenotazioniViewHelper view;
 
-	// CACHE UTENTI
-	private Map<Integer, Utente> cacheUtenti;
+    @Override
+    public void setUtente(Utente user) {
+        this.utenteLoggato = user;
 
-	private final DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        // helper UI
+        this.view = new PrenotazioniViewHelper(cacheUtenti);
 
-	// ============================================================
-	// INIT
-	// ============================================================
-	public void setUtente(Utente user) {
-		this.utenteLoggato = user;
+        ui.aggiornaStatiPrenotazioni();
 
-		caricaCacheUtenti();
-		configuraUI();
-		gestorePrenotazioni.aggiornaStatiPrenotazioni();
-		tablePrenotazioni.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        caricaCacheUtenti();
 
-		caricaDati();
+        view.configuraColonne(colId, colVeicolo, colDriver, colInizio, colFine, colStato, colTipo);
+        view.impostaUIByRuolo(utenteLoggato, lblDescrizioneRuolo, btnNuova, btnConferma, btnCompleta);
+        view.aggiornaBottoni(utenteLoggato, null, btnConferma, btnCompleta, btnAnnulla);
 
-		// Listener sulla selezione della tabella
-		tablePrenotazioni.getSelectionModel().selectedItemProperty()
-				.addListener((obs, oldSel, newSel) -> aggiornaBottoni(newSel));
-	}
+        tablePrenotazioni.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-	// ============================================================
-	// CACHE UTENTI
-	// ============================================================
-	private void caricaCacheUtenti() {
-		cacheUtenti = new HashMap<>();
-		for (Utente u : utenteDAO.getTuttiUtenti()) {
-			cacheUtenti.put(u.getIdUtente(), u);
-		}
-	}
+        caricaDati();
 
-	// ============================================================
-	// CONFIGURA UI
-	// ============================================================
-	private void configuraUI() {
+        tablePrenotazioni.getSelectionModel().selectedItemProperty()
+                .addListener((obs, oldSel, newSel) -> view.aggiornaBottoni(utenteLoggato, newSel, btnConferma, btnCompleta, btnAnnulla));
+    }
 
-		colId.setCellValueFactory(c -> new SimpleStringProperty("" + c.getValue().getIdPrenotazione()));
-		colVeicolo.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getTarga()));
+    private void caricaCacheUtenti() {
+        cacheUtenti.clear();
+        cacheUtenti.putAll(ui.getUtentiById());
+    }
 
-		colDriver.setCellValueFactory(c -> {
-			Utente u = cacheUtenti.get(c.getValue().getIdUtente());
-			return new SimpleStringProperty(u.getNome() + " " + u.getCognome());
-		});
+    private void caricaDati() {
+        List<Prenotazione> lista = ui.getPrenotazioniVisibiliOrdinare(utenteLoggato);
+        tablePrenotazioni.getItems().setAll(lista);
+    }
 
-		colInizio.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getDataInizio().format(fmt)));
-		colFine.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getDataFine().format(fmt)));
-		colStato.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getStato().name()));
-		colTipo.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getTipoPrenotazione().name()));
+    @FXML
+    private void onNuovaPrenotazione() {
+        SceneManager.changeScene("/ui/views/prenotazioni/NuovaPrenotazioneView.fxml", utenteLoggato);
+    }
 
-		if (utenteLoggato.getRuoloUtente() == RuoloUtente.MANAGER) {
-			lblDescrizioneRuolo.setText("Visualizzazione completa prenotazioni - Manager");
-			btnConferma.setVisible(true);
-			btnCompleta.setVisible(true);
-			btnNuova.setVisible(false);
-		} else {
-			lblDescrizioneRuolo.setText("Le mie prenotazioni");
-			btnNuova.setVisible(true);
-			btnConferma.setVisible(false);
-			btnCompleta.setVisible(false);
-		}
+    @FXML
+    private void onConferma() {
+        Prenotazione sel = getSelOrError();
+        if (sel == null) return;
 
-		// Disabilita tutto finché non è selezionato nulla
-		aggiornaBottoni(null);
-	}
+        ui.confermaPrenotazione(sel.getIdPrenotazione(), utenteLoggato);
+        view.mostraInfo("Prenotazione confermata.");
+        caricaDati();
+    }
 
-	// ============================================================
-	// CARICAMENTO DATI
-	// ============================================================
-	private void caricaDati() {
-		List<Prenotazione> tutte = prenDAO.findAll();
+    @FXML
+    private void onCompleta() {
+        Prenotazione sel = getSelOrError();
+        if (sel == null) return;
 
-		if (utenteLoggato.getRuoloUtente() == RuoloUtente.DRIVER) {
-			tutte = tutte.stream().filter(p -> p.getIdUtente() == utenteLoggato.getIdUtente())
-					.collect(Collectors.toList());
-		}
+        ui.completaPrenotazione(sel.getIdPrenotazione());
+        view.mostraInfo("Prenotazione completata.");
+        caricaDati();
+    }
 
-		tutte.sort((a, b) -> {
-			int cmp = Integer.compare(priorita(a), priorita(b));
-			return (cmp != 0) ? cmp : confrontoTemporale(a, b);
-		});
+    @FXML
+    private void onAnnulla() {
+        Prenotazione sel = getSelOrError();
+        if (sel == null) return;
 
-		tablePrenotazioni.getItems().setAll(tutte);
-	}
+        ui.annullaPrenotazione(sel.getIdPrenotazione(), utenteLoggato);
+        view.mostraInfo("Prenotazione annullata.");
+        caricaDati();
+    }
 
-	private int priorita(Prenotazione p) {
-		StatoPrenotazione s = p.getStato();
+    private Prenotazione getSelOrError() {
+        Prenotazione p = tablePrenotazioni.getSelectionModel().getSelectedItem();
+        if (p == null) view.mostraErrore("Seleziona una prenotazione.");
+        return p;
+    }
 
-		if (utenteLoggato.getRuoloUtente() == RuoloUtente.MANAGER) {
-			return switch (s) {
-			case RICHIESTA -> 1;
-			case ATTIVA -> 2;
-			case CONFERMATA -> 3;
-			case COMPLETATA -> 4;
-			case ANNULLATA -> 5;
-			};
-		}
+    @FXML
+    private void onRefreshClick() {
+        loadingIndicator.setVisible(true);
 
-		return switch (s) {
-		case ATTIVA -> 1;
-		case RICHIESTA -> 2;
-		case CONFERMATA -> 3;
-		case COMPLETATA -> 4;
-		case ANNULLATA -> 5;
-		};
-	}
+        Task<Void> task = new Task<>() {
+            @Override
+            protected Void call() {
+                ui.aggiornaStatiPrenotazioni();
+                return null;
+            }
+        };
 
-	private int confrontoTemporale(Prenotazione a, Prenotazione b) {
-		LocalDateTime now = LocalDateTime.now();
-		LocalDateTime ta = a.getDataInizio().isAfter(now) ? a.getDataInizio() : a.getDataFine();
-		LocalDateTime tb = b.getDataInizio().isAfter(now) ? b.getDataInizio() : b.getDataFine();
-		return ta.compareTo(tb);
-	}
+        task.setOnSucceeded(e -> {
+            caricaCacheUtenti();
+            caricaDati();
+            loadingIndicator.setVisible(false);
+        });
 
-	// ============================================================
-	// AGGIORNA BOTTONI DINAMICAMENTE
-	// ============================================================
-	private void aggiornaBottoni(Prenotazione p) {
+        task.setOnFailed(e -> {
+            loadingIndicator.setVisible(false);
+            view.mostraErrore("Errore durante l'aggiornamento.");
+        });
 
-		// Nessuna selezione → disabilita tutto
-		if (p == null) {
-			btnConferma.setVisible(false);
-			btnConferma.setManaged(false);
+        new Thread(task).start();
+    }
 
-			btnCompleta.setVisible(false);
-			btnCompleta.setManaged(false);
-
-			btnAnnulla.setDisable(true);
-			return;
-		}
-
-		StatoPrenotazione stato = p.getStato();
-
-		// ==========================================================
-		// MANAGER
-		// ==========================================================
-		if (utenteLoggato.getRuoloUtente() == RuoloUtente.MANAGER) {
-
-			// CONFERMA → solo richieste
-			boolean confermabile = stato == StatoPrenotazione.RICHIESTA;
-			btnConferma.setVisible(confermabile);
-			btnConferma.setManaged(confermabile);
-			btnConferma.setDisable(!confermabile);
-
-			// COMPLETA → solo attiva
-			boolean completabile = stato == StatoPrenotazione.ATTIVA;
-			btnCompleta.setVisible(completabile);
-			btnCompleta.setManaged(completabile);
-			btnCompleta.setDisable(!completabile);
-
-			// ANNULLA → richiesta o confermata
-			boolean annullabile = (stato == StatoPrenotazione.RICHIESTA || stato == StatoPrenotazione.CONFERMATA);
-			btnAnnulla.setDisable(!annullabile);
-
-			return;
-		}
-
-		// ==========================================================
-		// DRIVER
-		// ==========================================================
-		if (utenteLoggato.getRuoloUtente() == RuoloUtente.DRIVER) {
-
-			// Nasconde i pulsanti manager
-			btnConferma.setVisible(false);
-			btnConferma.setManaged(false);
-
-			btnCompleta.setVisible(false);
-			btnCompleta.setManaged(false);
-
-			// Annulla → solo per proprie prenotazioni in stati ammessi
-			if (p.getIdUtente() != utenteLoggato.getIdUtente()) {
-				btnAnnulla.setDisable(true);
-			} else {
-				boolean ann = (stato == StatoPrenotazione.RICHIESTA || stato == StatoPrenotazione.CONFERMATA);
-				btnAnnulla.setDisable(!ann);
-			}
-		}
-	}
-
-	// ============================================================
-	// BOTTONI AZIONI
-	// ============================================================
-	@FXML
-	private void onNuovaPrenotazione() {
-		var ctrl = SceneManager.changeSceneWithController("/ui/views/prenotazioni/NuovaPrenotazioneView.fxml");
-		((NuovaPrenotazioneController) ctrl).setUtente(utenteLoggato);
-	}
-
-	@FXML
-	private void onConferma() {
-		Prenotazione sel = getSel();
-		if (sel == null)
-			return;
-
-		gestorePrenotazioni.confermaPrenotazione(sel.getIdPrenotazione(), utenteLoggato);
-		mostraInfo("Prenotazione confermata.");
-		caricaDati();
-	}
-
-	@FXML
-	private void onCompleta() {
-		Prenotazione sel = getSel();
-		if (sel == null)
-			return;
-
-		gestorePrenotazioni.completaPrenotazione(sel.getIdPrenotazione());
-		mostraInfo("Prenotazione completata.");
-		caricaDati();
-	}
-
-	@FXML
-	private void onAnnulla() {
-		Prenotazione sel = getSel();
-		if (sel == null)
-			return;
-
-		gestorePrenotazioni.annullaPrenotazione(sel.getIdPrenotazione(), utenteLoggato);
-		mostraInfo("Prenotazione annullata.");
-		caricaDati();
-	}
-
-	private Prenotazione getSel() {
-		Prenotazione p = tablePrenotazioni.getSelectionModel().getSelectedItem();
-		if (p == null)
-			mostraErrore("Seleziona una prenotazione.");
-		return p;
-	}
-
-	// ============================================================
-	// REFRESH
-	// ============================================================
-	@FXML
-	private void onRefreshClick() {
-		loadingIndicator.setVisible(true);
-
-		Task<Void> task = new Task<>() {
-			@Override
-			protected Void call() {
-				gestorePrenotazioni.aggiornaStatiPrenotazioni();
-				return null;
-			}
-		};
-
-		task.setOnSucceeded(e -> {
-			caricaDati();
-			loadingIndicator.setVisible(false);
-		});
-
-		task.setOnFailed(e -> {
-			loadingIndicator.setVisible(false);
-			mostraErrore("Errore durante l'aggiornamento.");
-		});
-
-		new Thread(task).start();
-	}
-
-	// ============================================================
-	// NAVIGAZIONE
-	// ============================================================
-	@FXML
-	private void onBack() {
-		if (utenteLoggato.getRuoloUtente() == RuoloUtente.MANAGER) {
-			var ctrl = (ManagerDashboardController) SceneManager
-					.changeSceneWithController("/ui/views/dashboards/ManagerDashboard.fxml");
-			ctrl.setUtente(utenteLoggato);
-		} else {
-			var ctrl = (DriverDashboardController) SceneManager
-					.changeSceneWithController("/ui/views/dashboards/DriverDashboard.fxml");
-			ctrl.setUtente(utenteLoggato);
-		}
-	}
-
-	// ============================================================
-	// ALERT
-	// ============================================================
-	private void mostraErrore(String msg) {
-		Alert a = new Alert(Alert.AlertType.ERROR);
-		a.setHeaderText("Errore");
-		a.setContentText(msg);
-		a.show();
-	}
-
-	private void mostraInfo(String msg) {
-		Alert a = new Alert(Alert.AlertType.INFORMATION);
-		a.setHeaderText("Operazione completata");
-		a.setContentText(msg);
-		a.show();
-	}
+    @FXML
+    private void onBack() {
+        if (view.isManager(utenteLoggato)) {
+            SceneManager.changeScene("/ui/views/dashboards/ManagerDashboard.fxml", utenteLoggato);
+        } else {
+            SceneManager.changeScene("/ui/views/dashboards/DriverDashboard.fxml", utenteLoggato);
+        }
+    }
 }

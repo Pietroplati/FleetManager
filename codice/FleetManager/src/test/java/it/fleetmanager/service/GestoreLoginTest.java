@@ -6,11 +6,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import it.fleetmanager.model.Utente;
+import it.fleetmanager.repository.DatabaseTestUtils;
 import it.fleetmanager.repository.dao.UtenteDAO;
+import it.fleetmanager.repository.db.H2DatabaseManager;
 import it.fleetmanager.repository.impl.UtenteDAOImpl;
-import it.fleetmanager.repository.util.H2DatabaseManager;
 import it.fleetmanager.service.impl.GestoreLoginImpl;
-import it.fleetmanager.util.DatabaseTestUtils;
 import it.fleetmanager.util.RuoloUtente;
 
 public class GestoreLoginTest {

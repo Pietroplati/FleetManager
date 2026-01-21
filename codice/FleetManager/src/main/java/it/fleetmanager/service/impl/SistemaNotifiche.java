@@ -1,4 +1,4 @@
-package it.fleetmanager.util;
+package it.fleetmanager.service.impl;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -9,6 +9,7 @@ import it.fleetmanager.model.Scadenza;
 import it.fleetmanager.model.Utente;
 import it.fleetmanager.repository.dao.NotificaDAO;
 import it.fleetmanager.repository.dao.UtenteDAO;
+import it.fleetmanager.util.TipoNotifica;
 
 public class SistemaNotifiche {
 
@@ -22,9 +23,7 @@ public class SistemaNotifiche {
 		this.utenteDAO = utenteDAO;
 	}
 
-	// ------------------------------------------------------------
 	// Utility
-	// ------------------------------------------------------------
 	private void salva(Notifica n) {
 		notificaDAO.save(n);
 	}
@@ -33,9 +32,7 @@ public class SistemaNotifiche {
 		return utenteDAO.getManager();
 	}
 
-	// ------------------------------------------------------------
 	// SCADENZE
-	// ------------------------------------------------------------
 	public void inviaNotificaScadenza(Scadenza s) {
 
 		Utente manager = getManager();
@@ -51,11 +48,10 @@ public class SistemaNotifiche {
 				s.getIdScadenza()));
 	}
 
-	// ------------------------------------------------------------
-	// PRENOTAZIONI
-	// ------------------------------------------------------------
 
-	// 1️⃣ Richiesta prenotazione → Manager
+	// PRENOTAZIONI
+
+	//Richiesta prenotazione → Manager
 	public void notificaRichiestaPrenotazione(Utente driver, Prenotazione p) {
 
 		Utente manager = getManager();
@@ -72,7 +68,7 @@ public class SistemaNotifiche {
 				null));
 	}
 
-	// 2️⃣ Conferma → Driver
+	//Conferma → Driver
 	public void notificaConfermaPrenotazione(Utente driver, Prenotazione p) {
 
 		String msg = """
@@ -85,7 +81,7 @@ public class SistemaNotifiche {
 				null));
 	}
 
-	// 3️⃣ Rifiuto → Driver
+	//Rifiuto → Driver
 	public void notificaRifiutoPrenotazione(Utente driver, Prenotazione p) {
 
 		String msg = """
@@ -98,7 +94,7 @@ public class SistemaNotifiche {
 				null));
 	}
 
-	// 4️⃣ Driver annulla prenotazione → Manager
+	//Driver annulla prenotazione → Manager
 	public void notificaAnnullamentoPrenotazioneDaDriver(Utente driver, Prenotazione p) {
 
 		Utente manager = getManager();
@@ -113,9 +109,7 @@ public class SistemaNotifiche {
 				null));
 	}
 
-	// ------------------------------------------------------------
-	// MANUTENZIONI (stile semplice per ora)
-	// ------------------------------------------------------------
+
 	public void notificaManutenzioneProgrammata(int idUtente, String targa, LocalDateTime data) {
 
 		String msg = """

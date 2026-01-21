@@ -12,18 +12,18 @@ import org.junit.jupiter.api.Test;
 import it.fleetmanager.model.Notifica;
 import it.fleetmanager.model.Scadenza;
 import it.fleetmanager.model.Veicolo;
+import it.fleetmanager.repository.DatabaseTestUtils;
 import it.fleetmanager.repository.dao.NotificaDAO;
 import it.fleetmanager.repository.dao.ScadenzaDAO;
 import it.fleetmanager.repository.dao.UtenteDAO;
 import it.fleetmanager.repository.dao.VeicoloDAO;
+import it.fleetmanager.repository.db.H2DatabaseManager;
 import it.fleetmanager.repository.impl.NotificaDAOImpl;
 import it.fleetmanager.repository.impl.ScadenzaDAOImpl;
 import it.fleetmanager.repository.impl.UtenteDAOImpl;
 import it.fleetmanager.repository.impl.VeicoloDAOImpl;
-import it.fleetmanager.util.DatabaseTestUtils;
-import it.fleetmanager.repository.util.H2DatabaseManager;
 import it.fleetmanager.service.impl.GestoreScadenzeImpl;
-import it.fleetmanager.util.SistemaNotifiche;
+import it.fleetmanager.service.impl.SistemaNotifiche;
 import it.fleetmanager.util.StatoVeicolo;
 import it.fleetmanager.util.TipoScadenza;
 import it.fleetmanager.util.TipoVeicolo;
@@ -43,7 +43,7 @@ public class GestoreScadenzeTest {
     @BeforeEach
     void setup() throws Exception {
 
-        // 🔥 reset DB H2 in RAM
+        //reset DB H2 in RAM
         DatabaseTestUtils.resetDatabase();
 
         scadenzaDAO = new ScadenzaDAOImpl(H2DatabaseManager.getInstance());
@@ -60,7 +60,7 @@ public class GestoreScadenzeTest {
                 utenteDAO, sistemaNotifiche
         );
 
-        // ✅ TARGA UNICA e ≤ 10 caratteri
+        //TARGA UNICA e ≤ 10 caratteri
         targaTest = UUID.randomUUID()
                 .toString()
                 .replace("-", "")

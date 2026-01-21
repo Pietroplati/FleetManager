@@ -9,12 +9,13 @@ import java.util.List;
 
 import it.fleetmanager.model.Manutenzione;
 import it.fleetmanager.repository.dao.ManutenzioneDAO;
-import it.fleetmanager.repository.util.H2DatabaseManager;
+import it.fleetmanager.repository.db.ConnectionProvider;
 import it.fleetmanager.util.TipoManutenzione;
 
 public class ManutenzioneDAOImpl implements ManutenzioneDAO {
 
-	private final H2DatabaseManager db;
+
+	private final ConnectionProvider db;
 
 	public static final Manutenzione MANUTENZIONE_INESISTENTE = new Manutenzione(-1, LocalDateTime.MIN,
 			TipoManutenzione.ORDINARIA, "N/A", "N/A") {
@@ -24,7 +25,7 @@ public class ManutenzioneDAOImpl implements ManutenzioneDAO {
 		}
 	};
 
-	public ManutenzioneDAOImpl(H2DatabaseManager db) {
+	public ManutenzioneDAOImpl(ConnectionProvider db) {
 		this.db = db;
 	}
 

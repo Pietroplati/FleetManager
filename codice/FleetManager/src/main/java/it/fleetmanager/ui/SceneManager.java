@@ -1,80 +1,93 @@
 package it.fleetmanager.ui;
 
+import it.fleetmanager.model.Utente;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 public class SceneManager {
 
-	private static Stage primaryStage;
+    private static Stage primaryStage;
 
-	// Dimensioni dello schermo
-	private static double screenWidth;
-	private static double screenHeight;
+    private static double screenWidth;
+    private static double screenHeight;
 
-	// ============================================================
-	// INIZIALIZZAZIONE DIMENSIONI SCHERMO
-	// ============================================================
-	public static void initializeScreenSize() {
-		Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
-		screenWidth = bounds.getWidth();
-		screenHeight = bounds.getHeight();
+    // ============================================================
+    // INIT SCHERMO
+    public static void initializeScreenSize() {
+        Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
+        screenWidth = bounds.getWidth();
+        screenHeight = bounds.getHeight();
 
-		System.out.println("[SceneManager] Dimensioni schermo: " + screenWidth + " x " + screenHeight);
-	}
+        System.out.println("[SceneManager] Dimensioni schermo: " + screenWidth + " x " + screenHeight);
+    }
 
-	public static double getScreenWidth() {
-		return screenWidth;
-	}
+    public static void setPrimaryStage(Stage stage) {
+        primaryStage = stage;
+        System.out.println("[SceneManager] primaryStage impostato.");
+    }
 
-	public static double getScreenHeight() {
-		return screenHeight;
-	}
+    // ============================================================
+    // API PUBBLICHE
+    public static void changeScene(String fxmlPath) {
+        switchScene(fxmlPath, null, false);
+    }
 
-	// ============================================================
-	// SET STAGE PRIMARIO
-	// ============================================================
-	public static void setPrimaryStage(Stage stage) {
-		primaryStage = stage;
-		System.out.println("[SceneManager] primaryStage impostato.");
-	}
+    public static void changeScene(String fxmlPath, Utente utente) {
+        switchScene(fxmlPath, utente, false);
+    }
 
-	// ============================================================
-	// CAMBIO SCENA (SOLO VIEW)
-	// ============================================================
-	public static void changeScene(String fxmlPath) {
-		try {
-			FXMLLoader loader = new FXMLLoader(SceneManager.class.getResource(fxmlPath));
+    public static <T> T changeSceneWithController(String fxmlPath) {
+        return switchScene(fxmlPath, null, true);
+    }
 
-			Scene scene = new Scene(loader.load(), screenWidth, screenHeight);
+    public static <T> T changeSceneWithController(String fxmlPath, Utente utente) {
+        return switchScene(fxmlPath, utente, true);
+    }
 
-			primaryStage.setScene(scene);
+    // ============================================================
+    // IMPLEMENTAZIONE UNICA (no duplicazioni)
+    @SuppressWarnings("unchecked")
+    private static <T> T switchScene(String fxmlPath, Utente utente, boolean returnController) {
+        try {
+            ensureInitialized();
 
-		} catch (Exception e) {
-			System.err.println("[SceneManager] Errore changeScene: " + e.getMessage());
-			e.printStackTrace();
-		}
-	}
+            FXMLLoader loader = new FXMLLoader(SceneManager.class.getResource(fxmlPath));
+            Parent root = loader.load();
 
-	// ============================================================
-	// CAMBIO SCENA CON CONTROLLER
-	// ============================================================
-	public static <T> T changeSceneWithController(String fxmlPath) {
-		try {
-			FXMLLoader loader = new FXMLLoader(SceneManager.class.getResource(fxmlPath));
+            Object controller = loader.getController();
+            if (utente != null && controller instanceof UserAwareController uac) {
+                uac.setUtente(utente);
+            }
 
-			Scene scene = new Scene(loader.load(), screenWidth, screenHeight);
+            Scene scene = new Scene(root, screenWidth, screenHeight);
+            primaryStage.setScene(scene);
 
-			primaryStage.setScene(scene);
+            return returnController ? (T) controller : null;
 
-			return loader.getController();
+        } catch (Exception e) {
+            System.err.println("[SceneManager] Errore cambio scena (" + fxmlPath + "): " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
 
-		} catch (Exception e) {
-			System.err.println("[SceneManager] Errore changeSceneWithController: " + e.getMessage());
-			e.printStackTrace();
-			return null;
-		}
-	}
+    private static void ensureInitialized() {
+        if (primaryStage == null) {
+            throw new IllegalStateException("SceneManager: primaryStage non impostato. Chiama setPrimaryStage(stage).");
+        }
+        if (screenWidth <= 0 || screenHeight <= 0) {
+            // fallback: se ti sei dimenticato initializeScreenSize()
+            Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
+            screenWidth = bounds.getWidth();
+            screenHeight = bounds.getHeight();
+        }
+    }
+
+    // opzionali
+    public static double getScreenWidth() { return screenWidth; }
+    public static double getScreenHeight() { return screenHeight; }
 }

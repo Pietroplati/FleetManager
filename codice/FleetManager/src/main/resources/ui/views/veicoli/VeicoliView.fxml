@@ -9,61 +9,97 @@
             fx:controller="it.fleetmanager.ui.veicoli.VeicoliController"
             style="-fx-background-color: #e9f0f7;">
 
-    <!-- ==================== TOP ==================== -->
+    <!-- ====== HEADER ====== -->
     <top>
-        <VBox alignment="CENTER" spacing="10">
-            <padding>
-                <Insets top="20" right="20" bottom="20" left="20"/>
-            </padding>
-
+        <VBox alignment="CENTER" spacing="5"
+              style="-fx-padding: 25 0 15 0;">
             <Label text="Gestione Veicoli"
-                   style="-fx-font-size: 28; -fx-font-weight: bold; -fx-text-fill:#2f4773;"/>
+                   style="-fx-font-size: 30; -fx-font-weight: bold; -fx-text-fill:#2f4773;"/>
 
             <Label text="Visualizza e gestisci tutti i veicoli della flotta"
-                   style="-fx-font-size: 14; -fx-text-fill:#4a76a8;"/>
+                   style="-fx-font-size: 15; -fx-text-fill:#4a76a8;"/>
         </VBox>
     </top>
 
-    <!-- ==================== CENTER ==================== -->
+    <!-- ====== CENTRO ====== -->
     <center>
-        <VBox alignment="CENTER" spacing="20">
-            <padding>
-                <Insets top="20" right="20" bottom="20" left="20"/>
-            </padding>
+        <VBox alignment="CENTER" spacing="22">
 
-            <!-- TABELLONE -->
-            <TableView fx:id="tableVeicoli"
-                       prefWidth="900" prefHeight="450"
-                       style="-fx-background-radius: 10;">
+            <!-- ====== CARD TABELLA ====== -->
+            <VBox alignment="CENTER"
+                  prefWidth="1100"
+                  spacing="15"
+                  style="
+                        -fx-background-color: white;
+                        -fx-background-radius: 15;
+                        -fx-padding: 20;
+                        -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 15, 0.2, 0, 4);
+                  ">
 
-                <columns>
-                    <TableColumn text="Targa" fx:id="colTarga" prefWidth="120"/>
-                    <TableColumn text="Tipo" fx:id="colTipo" prefWidth="120"/>
-                    <TableColumn text="Marca" fx:id="colMarca" prefWidth="150"/>
-                    <TableColumn text="Modello" fx:id="colModello" prefWidth="150"/>
-                    <TableColumn text="Anno" fx:id="colAnno" prefWidth="90"/>
-                    <TableColumn text="Stato" fx:id="colStato" prefWidth="150"/>
-                    <TableColumn text="Km" fx:id="colKm" prefWidth="90"/>
-                </columns>
-            </TableView>
+                <TableView fx:id="tableVeicoli"
+                           prefWidth="1050"
+                           prefHeight="430"
+                           style="-fx-background-radius: 10;"
+                           VBox.vgrow="NEVER">
+                    <columns>
+                        <TableColumn text="Targa" fx:id="colTarga" prefWidth="120"/>
+                        <TableColumn text="Tipo" fx:id="colTipo" prefWidth="120"/>
+                        <TableColumn text="Marca" fx:id="colMarca" prefWidth="150"/>
+                        <TableColumn text="Modello" fx:id="colModello" prefWidth="150"/>
+                        <TableColumn text="Anno" fx:id="colAnno" prefWidth="90"/>
+                        <TableColumn text="Stato" fx:id="colStato" prefWidth="150"/>
+                        <TableColumn text="Km" fx:id="colKm" prefWidth="90"/>
+                    </columns>
+                </TableView>
 
-            <!-- PULSANTI -->
+            </VBox>
+
+            <!-- ====== BOTTONI (più agio + stacco dal bordo) ====== -->
             <HBox alignment="CENTER" spacing="20">
+                <padding>
+                    <!-- questo è lo "stacco" dal bordo inferiore -->
+                    <Insets top="5" right="0" bottom="25" left="0"/>
+                </padding>
+
                 <Button text="Aggiungi veicolo" onAction="#onAggiungi"
                         prefWidth="200"
-                        style="-fx-background-color:#4a76a8; -fx-text-fill:white; -fx-background-radius:10;"/>
+                        style="
+                            -fx-background-radius: 10;
+                            -fx-font-size: 16;
+                            -fx-font-weight: bold;
+                            -fx-text-fill: white;
+                            -fx-background-color: linear-gradient(to right,#4a76a8,#2f4773);
+                        "/>
 
                 <Button text="Modifica" onAction="#onModifica"
                         prefWidth="200"
-                        style="-fx-background-color:#5e8bbf; -fx-text-fill:white; -fx-background-radius:10;"/>
+                        style="
+                            -fx-background-radius: 10;
+                            -fx-font-size: 16;
+                            -fx-font-weight: bold;
+                            -fx-text-fill: white;
+                            -fx-background-color: linear-gradient(to right,#5e8bbf,#466c9c);
+                        "/>
 
                 <Button text="Elimina" onAction="#onElimina"
                         prefWidth="200"
-                        style="-fx-background-color:#8fb3d6; -fx-text-fill:white; -fx-background-radius:10;"/>
+                        style="
+                            -fx-background-radius: 10;
+                            -fx-font-size: 16;
+                            -fx-font-weight: bold;
+                            -fx-text-fill: white;
+                            -fx-background-color: linear-gradient(to right,#8fb3d6,#5e8bbf);
+                        "/>
 
                 <Button text="Indietro" onAction="#onBack"
                         prefWidth="200"
-                        style="-fx-background-color:#92aac4; -fx-text-fill:white; -fx-background-radius:10;"/>
+                        style="
+                            -fx-background-radius: 10;
+                            -fx-font-size: 16;
+                            -fx-font-weight: bold;
+                            -fx-text-fill: white;
+                            -fx-background-color: linear-gradient(to right,#b2c7db,#92aac4);
+                        "/>
             </HBox>
 
         </VBox>

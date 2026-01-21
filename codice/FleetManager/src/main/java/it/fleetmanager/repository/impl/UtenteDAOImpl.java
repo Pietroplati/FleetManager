@@ -9,12 +9,12 @@ import java.util.List;
 
 import it.fleetmanager.model.Utente;
 import it.fleetmanager.repository.dao.UtenteDAO;
-import it.fleetmanager.repository.util.H2DatabaseManager;
+import it.fleetmanager.repository.db.ConnectionProvider;
 import it.fleetmanager.util.RuoloUtente;
 
 public class UtenteDAOImpl implements UtenteDAO {
 
-	private final H2DatabaseManager db;
+	private final ConnectionProvider db;
 
 	public static final Utente UTENTE_INESISTENTE = new Utente(-1, "N/A", "N/A", "N/A", "N/A", RuoloUtente.MANAGER) {
 		@Override
@@ -23,7 +23,7 @@ public class UtenteDAOImpl implements UtenteDAO {
 		}
 	};
 
-	public UtenteDAOImpl(H2DatabaseManager db) {
+	public UtenteDAOImpl(ConnectionProvider db) {
 		this.db = db;
 	}
 
