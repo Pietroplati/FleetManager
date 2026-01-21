@@ -1,0 +1,50 @@
+@startuml
+group seq
+Manager -> ManagerDashboardController: onGestisciPrenotazioni()
+ManagerDashboardController -> SceneManager: changeScene("PrenotazioniView.fxml", utente)
+SceneManager -> SceneManager: switchScene(fxmlPath, utente, false)
+
+alt prenotazioneConfermata
+Manager -> PrenotazioniController: onConferma()
+PrenotazioniController -> UiFacade: confermaPrenotazione(idPrenotazione, utenteLoggato)
+UiFacade -> GestorePrenotazioni: confermaPrenotazione(idPrenotazione, manager)
+GestorePrenotazioni -> PrenotazioneDAO: getById(idPrenotazione)
+PrenotazioneDAO --> GestorePrenotazioni: prenotazione
+GestorePrenotazioni -> Prenotazione: setStato(CONFERMATA)
+GestorePrenotazioni -> PrenotazioneDAO: update(prenotazione)
+PrenotazioneDAO -> PrenotazioneDAO: inTransaction("update", conn)
+PrenotazioneDAO -> DataBase: commit()
+PrenotazioneDAO -> UtenteDAO: getUtenteById(prenotazione.getIdUtente())
+UtenteDAO --> PrenotazioneDAO: driver
+PrenotazioneDAO -> SistemaNotifiche: notificaConfermaPrenotazione(driver, prenotazione)
+SistemaNotifiche -> SistemaNotifiche: salva()
+SistemaNotifiche -> Notifica **: create
+
+else prenotazioneNonConfermata
+Manager -> PrenotazioniController: onAnnulla()
+PrenotazioniController -> UiFacade: annullaPrenotazione(idPrenotazione, utenteLoggato)
+UiFacade -> GestorePrenotazioni: annullaPrenotazione(idPrenotazione, utenteLoggato)
+GestorePrenotazioni -> PrenotazioneDAO: getById(idPrenotazione)
+PrenotazioneDAO --> GestorePrenotazioni: prenotazione
+GestorePrenotazioni -> Prenotazione: setStato(ANNULLATA)
+GestorePrenotazioni -> PrenotazioneDAO: update(prenotazione)
+PrenotazioneDAO -> PrenotazioneDAO: inTransaction("update", conn)
+PrenotazioneDAO -> DataBase: commit()
+PrenotazioneDAO -> UtenteDAO: getUtenteById(prenotazione.getIdUtente())
+UtenteDAO --> PrenotazioneDAO: driver
+
+alt utenteLoggato.getRuoloUtente() == MANAGER
+GestorePrenotazioni -> SistemaNotifiche: notificaRifiutoPrenotazione(driver, prenotazione)
+SistemaNotifiche -> SistemaNotifiche: salva()
+SistemaNotifiche -> Notifica **: create
+
+else utenteLoggato.getRuoloUtente() == DRIVER
+GestorePrenotazioni -> SistemaNotifiche: notificaAnnullamentoPrenotazioneDaDriver(driver, prenotazione)
+SistemaNotifiche -> SistemaNotifiche: salva()
+SistemaNotifiche -> Notifica **: create
+end
+
+end
+
+end
+@enduml
