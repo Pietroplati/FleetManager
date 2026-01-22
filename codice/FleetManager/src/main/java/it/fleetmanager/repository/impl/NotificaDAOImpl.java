@@ -3,11 +3,15 @@ package it.fleetmanager.repository.impl;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Types;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import it.fleetmanager.model.Notifica;
 import it.fleetmanager.repository.dao.NotificaDAO;
@@ -16,7 +20,9 @@ import it.fleetmanager.util.TipoNotifica;
 
 public class NotificaDAOImpl implements NotificaDAO {
 
-	private final ConnectionProvider db;
+    private static final Logger logger = LogManager.getLogger(NotificaDAOImpl.class);
+
+    private final ConnectionProvider db;
 
     public static final Notifica NOTIFICA_INESISTENTE = new Notifica(
             -1,
@@ -37,7 +43,7 @@ public class NotificaDAOImpl implements NotificaDAO {
         this.db = db;
     }
 
-    private Notifica mapResultSet(ResultSet rs) throws Exception {
+    private Notifica mapResultSet(ResultSet rs) throws SQLException {
 
         int id = rs.getInt("idNotifica");
         TipoNotifica tipo = TipoNotifica.valueOf(rs.getString("tipoNotifica"));
@@ -45,13 +51,15 @@ public class NotificaDAOImpl implements NotificaDAO {
         LocalDateTime dataInvio = rs.getTimestamp("dataInvio").toLocalDateTime();
         boolean letta = rs.getBoolean("letta");
         int idUtente = rs.getInt("idUtente");
-
         Integer idScadenza = rs.getObject("idScadenza", Integer.class);
 
         return new Notifica(id, tipo, messaggio, dataInvio, letta, idUtente, idScadenza);
     }
 
+    // =====================
     // CRUD
+    // =====================
+
     @Override
     public void save(Notifica n) {
 
@@ -77,8 +85,8 @@ public class NotificaDAOImpl implements NotificaDAO {
 
             ps.executeUpdate();
 
-        } catch (Exception e) {
-            System.err.println("ERRORE SQL during save(): " + e.getMessage());
+        } catch (SQLException e) {
+            logger.error("ERRORE SQL durante save(): {}", e.getMessage(), e);
         }
     }
 
@@ -111,11 +119,10 @@ public class NotificaDAOImpl implements NotificaDAO {
                 ps.setNull(6, Types.INTEGER);
 
             ps.setInt(7, n.getIdNotifica());
-
             ps.executeUpdate();
 
-        } catch (Exception e) {
-            System.err.println("ERRORE SQL during update(): " + e.getMessage());
+        } catch (SQLException e) {
+            logger.error("ERRORE SQL durante update(): {}", e.getMessage(), e);
         }
     }
 
@@ -130,17 +137,20 @@ public class NotificaDAOImpl implements NotificaDAO {
             ps.setInt(1, idNotifica);
             ps.executeUpdate();
 
-        } catch (Exception e) {
-            System.err.println("ERRORE SQL during delete(): " + e.getMessage());
+        } catch (SQLException e) {
+            logger.error("ERRORE SQL durante delete(): {}", e.getMessage(), e);
         }
     }
 
+    // =====================
     // QUERY
+    // =====================
+
     @Override
     public Notifica getNotificaById(int idNotifica) {
 
         String sql = """
-            SELECT *
+            SELECT idNotifica, tipoNotifica, messaggio, dataInvio, letta, idUtente, idScadenza
             FROM Notifica
             WHERE idNotifica = ?
             """;
@@ -155,8 +165,8 @@ public class NotificaDAOImpl implements NotificaDAO {
                     return mapResultSet(rs);
             }
 
-        } catch (Exception e) {
-            System.err.println("ERRORE SQL during getNotificaById(): " + e.getMessage());
+        } catch (SQLException e) {
+            logger.error("ERRORE SQL durante getNotificaById(): {}", e.getMessage(), e);
         }
 
         return NOTIFICA_INESISTENTE;
@@ -166,7 +176,7 @@ public class NotificaDAOImpl implements NotificaDAO {
     public List<Notifica> findByUtente(int idUtente) {
 
         String sql = """
-            SELECT *
+            SELECT idNotifica, tipoNotifica, messaggio, dataInvio, letta, idUtente, idScadenza
             FROM Notifica
             WHERE idUtente = ?
             ORDER BY dataInvio DESC
@@ -184,8 +194,8 @@ public class NotificaDAOImpl implements NotificaDAO {
                     list.add(mapResultSet(rs));
             }
 
-        } catch (Exception e) {
-            System.err.println("ERRORE SQL during findByUtente(): " + e.getMessage());
+        } catch (SQLException e) {
+            logger.error("ERRORE SQL durante findByUtente(): {}", e.getMessage(), e);
         }
 
         return list;
@@ -195,7 +205,7 @@ public class NotificaDAOImpl implements NotificaDAO {
     public List<Notifica> findNonLette(int idUtente) {
 
         String sql = """
-            SELECT *
+            SELECT idNotifica, tipoNotifica, messaggio, dataInvio, letta, idUtente, idScadenza
             FROM Notifica
             WHERE idUtente = ? AND letta = FALSE
             ORDER BY dataInvio ASC
@@ -213,8 +223,8 @@ public class NotificaDAOImpl implements NotificaDAO {
                     list.add(mapResultSet(rs));
             }
 
-        } catch (Exception e) {
-            System.err.println("ERRORE SQL during findNonLette(): " + e.getMessage());
+        } catch (SQLException e) {
+            logger.error("ERRORE SQL durante findNonLette(): {}", e.getMessage(), e);
         }
 
         return list;
@@ -227,7 +237,7 @@ public class NotificaDAOImpl implements NotificaDAO {
             return Collections.emptyList();
 
         String sql = """
-            SELECT *
+            SELECT idNotifica, tipoNotifica, messaggio, dataInvio, letta, idUtente, idScadenza
             FROM Notifica
             WHERE idScadenza = ?
             ORDER BY dataInvio DESC
@@ -245,19 +255,19 @@ public class NotificaDAOImpl implements NotificaDAO {
                     list.add(mapResultSet(rs));
             }
 
-        } catch (Exception e) {
-            System.err.println("ERRORE SQL during findByScadenza(): " + e.getMessage());
+        } catch (SQLException e) {
+            logger.error("ERRORE SQL durante findByScadenza(): {}", e.getMessage(), e);
         }
 
         return list;
     }
 
-    //PER I MANAGER: TUTTE LE NOTIFICHE
+    // PER I MANAGER
     @Override
     public List<Notifica> findAll() {
 
         String sql = """
-            SELECT *
+            SELECT idNotifica, tipoNotifica, messaggio, dataInvio, letta, idUtente, idScadenza
             FROM Notifica
             ORDER BY dataInvio DESC
             """;
@@ -271,8 +281,8 @@ public class NotificaDAOImpl implements NotificaDAO {
             while (rs.next())
                 list.add(mapResultSet(rs));
 
-        } catch (Exception e) {
-            System.err.println("ERRORE SQL during findAll(): " + e.getMessage());
+        } catch (SQLException e) {
+            logger.error("ERRORE SQL durante findAll(): {}", e.getMessage(), e);
         }
 
         return list;

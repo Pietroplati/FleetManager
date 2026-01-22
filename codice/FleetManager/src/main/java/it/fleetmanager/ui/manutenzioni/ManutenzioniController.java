@@ -25,12 +25,14 @@ public class ManutenzioniController implements UserAwareController {
 	@FXML private TableColumn<Manutenzione, String> colTipo;
 	@FXML private TableColumn<Manutenzione, String> colDescrizione;
 
-	@FXML private Button btnNuova, btnChiudi;
+	@FXML private Button btnNuova;
+	@FXML private Button btnChiudi;
+
 	@FXML private Label lblDescrizioneRuolo;
 
 	private Utente utenteLoggato;
 
-	//SOLO facade
+	// SOLO facade
 	private final UiFacade ui = AppContext.getInstance().getUiFacade();
 
 	private final DateTimeFormatter fmtData = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -45,19 +47,31 @@ public class ManutenzioniController implements UserAwareController {
 
 	private void configuraUI() {
 
-		colId.setCellValueFactory(c -> new SimpleStringProperty(String.valueOf(c.getValue().getIdManutenzione())));
-		colTarga.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getTarga()));
+		colId.setCellValueFactory(c ->
+			new SimpleStringProperty(String.valueOf(c.getValue().getIdManutenzione()))
+		);
+		colTarga.setCellValueFactory(c ->
+			new SimpleStringProperty(c.getValue().getTarga())
+		);
 
-		colData.setCellValueFactory(c -> new SimpleStringProperty(
+		colData.setCellValueFactory(c ->
+			new SimpleStringProperty(
 				c.getValue().getData().toLocalDate().format(fmtData)
-		));
+			)
+		);
 
-		colOraInizio.setCellValueFactory(c -> new SimpleStringProperty(
+		colOraInizio.setCellValueFactory(c ->
+			new SimpleStringProperty(
 				c.getValue().getData().toLocalTime().format(fmtOra)
-		));
+			)
+		);
 
-		colTipo.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getTipoManutenzione().name()));
-		colDescrizione.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getDescrizione()));
+		colTipo.setCellValueFactory(c ->
+			new SimpleStringProperty(c.getValue().getTipoManutenzione().name())
+		);
+		colDescrizione.setCellValueFactory(c ->
+			new SimpleStringProperty(c.getValue().getDescrizione())
+		);
 
 		if (utenteLoggato.getRuoloUtente() == RuoloUtente.MANAGER) {
 			lblDescrizioneRuolo.setText("Gestione Manutenzioni - Manager");
@@ -69,7 +83,9 @@ public class ManutenzioniController implements UserAwareController {
 			btnChiudi.setManaged(false);
 		}
 
-		tableManutenzioni.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+		tableManutenzioni.setColumnResizePolicy(
+			TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN
+		);
 	}
 
 	private void caricaDati() {
@@ -79,7 +95,10 @@ public class ManutenzioniController implements UserAwareController {
 
 	@FXML
 	private void onNuovaManutenzione() {
-		SceneManager.changeScene("/ui/views/manutenzioni/NuovaManutenzioneView.fxml", utenteLoggato);
+		SceneManager.changeScene(
+			"/ui/views/manutenzioni/NuovaManutenzioneView.fxml",
+			utenteLoggato
+		);
 	}
 
 	@FXML
@@ -103,7 +122,10 @@ public class ManutenzioniController implements UserAwareController {
 
 	@FXML
 	private void onBack() {
-		SceneManager.changeScene("/ui/views/dashboards/ManagerDashboard.fxml", utenteLoggato);
+		SceneManager.changeScene(
+			"/ui/views/dashboards/ManagerDashboard.fxml",
+			utenteLoggato
+		);
 	}
 
 	private void mostraErrore(String msg) {

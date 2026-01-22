@@ -47,7 +47,7 @@ public class NotificaDAOImplTest {
 
         Notifica loaded = list.get(0);
 
-        assertNotNull(loaded.getIdNotifica());
+        assertTrue(loaded.getIdNotifica() >= 0);
         assertEquals(TipoNotifica.PRENOTAZIONE, loaded.getTipoNotifica());
         assertEquals("Prenotazione confermata", loaded.getMessaggio());
         assertFalse(loaded.getLetta());

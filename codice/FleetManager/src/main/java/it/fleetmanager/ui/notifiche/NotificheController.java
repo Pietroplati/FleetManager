@@ -4,7 +4,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
-import java.util.stream.Collectors;
 
 import it.fleetmanager.app.AppContext;
 import it.fleetmanager.model.Notifica;
@@ -37,7 +36,7 @@ public class NotificheController implements UserAwareController {
     @FXML private ProgressIndicator loadingIndicator;
     @FXML private Button btnVeicoloNonDisponibile;
 
-    //SOLO facade
+    // SOLO facade
     private final UiFacade ui = AppContext.getInstance().getUiFacade();
 
     private Utente utente;
@@ -49,7 +48,9 @@ public class NotificheController implements UserAwareController {
 
     @FXML
     private void initialize() {
-        tableNotifiche.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        tableNotifiche.setColumnResizePolicy(
+                TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN
+        );
         setupColumns();
         setupSelectionListener();
         btnVeicoloNonDisponibile.setVisible(false);
@@ -65,11 +66,21 @@ public class NotificheController implements UserAwareController {
 
     private void setupColumns() {
 
-        colId.setCellValueFactory(n -> new SimpleStringProperty(String.valueOf(n.getValue().getIdNotifica())));
-        colTipo.setCellValueFactory(n -> new SimpleStringProperty(n.getValue().getTipoNotifica().name()));
-        colMessaggio.setCellValueFactory(n -> new SimpleStringProperty(n.getValue().getMessaggio()));
-        colData.setCellValueFactory(n -> new SimpleStringProperty(n.getValue().getDataInvio().format(fmt)));
-        colLetta.setCellValueFactory(n -> new SimpleStringProperty(n.getValue().getLetta() ? "SI" : "NO"));
+        colId.setCellValueFactory(n ->
+                new SimpleStringProperty(String.valueOf(n.getValue().getIdNotifica()))
+        );
+        colTipo.setCellValueFactory(n ->
+                new SimpleStringProperty(n.getValue().getTipoNotifica().name())
+        );
+        colMessaggio.setCellValueFactory(n ->
+                new SimpleStringProperty(n.getValue().getMessaggio())
+        );
+        colData.setCellValueFactory(n ->
+                new SimpleStringProperty(n.getValue().getDataInvio().format(fmt))
+        );
+        colLetta.setCellValueFactory(n ->
+                new SimpleStringProperty(n.getValue().getLetta() ? "SI" : "NO")
+        );
     }
 
     private void setupSelectionListener() {
@@ -134,7 +145,7 @@ public class NotificheController implements UserAwareController {
                             Comparator.comparing(Notifica::getLetta)
                                     .thenComparing(Notifica::getDataInvio, Comparator.reverseOrder())
                     )
-                    .collect(Collectors.toList());
+                    .toList(); // <-- FIX SonarLint
 
             Platform.runLater(() -> {
                 notificheList.setAll(ordinate);

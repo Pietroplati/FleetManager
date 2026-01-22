@@ -86,12 +86,12 @@ public class AppContext {
 
     public synchronized GestorePrenotazioni getGestorePrenotazioni() {
         if (gestorePrenotazioni == null) {
-            gestorePrenotazioni = new GestorePrenotazioniImpl(
-                    prenotazioneDAO,
-                    veicoloDAO,
-                    utenteDAO,
-                    sistemaNotifiche
-            );
+            gestorePrenotazioni = gestorePrenotazioni = new GestorePrenotazioniImpl(
+            	    prenotazioneDAO,
+            	    utenteDAO,
+            	    sistemaNotifiche
+            	);
+;
         }
         return gestorePrenotazioni;
     }

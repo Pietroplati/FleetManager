@@ -15,6 +15,7 @@ public final class BootstrapDb {
     // Metti qui gli stessi valori che usi in H2DatabaseManager
     // (se usi file-based, metti il path; se usi in-memory, metti quello).
     private static final String URL  = "jdbc:h2:./fleetmanager;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE";
+    // H2 embedded DB senza password: uso locale / didattico
     private static final String USER = "sa";
     private static final String PASS = "";
 

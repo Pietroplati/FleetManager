@@ -3,6 +3,7 @@ package it.fleetmanager.repository.impl;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,179 +15,204 @@ import it.fleetmanager.util.TipoScadenza;
 
 public class ScadenzaDAOImpl implements ScadenzaDAO {
 
-	private final ConnectionProvider db;
+    private static final java.util.logging.Logger LOGGER =
+            java.util.logging.Logger.getLogger(ScadenzaDAOImpl.class.getName());
 
-	public static final Scadenza SCADENZA_INESISTENTE = new Scadenza(-1, TipoScadenza.BOLLO, LocalDate.MIN, false,
-			"N/A") {
-		@Override
-		public String toString() {
-			return "Scadenza inesistente";
-		}
-	};
+    private final ConnectionProvider db;
 
-	public ScadenzaDAOImpl(ConnectionProvider  db) {
-		this.db = db;
-	}
+    public static final Scadenza SCADENZA_INESISTENTE =
+            new Scadenza(-1, TipoScadenza.BOLLO, LocalDate.MIN, false, "N/A") {
+                @Override
+                public String toString() {
+                    return "Scadenza inesistente";
+                }
+            };
 
-	private Scadenza map(ResultSet rs) throws Exception {
-		int id = rs.getInt("idScadenza");
-		TipoScadenza tipo = TipoScadenza.valueOf(rs.getString("tipoScadenza"));
-		LocalDate data = rs.getDate("data").toLocalDate();
-		boolean notificata = rs.getBoolean("notificata");
-		String targa = rs.getString("targa");
-		return new Scadenza(id, tipo, data, notificata, targa);
-	}
+    public ScadenzaDAOImpl(ConnectionProvider db) {
+        this.db = db;
+    }
 
-	@Override
-	public void save(Scadenza s) {
-		String sql = """
-				INSERT INTO Scadenza
-				(idScadenza, tipoScadenza, data, notificata, targa)
-				VALUES (?, ?, ?, ?, ?)
-				""";
+    private Scadenza map(ResultSet rs) throws SQLException {
+        int id = rs.getInt("idScadenza");
+        TipoScadenza tipo = TipoScadenza.valueOf(rs.getString("tipoScadenza"));
+        LocalDate data = rs.getDate("data").toLocalDate();
+        boolean notificata = rs.getBoolean("notificata");
+        String targa = rs.getString("targa");
+        return new Scadenza(id, tipo, data, notificata, targa);
+    }
 
-		try (Connection conn = db.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+    @Override
+    public void save(Scadenza s) {
+        String sql = """
+                INSERT INTO Scadenza
+                (idScadenza, tipoScadenza, data, notificata, targa)
+                VALUES (?, ?, ?, ?, ?)
+                """;
 
-			ps.setInt(1, s.getIdScadenza());
-			ps.setString(2, s.getTipoScadenza().name());
-			ps.setDate(3, java.sql.Date.valueOf(s.getData()));
-			ps.setBoolean(4, s.getNotificata());
-			ps.setString(5, s.getTarga());
+        try (Connection conn = db.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
-			ps.executeUpdate();
+            ps.setInt(1, s.getIdScadenza());
+            ps.setString(2, s.getTipoScadenza().name());
+            ps.setDate(3, java.sql.Date.valueOf(s.getData()));
+            ps.setBoolean(4, s.getNotificata());
+            ps.setString(5, s.getTarga());
 
-		} catch (Exception e) {
-			System.err.println("ERRORE SQL save: " + e.getMessage());
-		}
-	}
+            ps.executeUpdate();
 
-	@Override
-	public void update(Scadenza s) {
-		String sql = """
-				UPDATE Scadenza SET
-				    tipoScadenza = ?,
-				    data = ?,
-				    notificata = ?,
-				    targa = ?
-				WHERE idScadenza = ?
-				""";
+        } catch (SQLException e) {
+            LOGGER.log(java.util.logging.Level.SEVERE, "Errore SQL save Scadenza", e);
+        }
+    }
 
-		try (Connection conn = db.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+    @Override
+    public void update(Scadenza s) {
+        String sql = """
+                UPDATE Scadenza SET
+                    tipoScadenza = ?,
+                    data = ?,
+                    notificata = ?,
+                    targa = ?
+                WHERE idScadenza = ?
+                """;
 
-			ps.setString(1, s.getTipoScadenza().name());
-			ps.setDate(2, java.sql.Date.valueOf(s.getData()));
-			ps.setBoolean(3, s.getNotificata());
-			ps.setString(4, s.getTarga());
-			ps.setInt(5, s.getIdScadenza());
+        try (Connection conn = db.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
-			ps.executeUpdate();
+            ps.setString(1, s.getTipoScadenza().name());
+            ps.setDate(2, java.sql.Date.valueOf(s.getData()));
+            ps.setBoolean(3, s.getNotificata());
+            ps.setString(4, s.getTarga());
+            ps.setInt(5, s.getIdScadenza());
 
-		} catch (Exception e) {
-			System.err.println("ERRORE SQL update: " + e.getMessage());
-		}
-	}
+            ps.executeUpdate();
 
-	@Override
-	public void delete(int id) {
-		String sql = "DELETE FROM Scadenza WHERE idScadenza = ?";
+        } catch (SQLException e) {
+            LOGGER.log(java.util.logging.Level.SEVERE, "Errore SQL update Scadenza", e);
+        }
+    }
 
-		try (Connection conn = db.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+    @Override
+    public void delete(int id) {
+        String sql = "DELETE FROM Scadenza WHERE idScadenza = ?";
 
-			ps.setInt(1, id);
-			ps.executeUpdate();
+        try (Connection conn = db.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
-		} catch (Exception e) {
-			System.err.println("ERRORE SQL delete: " + e.getMessage());
-		}
-	}
+            ps.setInt(1, id);
+            ps.executeUpdate();
 
-	@Override
-	public Scadenza getScadenzaById(int idScadenza) {
-		String sql = "SELECT * FROM Scadenza WHERE idScadenza = ?";
+        } catch (SQLException e) {
+            LOGGER.log(java.util.logging.Level.SEVERE, "Errore SQL delete Scadenza", e);
+        }
+    }
 
-		try (Connection conn = db.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+    @Override
+    public Scadenza getScadenzaById(int idScadenza) {
+        String sql = """
+                SELECT idScadenza, tipoScadenza, data, notificata, targa
+                FROM Scadenza
+                WHERE idScadenza = ?
+                """;
 
-			ps.setInt(1, idScadenza);
+        try (Connection conn = db.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
-			try (ResultSet rs = ps.executeQuery()) {
-				if (!rs.next())
-					return SCADENZA_INESISTENTE;
-				return map(rs);
-			}
+            ps.setInt(1, idScadenza);
 
-		} catch (Exception e) {
-			System.err.println("ERRORE SQL getScadenzaById: " + e.getMessage());
-			return SCADENZA_INESISTENTE;
-		}
-	}
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return map(rs);
+                }
+            }
 
-	@Override
-	public List<Scadenza> findProssimeScadenze(LocalDate finoA) {
-		String sql = """
-				SELECT * FROM Scadenza
-				WHERE data >= CURRENT_DATE AND data <= ?
-				ORDER BY data ASC
-				""";
+        } catch (SQLException e) {
+            LOGGER.log(java.util.logging.Level.SEVERE, "Errore SQL getScadenzaById", e);
+        }
 
-		List<Scadenza> lista = new ArrayList<>();
+        return SCADENZA_INESISTENTE;
+    }
 
-		try (Connection conn = db.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+    @Override
+    public List<Scadenza> findProssimeScadenze(LocalDate finoA) {
+        String sql = """
+                SELECT idScadenza, tipoScadenza, data, notificata, targa
+                FROM Scadenza
+                WHERE data >= CURRENT_DATE AND data <= ?
+                ORDER BY data ASC
+                """;
 
-			ps.setDate(1, java.sql.Date.valueOf(finoA));
+        List<Scadenza> lista = new ArrayList<>();
 
-			try (ResultSet rs = ps.executeQuery()) {
-				while (rs.next())
-					lista.add(map(rs));
-			}
+        try (Connection conn = db.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
-		} catch (Exception e) {
-			System.err.println("ERRORE SQL findProssimeScadenze: " + e.getMessage());
-		}
+            ps.setDate(1, java.sql.Date.valueOf(finoA));
 
-		return lista;
-	}
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    lista.add(map(rs));
+                }
+            }
 
-	@Override
-	public List<Scadenza> findByVeicolo(String targa) {
-		String sql = "SELECT * FROM Scadenza WHERE targa = ? ORDER BY data ASC";
-		List<Scadenza> lista = new ArrayList<>();
+        } catch (SQLException e) {
+            LOGGER.log(java.util.logging.Level.SEVERE, "Errore SQL findProssimeScadenze", e);
+        }
 
-		try (Connection conn = db.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        return lista;
+    }
 
-			ps.setString(1, targa);
+    @Override
+    public List<Scadenza> findByVeicolo(String targa) {
+        String sql = """
+                SELECT idScadenza, tipoScadenza, data, notificata, targa
+                FROM Scadenza
+                WHERE targa = ?
+                ORDER BY data ASC
+                """;
 
-			try (ResultSet rs = ps.executeQuery()) {
-				while (rs.next())
-					lista.add(map(rs));
-			}
+        List<Scadenza> lista = new ArrayList<>();
 
-		} catch (Exception e) {
-			System.err.println("ERRORE SQL findByVeicolo: " + e.getMessage());
-		}
+        try (Connection conn = db.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
-		return lista;
-	}
-	
-	@Override
-	public List<Scadenza> getTutteScadenze() {
+            ps.setString(1, targa);
 
-	    String sql = "SELECT * FROM Scadenza ORDER BY data ASC";
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    lista.add(map(rs));
+                }
+            }
 
-	    List<Scadenza> lista = new ArrayList<>();
+        } catch (SQLException e) {
+            LOGGER.log(java.util.logging.Level.SEVERE, "Errore SQL findByVeicolo", e);
+        }
 
-	    try (Connection conn = db.getConnection();
-	         PreparedStatement ps = conn.prepareStatement(sql);
-	         ResultSet rs = ps.executeQuery()) {
+        return lista;
+    }
 
-	        while (rs.next()) {
-	            lista.add(map(rs));
-	        }
+    @Override
+    public List<Scadenza> getTutteScadenze() {
+        String sql = """
+                SELECT idScadenza, tipoScadenza, data, notificata, targa
+                FROM Scadenza
+                ORDER BY data ASC
+                """;
 
-	    } catch (Exception e) {
-	        System.err.println("ERRORE SQL getTutteScadenze: " + e.getMessage());
-	    }
+        List<Scadenza> lista = new ArrayList<>();
 
-	    return lista;
-	}
+        try (Connection conn = db.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
 
+            while (rs.next()) {
+                lista.add(map(rs));
+            }
+
+        } catch (SQLException e) {
+            LOGGER.log(java.util.logging.Level.SEVERE, "Errore SQL getTutteScadenze", e);
+        }
+
+        return lista;
+    }
 }

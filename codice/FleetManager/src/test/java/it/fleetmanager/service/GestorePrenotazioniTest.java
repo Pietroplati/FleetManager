@@ -56,7 +56,6 @@ class GestorePrenotazioniTest {
 
         gestore = new GestorePrenotazioniImpl(
                 prenotazioneDAO,
-                veicoloDAO,
                 utenteDAO,
                 sistemaNotifiche
         );

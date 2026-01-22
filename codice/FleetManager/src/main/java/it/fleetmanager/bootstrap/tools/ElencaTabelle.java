@@ -7,13 +7,18 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import it.fleetmanager.repository.db.H2DatabaseManager;
 
 public class ElencaTabelle {
 
+    private static final Logger logger = LogManager.getLogger(ElencaTabelle.class);
+
     public static void main(String[] args) {
         try (Connection conn = H2DatabaseManager.getInstance().getConnection()) {
-            System.out.println("SCHEMA DATABASE: " + H2DatabaseManager.getUrl());
+            logger.info("SCHEMA DATABASE: {}", H2DatabaseManager.getUrl());
             DatabaseMetaData meta = conn.getMetaData();
 
             try (ResultSet rsTables = meta.getTables(null, "PUBLIC", "%", new String[] { "TABLE" })) {
@@ -23,7 +28,7 @@ public class ElencaTabelle {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Errore durante l'elenco delle tabelle", e);
         }
     }
 
@@ -32,8 +37,8 @@ public class ElencaTabelle {
         String table = rsTables.getString("TABLE_NAME");
 
         printLine();
-        System.out.printf("→ %s.%s%n", schema, table);
-        System.out.println("   Colonne:");
+        logger.info("→ {}.{}", schema, table);
+        logger.info("   Colonne:");
 
         Map<String, String> pkCols = caricaPrimaryKeys(meta, schema, table);
         Map<String, String> fkRefs = caricaForeignKeys(meta, schema, table);
@@ -86,7 +91,7 @@ public class ElencaTabelle {
 
                 String info = descriviColonna(col, autoinc, nullable, pkCols, fkRefs);
 
-                System.out.printf("   - %-20s (%s[%d]) %s%n", col, type, size, info);
+                logger.info("   - {} ({ }[{}]) {}", padRight(col, 20), type, size, info);
             }
         }
     }
@@ -114,7 +119,17 @@ public class ElencaTabelle {
     }
 
     private static void printLine() {
-        System.out.println(
+        logger.info(
                 "────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────");
+    }
+
+    private static String padRight(String s, int n) {
+        if (s == null) s = "";
+        if (s.length() >= n) return s.substring(0, n);
+
+        StringBuilder sb = new StringBuilder(n);
+        sb.append(s);
+        for (int i = s.length(); i < n; i++) sb.append(' ');
+        return sb.toString();
     }
 }

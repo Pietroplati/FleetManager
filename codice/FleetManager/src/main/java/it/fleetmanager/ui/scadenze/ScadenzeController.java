@@ -51,7 +51,10 @@ public class ScadenzeController implements UserAwareController {
 
     @FXML
     private void initialize() {
-        tableScadenze.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+    	tableScadenze.setColumnResizePolicy(
+    	        TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS
+    	);
+
         setupColumns();
     }
 
@@ -110,10 +113,6 @@ public class ScadenzeController implements UserAwareController {
 
     private void mostraErrore(String msg) {
         new Alert(Alert.AlertType.ERROR, msg, ButtonType.OK).showAndWait();
-    }
-
-    private void mostraInfo(String msg) {
-        new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.OK).showAndWait();
     }
 
     private void apriFormScadenza(Scadenza scadenza) {

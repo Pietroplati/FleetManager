@@ -11,7 +11,6 @@ import it.fleetmanager.model.Utente;
 import it.fleetmanager.model.Veicolo;
 import it.fleetmanager.repository.dao.PrenotazioneDAO;
 import it.fleetmanager.repository.dao.UtenteDAO;
-import it.fleetmanager.repository.dao.VeicoloDAO;
 import it.fleetmanager.service.interfaces.GestorePrenotazioni;
 import it.fleetmanager.util.RuoloUtente;
 import it.fleetmanager.util.StatoPrenotazione;
@@ -20,22 +19,18 @@ import it.fleetmanager.util.TipoPrenotazione;
 public class GestorePrenotazioniImpl implements GestorePrenotazioni {
 
     private final PrenotazioneDAO prenotazioneDAO;
-    private final VeicoloDAO veicoloDAO;
     private final UtenteDAO utenteDAO;
     private final SistemaNotifiche sistemaNotifiche;
 
     public GestorePrenotazioniImpl(
             PrenotazioneDAO prenotazioneDAO,
-            VeicoloDAO veicoloDAO,
             UtenteDAO utenteDAO,
             SistemaNotifiche sistemaNotifiche
     ) {
         this.prenotazioneDAO = prenotazioneDAO;
-        this.veicoloDAO = veicoloDAO;
         this.utenteDAO = utenteDAO;
         this.sistemaNotifiche = sistemaNotifiche;
     }
-
 
     @Override
     public List<Prenotazione> getPrenotazioniVisibiliOrdinare(Utente utenteLoggato) {
@@ -93,7 +88,6 @@ public class GestorePrenotazioniImpl implements GestorePrenotazioni {
         LocalDateTime tb = b.getDataInizio().isAfter(now) ? b.getDataInizio() : b.getDataFine();
         return ta.compareTo(tb);
     }
-
 
     @Override
     public Prenotazione creaPrenotazione(Utente driver, Veicolo veicolo, LocalDateTime dataInizio,

@@ -8,12 +8,17 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 /**
  * Tool di bootstrap/debug: stampa i contenuti delle tabelle.
  * NON dipende più da it.fleetmanager.repository.* (riduce Tangled)
  * Logica invariata: legge tutte le tabelle e stampa le righe.
  */
 public class ElencaDati {
+
+    private static final Logger logger = LogManager.getLogger(ElencaDati.class);
 
     private static final String SCHEMA = "PUBLIC";
     private static final int MAX_ROWS_PER_TABLE = 0;
@@ -22,12 +27,10 @@ public class ElencaDati {
     private static final int MESSAGE_COL_WIDTH = 60;
     private static final int DESCRIZIONE_COL_WIDTH = 80;
 
-    // ==========================
+
     // CONFIG DB (BOOTSTRAP ONLY)
-    // ==========================
-    //Metti qui gli stessi valori usati dal tuo H2DatabaseManager
-    // (Se usi in-memory, usa jdbc:h2:mem:...; se usi file-based, usa jdbc:h2:./...)
-    private static final String DB_URL  = "jdbc:h2:./fleetmanager;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE";
+    private static final String DB_URL  =
+            "jdbc:h2:./fleetmanager;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE";
     private static final String DB_USER = "sa";
     private static final String DB_PASS = "";
 
@@ -35,16 +38,18 @@ public class ElencaDati {
         try (Connection conn = getConnection()) {
             DatabaseMetaData meta = conn.getMetaData();
 
-            try (ResultSet rsTables = meta.getTables(null, SCHEMA, "%", new String[] { "TABLE" })) {
+            try (ResultSet rsTables =
+                         meta.getTables(null, SCHEMA, "%", new String[]{"TABLE"})) {
+
                 while (rsTables.next()) {
                     String table = rsTables.getString("TABLE_NAME");
                     printLine();
-                    System.out.println("TABELLA: " + table);
+                    logger.info("TABELLA: {}", table);
                     printTableData(conn, table, MAX_ROWS_PER_TABLE);
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Errore durante l'elenco dei dati del database", e);
         }
         printLine();
     }
@@ -61,14 +66,12 @@ public class ElencaDati {
 
             ResultSetMetaData md = rs.getMetaData();
 
-            // Controllo tabella vuota + stampa prima riga (robusto e lineare)
             if (!rs.next()) {
-                System.out.println("(tabella vuota)");
+                logger.info("(tabella vuota)");
                 return;
             }
 
             printHeader(md);
-            // prima riga già “posizionata”
             printRow(rs, md);
 
             while (rs.next()) {
@@ -76,7 +79,7 @@ public class ElencaDati {
             }
 
         } catch (SQLException e) {
-            System.out.println("Errore leggendo i dati da " + table + ": " + e.getMessage());
+            logger.error("Errore leggendo i dati da {}", table, e);
         }
     }
 
@@ -97,7 +100,7 @@ public class ElencaDati {
             header.append(padRight(colName, getWidthForColumn(colName)));
         }
 
-        System.out.println(header);
+        logger.info(header.toString());
     }
 
     private static void printRow(ResultSet rs, ResultSetMetaData md) throws SQLException {
@@ -107,10 +110,13 @@ public class ElencaDati {
         for (int i = 1; i <= colCount; i++) {
             String colName = md.getColumnName(i);
             Object val = rs.getObject(i);
-            row.append(padRight(val != null ? String.valueOf(val) : "NULL", getWidthForColumn(colName)));
+            row.append(
+                padRight(val != null ? String.valueOf(val) : "NULL",
+                         getWidthForColumn(colName))
+            );
         }
 
-        System.out.println(row);
+        logger.info(row.toString());
     }
 
     private static int getWidthForColumn(String colName) {
@@ -134,7 +140,8 @@ public class ElencaDati {
     }
 
     private static void printLine() {
-        System.out.println(
-            "──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────");
+        logger.info(
+            "──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────"
+        );
     }
 }

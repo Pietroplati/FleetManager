@@ -12,6 +12,9 @@ import java.sql.SQLException;
  * - supporto testUrl
  * - autoCommit = true
  * - stessa JDBC URL
+ *
+ * Nota: la Connection NON viene chiusa qui perché questo
+ * è un provider; la responsabilità della chiusura è del chiamante.
  */
 public class H2DatabaseManager implements ConnectionProvider {
 
@@ -37,11 +40,11 @@ public class H2DatabaseManager implements ConnectionProvider {
     }
 
     @Override
+    @SuppressWarnings("resource") // Connection chiusa dal chiamante
     public Connection getConnection() throws SQLException {
         String url = (testUrl != null) ? testUrl : DEFAULT_URL;
 
         Connection conn = DriverManager.getConnection(url);
-
         conn.setAutoCommit(true);
 
         return conn;

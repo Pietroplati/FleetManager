@@ -25,6 +25,7 @@ import it.fleetmanager.util.StatoVeicolo;
 import it.fleetmanager.util.TipoManutenzione;
 import it.fleetmanager.util.TipoNotifica;
 
+
 public class UiFacadeImpl implements UiFacade {
 
     private final VeicoloDAO veicoloDAO;
@@ -38,6 +39,7 @@ public class UiFacadeImpl implements UiFacade {
     private final GestoreManutenzioniImpl gestoreManutenzioni;
     private final SistemaNotifiche sistemaNotifiche;
 
+ // NOSONAR - Facade con molte dipendenze intenzionali (composition root)
     public UiFacadeImpl(
             VeicoloDAO veicoloDAO,
             PrenotazioneDAO prenotazioneDAO,
@@ -49,6 +51,7 @@ public class UiFacadeImpl implements UiFacade {
             GestoreManutenzioniImpl gestoreManutenzioni,
             SistemaNotifiche sistemaNotifiche
     ) {
+
         this.veicoloDAO = veicoloDAO;
         this.prenotazioneDAO = prenotazioneDAO;
         this.manutenzioneDAO = manutenzioneDAO;

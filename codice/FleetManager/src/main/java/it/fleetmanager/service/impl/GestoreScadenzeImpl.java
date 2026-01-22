@@ -16,14 +16,14 @@ public class GestoreScadenzeImpl implements GestoreScadenze {
 
 	private final ScadenzaDAO scadenzaDAO;
 	private final VeicoloDAO veicoloDAO;
-	private final UtenteDAO utenteDAO;
+	
 	private final SistemaNotifiche sistemaNotifiche;
 
 	public GestoreScadenzeImpl(ScadenzaDAO scadenzaDAO, VeicoloDAO veicoloDAO, UtenteDAO utenteDAO,
 			SistemaNotifiche sistemaNotifiche) {
 		this.scadenzaDAO = scadenzaDAO;
 		this.veicoloDAO = veicoloDAO;
-		this.utenteDAO = utenteDAO;
+	
 		this.sistemaNotifiche = sistemaNotifiche;
 	}
 

@@ -13,7 +13,7 @@ import it.fleetmanager.repository.impl.UtenteDAOImpl;
 import it.fleetmanager.service.impl.GestoreLoginImpl;
 import it.fleetmanager.util.RuoloUtente;
 
-public class GestoreLoginTest {
+ class GestoreLoginTest {
 
     private GestoreLoginImpl gestoreLogin;
     private UtenteDAO utenteDAO;
