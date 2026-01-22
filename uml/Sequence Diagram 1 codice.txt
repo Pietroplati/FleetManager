@@ -7,14 +7,13 @@ Driver -> NuovaPrenotazioneController: onConferma()
 NuovaPrenotazioneController -> UiFacade: creaPrenotazione(utente, veicolo, dataInizio, dataFine)
 UiFacade -> GestorePrenotazione: creaPrenotazione(driver, veicolo, dataInizio, dataFine)
 
-break driver.getPatente() == null
+alt driver.getPatente() == null
 GestorePrenotazione --> UiFacade: //IllegalArgumentException("L’utente non ha la patente, non può prenotare veicoli.")//
-end
 
-break !validadisponibilita(veicolo, dataInizio, dataFine)
+else !validadisponibilita(veicolo, dataInizio, dataFine)
 GestorePrenotazione --> UiFacade: //IllegalArgumentException("Il veicolo " + veicolo.getTarga() + " non è disponibile nelle date richieste.")//
-end
 
+else
 GestorePrenotazione -> Prenotazione **: create
 GestorePrenotazione -> PrenotazioneDAO: save(prenotazione)
 PrenotazioneDAO -> PrenotazioneDAO: inTransaction("save", conn)
@@ -26,6 +25,8 @@ GestorePrenotazione --> UiFacade: prenotazione
 UiFacade --> NuovaPrenotazioneController: prenotazione
 NuovaPrenotazioneController -> Driver: alertInfo("Prenotazione creata con successo.");
 NuovaPrenotazioneController -> NuovaPrenotazioneController: tornaAllePrenotazioni()
+
+end
 
 end
 @enduml
