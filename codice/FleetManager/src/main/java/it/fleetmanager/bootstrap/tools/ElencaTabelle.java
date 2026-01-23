@@ -12,13 +12,36 @@ import org.apache.logging.log4j.Logger;
 
 import it.fleetmanager.repository.db.H2DatabaseManager;
 
+/**
+ * Utility di bootstrap che elenca dinamicamente tutte le tabelle presenti
+ * nello schema {@code PUBLIC} del database H2, stampando per ciascuna tabella
+ * le colonne, il tipo, la dimensione e le eventuali chiavi primarie o esterne.
+ *
+ * <p>
+ * La classe utilizza {@link DatabaseMetaData} per interrogare il catalogo del
+ * database ed è pensata come strumento di supporto per il debug e la verifica
+ * della struttura del database durante le fasi di sviluppo.
+ * </p>
+ */
 public class ElencaTabelle {
 
-    private static final Logger logger = LogManager.getLogger(ElencaTabelle.class);
+    /**
+     * Logger di classe.
+     */
+    private static final Logger LOGGER = LogManager.getLogger(ElencaTabelle.class);
 
+    /**
+     * Punto di ingresso dell'applicazione.
+     * <p>
+     * Stabilisce una connessione al database e avvia la procedura di lettura
+     * delle tabelle presenti nello schema.
+     * </p>
+     *
+     * @param args argomenti da linea di comando (non utilizzati)
+     */
     public static void main(String[] args) {
         try (Connection conn = H2DatabaseManager.getInstance().getConnection()) {
-            logger.info("SCHEMA DATABASE: {}", H2DatabaseManager.getUrl());
+            LOGGER.info("SCHEMA DATABASE: {}", H2DatabaseManager.getUrl());
             DatabaseMetaData meta = conn.getMetaData();
 
             try (ResultSet rsTables = meta.getTables(null, "PUBLIC", "%", new String[] { "TABLE" })) {
@@ -28,17 +51,24 @@ public class ElencaTabelle {
             }
 
         } catch (SQLException e) {
-            logger.error("Errore durante l'elenco delle tabelle", e);
+            LOGGER.error("Errore durante l'elenco delle tabelle", e);
         }
     }
 
+    /**
+     * Stampa le informazioni principali di una tabella e delle sue colonne.
+     *
+     * @param meta     metadati del database
+     * @param rsTables result set posizionato sulla tabella corrente
+     * @throws SQLException in caso di errore di accesso ai metadati
+     */
     private static void stampaTabella(DatabaseMetaData meta, ResultSet rsTables) throws SQLException {
         String schema = rsTables.getString("TABLE_SCHEM");
         String table = rsTables.getString("TABLE_NAME");
 
         printLine();
-        logger.info("→ {}.{}", schema, table);
-        logger.info("   Colonne:");
+        LOGGER.info("→ {}.{}", schema, table);
+        LOGGER.info("   Colonne:");
 
         Map<String, String> pkCols = caricaPrimaryKeys(meta, schema, table);
         Map<String, String> fkRefs = caricaForeignKeys(meta, schema, table);
@@ -46,6 +76,15 @@ public class ElencaTabelle {
         stampaColonne(meta, schema, table, pkCols, fkRefs);
     }
 
+    /**
+     * Recupera le colonne che costituiscono la chiave primaria di una tabella.
+     *
+     * @param meta   metadati del database
+     * @param schema schema della tabella
+     * @param table  nome della tabella
+     * @return mappa contenente le colonne di chiave primaria
+     * @throws SQLException in caso di errore di accesso ai metadati
+     */
     private static Map<String, String> caricaPrimaryKeys(DatabaseMetaData meta, String schema, String table)
             throws SQLException {
 
@@ -60,6 +99,15 @@ public class ElencaTabelle {
         return pkCols;
     }
 
+    /**
+     * Recupera le chiavi esterne di una tabella e le relative referenze.
+     *
+     * @param meta   metadati del database
+     * @param schema schema della tabella
+     * @param table  nome della tabella
+     * @return mappa colonna → tabella.colonna referenziata
+     * @throws SQLException in caso di errore di accesso ai metadati
+     */
     private static Map<String, String> caricaForeignKeys(DatabaseMetaData meta, String schema, String table)
             throws SQLException {
 
@@ -77,8 +125,19 @@ public class ElencaTabelle {
         return fkRefs;
     }
 
-    private static void stampaColonne(DatabaseMetaData meta, String schema, String table, Map<String, String> pkCols,
-            Map<String, String> fkRefs) throws SQLException {
+    /**
+     * Stampa tutte le colonne di una tabella con le relative informazioni.
+     *
+     * @param meta    metadati del database
+     * @param schema  schema della tabella
+     * @param table   nome della tabella
+     * @param pkCols  colonne di chiave primaria
+     * @param fkRefs  colonne di chiave esterna
+     * @throws SQLException in caso di errore di accesso ai metadati
+     */
+    private static void stampaColonne(DatabaseMetaData meta, String schema, String table,
+                                      Map<String, String> pkCols, Map<String, String> fkRefs)
+            throws SQLException {
 
         try (ResultSet rsCols = meta.getColumns(null, schema, table, "%")) {
             while (rsCols.next()) {
@@ -91,13 +150,23 @@ public class ElencaTabelle {
 
                 String info = descriviColonna(col, autoinc, nullable, pkCols, fkRefs);
 
-                logger.info("   - {} ({ }[{}]) {}", padRight(col, 20), type, size, info);
+                LOGGER.info("   - {} ({ }[{}]) {}", padRight(col, 20), type, size, info);
             }
         }
     }
 
-    private static String descriviColonna(String col, String autoinc, String nullable, Map<String, String> pkCols,
-            Map<String, String> fkRefs) {
+    /**
+     * Determina la descrizione semantica di una colonna.
+     *
+     * @param col      nome della colonna
+     * @param autoinc  indicatore di autoincremento
+     * @param nullable indicatore di nullabilità
+     * @param pkCols   colonne di chiave primaria
+     * @param fkRefs   colonne di chiave esterna
+     * @return descrizione della colonna
+     */
+    private static String descriviColonna(String col, String autoinc, String nullable,
+                                          Map<String, String> pkCols, Map<String, String> fkRefs) {
 
         if (pkCols.containsKey(col)) {
             return "Primary Key";
@@ -118,11 +187,21 @@ public class ElencaTabelle {
         return "Standard field";
     }
 
+    /**
+     * Stampa una linea separatrice per migliorare la leggibilità dell'output.
+     */
     private static void printLine() {
-        logger.info(
+        LOGGER.info(
                 "────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────");
     }
 
+    /**
+     * Effettua il padding a destra di una stringa fino alla lunghezza indicata.
+     *
+     * @param s stringa di input
+     * @param n lunghezza desiderata
+     * @return stringa con padding a destra
+     */
     private static String padRight(String s, int n) {
         if (s == null) s = "";
         if (s.length() >= n) return s.substring(0, n);
