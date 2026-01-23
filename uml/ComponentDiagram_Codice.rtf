@@ -1,0 +1,159 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2867
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 @startuml\
+\
+\
+left to right direction\
+skinparam componentStyle uml2\
+skinparam shadowing false\
+skinparam linetype ortho\
+skinparam nodesep 70\
+skinparam ranksep 60\
+\
+title FleetManager - Component Diagram \
+\
+' INTERFACCE (contratti)\
+interface "UiFacade" as IUiFacade\
+interface "GestoreLogin" as IGestoreLogin\
+interface "GestorePrenotazioni" as IGestorePren\
+\
+interface "UtenteDAO" as IUtenteDAO\
+interface "VeicoloDAO" as IVeicoloDAO\
+interface "PrenotazioneDAO" as IPrenDAO\
+interface "ManutenzioneDAO" as IManDAO\
+interface "ScadenzaDAO" as IScadDAO\
+interface "NotificaDAO" as INotifDAO\
+\
+\
+' COMPONENTI / PACKAGE\
+\
+package "it.fleetmanager.ui\\n(JavaFX Controllers + Views)" as PUI \{\
+  component "UI Layer\\n(Controllers)" as UI\
+\}\
+\
+package "it.fleetmanager.bootstrap\\n(Composition Root + Seeder)" as PBOOT \{\
+  component "AppContext\\n(Service wiring)" as AppCtx\
+  component "DatabaseSeeder / SeedDatabaseCli\\n(JDBC seeding)" as Seeder\
+\}\
+\
+package "it.fleetmanager.service\\n(Service Layer)" as PSVC \{\
+  component "UiFacadeImpl" as UiFacadeImpl\
+  component "GestoreLoginImpl" as LoginImpl\
+  component "GestorePrenotazioniImpl" as PrenImpl\
+  component "GestoreManutenzioniImpl" as ManImpl\
+  component "SistemaNotifiche" as NotifSys\
+\}\
+\
+package "it.fleetmanager.repository\\n(DAO + DB access)" as PREPO \{\
+  component "DAO Interfaces\\n(repository.dao)" as DAOApi\
+  component "DAO Implementations\\n(repository.impl)" as DAOImpl\
+  component "DB Access\\n(repository.db)\\n(ConnectionProvider/H2DatabaseManager)" as DBAccess\
+\}\
+\
+package "it.fleetmanager.model\\n(Domain Model)" as PMODEL \{\
+  component "Model\\n(Utente, Veicolo, Prenotazione,\\nManutenzione, Scadenza, Notifica, ...)" as MODEL\
+\}\
+\
+package "External Libraries" as PEXT \{\
+  component "JavaFX Runtime" as JFX <<library>>\
+  component "Log4j2" as LOG <<library>>\
+  component "JDBC (java.sql / DriverManager)" as JDBC <<library>>\
+  component "H2 Database" as H2 <<database>>\
+\}\
+\
+\
+' PROVIDED INTERFACES \
+UiFacadeImpl - IUiFacade\
+LoginImpl   - IGestoreLogin\
+PrenImpl    - IGestorePren\
+\
+DAOApi - IUtenteDAO\
+DAOApi - IVeicoloDAO\
+DAOApi - IPrenDAO\
+DAOApi - IManDAO\
+DAOApi - IScadDAO\
+DAOApi - INotifDAO\
+\
+\
+' USE / REQUIRED DEPENDENCIES (<<use>>)\
+\
+\
+' UI: prende servizi da AppContext e usa solo interfacce ---\
+UI ..> AppCtx : <<use>>\\ngetUiFacade(), getGestoreLogin()\
+UI ..> IUiFacade : <<use>>\
+UI ..> IGestoreLogin : <<use>>\
+UI ..> JFX : <<use>>\
+UI ..> MODEL : <<use>>\
+\
+'AppContext: wiring reale (composition root) ---\
+AppCtx ..> UiFacadeImpl : <<use>>\
+AppCtx ..> LoginImpl : <<use>>\
+AppCtx ..> PrenImpl : <<use>>\
+AppCtx ..> ManImpl : <<use>>\
+AppCtx ..> NotifSys : <<use>>\
+AppCtx ..> DAOImpl : <<use>>\
+AppCtx ..> DBAccess : <<use>>\
+\
+' UiFacadeImpl: dipendenze reali (service + DAO) ---\
+UiFacadeImpl ..> IGestorePren : <<use>>\
+UiFacadeImpl ..> ManImpl : <<use>>\
+UiFacadeImpl ..> NotifSys : <<use>>\
+\
+UiFacadeImpl ..> IUtenteDAO : <<use>>\
+UiFacadeImpl ..> IVeicoloDAO : <<use>>\
+UiFacadeImpl ..> IPrenDAO : <<use>>\
+UiFacadeImpl ..> IManDAO : <<use>>\
+UiFacadeImpl ..> IScadDAO : <<use>>\
+UiFacadeImpl ..> INotifDAO : <<use>>\
+\
+UiFacadeImpl ..> MODEL : <<use>>\
+\
+'Service implementations: DAO + model (+ notifiche dove serve) ---\
+LoginImpl ..> IUtenteDAO : <<use>>\
+LoginImpl ..> MODEL : <<use>>\
+\
+PrenImpl ..> IPrenDAO : <<use>>\
+PrenImpl ..> IVeicoloDAO : <<use>>\
+PrenImpl ..> IUtenteDAO : <<use>>\
+PrenImpl ..> INotifDAO : <<use>>\
+PrenImpl ..> NotifSys : <<use>>\
+PrenImpl ..> MODEL : <<use>>\
+\
+ManImpl ..> IManDAO : <<use>>\
+ManImpl ..> IVeicoloDAO : <<use>>\
+ManImpl ..> INotifDAO : <<use>>\
+ManImpl ..> NotifSys : <<use>>\
+ManImpl ..> MODEL : <<use>>\
+\
+NotifSys ..> INotifDAO : <<use>>\
+NotifSys ..> MODEL : <<use>>\
+\
+' Repository: impl usa DB access + model ---\
+DAOImpl ..> DAOApi : <<use>>\
+DAOImpl ..> DBAccess : <<use>>\
+DAOImpl ..> MODEL : <<use>>\
+\
+DBAccess ..> JDBC : <<use>>\
+DBAccess ..> H2 : <<use>>\
+\
+'Bootstrap / Seeder: JDBC diretto (NON DAO) ---\
+Seeder ..> JDBC : <<use>>\
+Seeder ..> H2 : <<use>>\
+\
+'Logging (se usato nei componenti) \
+UiFacadeImpl ..> LOG : <<use>>\
+LoginImpl ..> LOG : <<use>>\
+PrenImpl ..> LOG : <<use>>\
+ManImpl ..> LOG : <<use>>\
+NotifSys ..> LOG : <<use>>\
+DAOImpl ..> LOG : <<use>>\
+DBAccess ..> LOG : <<use>>\
+Seeder ..> LOG : <<use>>\
+\
+@enduml\
+}
