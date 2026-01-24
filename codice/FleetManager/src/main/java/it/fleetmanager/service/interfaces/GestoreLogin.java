@@ -5,8 +5,8 @@ import java.util.List;
 import it.fleetmanager.model.Utente;
 
 /**
- * Interfaccia di servizio per la gestione delle funzionalità di autenticazione e
- * di gestione degli {@link Utente} nel sistema FleetManager.
+ * Interfaccia di servizio per la gestione delle funzionalità di autenticazione
+ * e di gestione degli {@link Utente} nel sistema FleetManager.
  * <p>
  * Questa interfaccia definisce il contratto delle operazioni di business legate
  * agli utenti (login e gestione profilo). Le implementazioni concrete si
@@ -48,8 +48,8 @@ public interface GestoreLogin {
 	 * Elimina un utente identificato dal suo id.
 	 *
 	 * @param idUtente identificativo dell'utente
-	 * @return {@code true} se l'eliminazione è andata a buon fine; {@code false}
-	 *         se l'utente non esiste o l'operazione non è riuscita
+	 * @return {@code true} se l'eliminazione è andata a buon fine; {@code false} se
+	 *         l'utente non esiste o l'operazione non è riuscita
 	 */
 	boolean eliminaUtente(int idUtente);
 

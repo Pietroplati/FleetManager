@@ -21,16 +21,16 @@ public interface GestoreScadenze {
 	 * Controlla le scadenze entro una determinata data limite.
 	 *
 	 * @param dataLimite data entro la quale verificare le scadenze
-	 * @return una scadenza rilevante entro la data indicata, oppure {@code null}
-	 *         se non sono presenti scadenze critiche
+	 * @return una scadenza rilevante entro la data indicata, oppure {@code null} se
+	 *         non sono presenti scadenze critiche
 	 */
 	Scadenza controllaScadenzeEntro(LocalDate dataLimite);
 
 	/**
 	 * Marca una scadenza come notificata.
 	 * <p>
-	 * Questa operazione indica che per la scadenza specificata è già stata
-	 * inviata una notifica, evitando notifiche duplicate.
+	 * Questa operazione indica che per la scadenza specificata è già stata inviata
+	 * una notifica, evitando notifiche duplicate.
 	 * </p>
 	 *
 	 * @param idScadenza identificativo della scadenza da marcare come notificata
@@ -47,8 +47,8 @@ public interface GestoreScadenze {
 	/**
 	 * Esegue un controllo periodico delle scadenze del sistema.
 	 * <p>
-	 * Questo metodo coordina le operazioni di verifica delle scadenze,
-	 * invio notifiche e blocco dei veicoli quando necessario.
+	 * Questo metodo coordina le operazioni di verifica delle scadenze, invio
+	 * notifiche e blocco dei veicoli quando necessario.
 	 * </p>
 	 */
 	void eseguiControlloPeriodico();
