@@ -212,11 +212,13 @@ public class UtenteDAOImpl implements UtenteDAO {
 
 		String sql = "SELECT 1 FROM Utente WHERE email = ?";
 
-		try (Connection conn = db.getConnection();
-				PreparedStatement ps = conn.prepareStatement(sql);
-				ResultSet rs = ps.executeQuery()) {
+		try (Connection conn = db.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
-			return rs.next();
+			ps.setString(1, email);
+
+			try (ResultSet rs = ps.executeQuery()) {
+				return rs.next();
+			}
 
 		} catch (SQLException e) {
 			logger.error("{} durante existsByEmail(): {}", ERRORE_SQL, e.getMessage(), e);
