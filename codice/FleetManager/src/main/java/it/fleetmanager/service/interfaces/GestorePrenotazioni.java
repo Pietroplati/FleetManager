@@ -31,7 +31,6 @@ public interface GestorePrenotazioni {
     // (per togliere DAO dalla UI, logica invariata)
     List<Prenotazione> getTuttePrenotazioni();
 
-    List<Utente> getTuttiUtenti();
 
 
     /**

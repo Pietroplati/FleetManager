@@ -63,7 +63,7 @@ public class Prenotazione {
 	public String getTarga() {
 		return targa;
 	}
-	public void setId(int idPrenotazione) {
+	public void setId(int idPrenotazione) { 
 		this.idPrenotazione = idPrenotazione;
 	}
 

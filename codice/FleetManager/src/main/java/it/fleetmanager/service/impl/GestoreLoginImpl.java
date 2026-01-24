@@ -51,12 +51,6 @@ public class GestoreLoginImpl implements GestoreLogin {
 		return true;
 	}
 
-	@Override
-	public void logout(Utente utente) {
-		   // Metodo volutamente lasciato vuoto:
-	    // il logout è gestito a livello di UI/sessione e non dal service
-	}
-
 
 	@Override
 	public boolean aggiornaProfilo(Utente utenteAggiornato) {

@@ -1,7 +1,6 @@
 package it.fleetmanager.service.impl;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import it.fleetmanager.model.Manutenzione;
 import it.fleetmanager.model.Veicolo;
@@ -135,15 +134,4 @@ public class GestoreManutenzioniImpl implements GestoreManutenzioni {
 		);
 	}
 
-
-	// QUERY
-
-	@Override
-	public List<Manutenzione> getManutenzioniVeicolo(Veicolo veicolo) {
-
-		if (veicolo == null)
-			throw new IllegalArgumentException("Veicolo nullo.");
-
-		return manutenzioneDAO.findByVeicolo(veicolo.getTarga());
-	}
 }

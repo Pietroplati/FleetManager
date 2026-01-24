@@ -229,8 +229,5 @@ public class GestorePrenotazioniImpl implements GestorePrenotazioni {
         return prenotazioneDAO.findAll();
     }
 
-    @Override
-    public List<Utente> getTuttiUtenti() {
-        return utenteDAO.getTuttiUtenti();
-    }
+   
 }

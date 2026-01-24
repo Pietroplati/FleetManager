@@ -21,7 +21,6 @@ import it.fleetmanager.service.interfaces.GestorePrenotazioni;
 import it.fleetmanager.service.interfaces.UiFacade;
 import it.fleetmanager.util.RuoloUtente;
 import it.fleetmanager.util.StatoPrenotazione;
-import it.fleetmanager.util.StatoVeicolo;
 import it.fleetmanager.util.TipoManutenzione;
 import it.fleetmanager.util.TipoNotifica;
 
@@ -63,16 +62,7 @@ public class UiFacadeImpl implements UiFacade {
         this.sistemaNotifiche = sistemaNotifiche;
     }
 
-    // ===== UTENTI =====
-    @Override
-    public List<Utente> getTuttiUtenti() {
-        return utenteDAO.getTuttiUtenti();
-    }
-
-    @Override
-    public Utente getUtenteById(int idUtente) {
-        return utenteDAO.getUtenteById(idUtente);
-    }
+   
 
     // ===== VEICOLI =====
     @Override
@@ -96,11 +86,7 @@ public class UiFacadeImpl implements UiFacade {
     }
 
     // ===== PRENOTAZIONI =====
-    @Override
-    public List<Prenotazione> getTuttePrenotazioni() {
-        return prenotazioneDAO.findAll();
-    }
-
+ 
     @Override
     public List<Prenotazione> getPrenotazioniDriver(int idDriver) {
         return prenotazioneDAO.findByDriver(idDriver);
@@ -169,11 +155,6 @@ public class UiFacadeImpl implements UiFacade {
     }
 
     @Override
-    public void aggiornaScadenza(Scadenza s) {
-        scadenzaDAO.update(s);
-    }
-
-    @Override
     public void controllaScadenzeENotifica() {
         List<Scadenza> scadenze = scadenzaDAO.getTutteScadenze();
 
@@ -225,39 +206,10 @@ public class UiFacadeImpl implements UiFacade {
         return notificaDAO.findByUtente(u.getIdUtente());
     }
 
-    @Override
-    public void segnaComeLetta(Notifica n) {
-        n.setLetta(true);
-        notificaDAO.update(n);
-    }
 
-    @Override
-    public void segnaTutteComeLette(Utente u) {
-        List<Notifica> target;
-        if (u.getRuoloUtente() == RuoloUtente.MANAGER) {
-            target = notificaDAO.findAll();
-        } else {
-            target = notificaDAO.findNonLette(u.getIdUtente());
-        }
-
-        for (Notifica n : target) {
-            if (!n.getLetta()) {
-                n.setLetta(true);
-                notificaDAO.update(n);
-            }
-        }
-    }
 
     // ===== ACTION SPECIFICA NOTIFICHE =====
-    @Override
-    public void impostaVeicoloNonDisponibile(String targa, StatoVeicolo stato) {
-        Veicolo v = veicoloDAO.getVeicoloByTarga(targa);
-        if (v == null || "N/A".equals(v.getTarga())) {
-            throw new IllegalArgumentException("Veicolo non trovato nel database.");
-        }
-        v.setStatoVeicolo(stato);
-        veicoloDAO.update(v);
-    }
+
     
     @Override
     public void inviaSegnalazioneStraordinaria(Utente driver, Veicolo veicolo, String descrizione) {
@@ -313,6 +265,48 @@ public class UiFacadeImpl implements UiFacade {
     public Map<Integer, Utente> getUtentiById() {
         return gestorePrenotazioni.getUtentiById();
     }
+    
+ // ===== UTENTI =====
+
+    @Override
+    public List<Utente> getTuttiDriver() {
+        return utenteDAO.getTuttiUtenti().stream()
+                .filter(u -> u.getRuoloUtente() == RuoloUtente.DRIVER)
+                .toList();
+    }
+
+    @Override
+    public void creaUtente(Utente u) {
+        if (u == null)
+            throw new IllegalArgumentException("Utente null");
+
+        if (utenteDAO.existsByEmail(u.getEmail()))
+            throw new IllegalStateException("Email già esistente");
+
+        utenteDAO.save(u);
+    }
+
+    @Override
+    public void aggiornaUtente(Utente u) {
+        if (u == null)
+            throw new IllegalArgumentException("Utente null");
+
+        utenteDAO.update(u);
+    }
+
+    @Override
+    public void eliminaUtente(int idUtente) {
+        utenteDAO.delete(idUtente);
+    }
+
+    @Override
+    public void salvaUtente(Utente u) {
+        if (utenteDAO.existsByEmail(u.getEmail())) {
+            throw new IllegalArgumentException("Email già presente nel sistema.");
+        }
+        utenteDAO.save(u);
+    }
+
 
 
 }
