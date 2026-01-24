@@ -30,10 +30,6 @@ public class Scadenza {
 		return idScadenza;
 	}
 
-	public void setIdScadenza(int idScadenza) {
-		this.idScadenza = idScadenza;
-	}
-
 	public TipoScadenza getTipoScadenza() {
 		return tipoScadenza;
 	}

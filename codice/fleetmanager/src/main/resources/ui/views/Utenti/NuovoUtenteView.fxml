@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.geometry.Pos?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+	xmlns:fx="http://javafx.com/fxml"
+	fx:controller="it.fleetmanager.ui.utenti.NuovoUtenteController"
+	style="-fx-background-color: #e9f0f7;">
+
+	<!-- HEADER -->
+	<top>
+		<VBox alignment="CENTER" spacing="5"
+			style="-fx-padding: 20 0 15 0;">
+			<Label text="Nuovo Utente"
+				style="-fx-font-size: 30; -fx-font-weight: bold; -fx-text-fill:#2f4773;" />
+
+			<Label text="Inserisci i dati del nuovo driver"
+				style="-fx-font-size: 15; -fx-text-fill:#4a76a8;" />
+		</VBox>
+	</top>
+
+	<!-- FORM -->
+	<center>
+		<VBox alignment="CENTER" spacing="20">
+
+			<VBox spacing="15" prefWidth="460"
+				style="
+                      -fx-background-color: white;
+                      -fx-background-radius: 15;
+                      -fx-padding: 30;
+                      -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 15, 0.2, 0, 4);
+                  ">
+
+				<VBox spacing="5">
+					<Label text="Nome:" />
+					<TextField fx:id="txtNome" />
+				</VBox>
+
+				<VBox spacing="5">
+					<Label text="Cognome:" />
+					<TextField fx:id="txtCognome" />
+				</VBox>
+
+				<VBox spacing="5">
+					<Label text="Email:" />
+					<TextField fx:id="txtEmail" />
+				</VBox>
+
+				<VBox spacing="5">
+					<Label text="Password:" />
+					<PasswordField fx:id="txtPassword" />
+				</VBox>
+
+				<VBox spacing="5">
+					<Label text="Patente:" />
+					<TextField fx:id="txtPatente" />
+				</VBox>
+
+				<!-- BUTTONS -->
+				<HBox alignment="CENTER" spacing="20">
+
+					<Button text="Conferma" onAction="#onConferma"
+						prefWidth="180"
+						style="-fx-background-radius:10;
+                                   -fx-font-size:16;
+                                   -fx-font-weight:bold;
+                                   -fx-text-fill:white;
+                                   -fx-background-color:linear-gradient(to right,#4a76a8,#2f4773);" />
+
+					<Button text="Annulla" onAction="#onBack" prefWidth="180"
+						style="-fx-background-radius:10;
+                                   -fx-font-size:16;
+                                   -fx-font-weight:bold;
+                                   -fx-text-fill:white;
+                                   -fx-background-color:linear-gradient(to right,#b2c7db,#92aac4);" />
+
+				</HBox>
+
+			</VBox>
+
+		</VBox>
+	</center>
+
+</BorderPane>

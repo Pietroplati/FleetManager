@@ -102,6 +102,15 @@
                                        -fx-text-fill: white; -fx-padding: 10 20;
                                        -fx-background-color: linear-gradient(to right,#4a76a8,#2f4773);" />
 
+						<Button text="Gestisci Utenti" onAction="#onGestisciUtenti"
+							prefWidth="230"
+							style="-fx-background-radius: 10;
+             				   -fx-font-size: 16;
+				               -fx-font-weight: bold;
+				               -fx-text-fill: white;
+				               -fx-padding: 10 20;
+				               -fx-background-color: linear-gradient(to right,#6f9bcf,#4a76a8);" />
+
 						<!-- Gestisci Prenotazioni -->
 						<Button text="Gestisci Prenotazioni"
 							onAction="#onGestisciPrenotazioni" prefWidth="230"

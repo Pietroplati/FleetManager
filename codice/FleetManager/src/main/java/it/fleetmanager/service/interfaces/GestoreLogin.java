@@ -10,8 +10,6 @@ public interface GestoreLogin {
 
 	boolean createUtente(Utente nuovoUtente);
 
-	void logout(Utente utente);
-
 	boolean aggiornaProfilo(Utente utenteAggiornato);
 
 	boolean eliminaUtente(int idUtente);

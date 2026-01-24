@@ -43,7 +43,7 @@ public class AppContext {
     // ===== servizi cached =====
     private final SistemaNotifiche sistemaNotifiche;
 
-    private GestorePrenotazioni gestorePrenotazioni;
+    private volatile GestorePrenotazioni gestorePrenotazioni;
     private GestoreManutenzioniImpl gestoreManutenzioni;
     private UiFacade uiFacade;
 
@@ -84,17 +84,21 @@ public class AppContext {
         return sistemaNotifiche;
     }
 
-    public synchronized GestorePrenotazioni getGestorePrenotazioni() {
+    public GestorePrenotazioni getGestorePrenotazioni() {
         if (gestorePrenotazioni == null) {
-            gestorePrenotazioni = gestorePrenotazioni = new GestorePrenotazioniImpl(
-            	    prenotazioneDAO,
-            	    utenteDAO,
-            	    sistemaNotifiche
-            	);
-;
+            synchronized (this) {
+                if (gestorePrenotazioni == null) {
+                    gestorePrenotazioni = new GestorePrenotazioniImpl(
+                        prenotazioneDAO,
+                        utenteDAO,
+                        sistemaNotifiche
+                    );
+                }
+            }
         }
         return gestorePrenotazioni;
     }
+
 
     public synchronized GestoreManutenzioniImpl getGestoreManutenzioni() {
         if (gestoreManutenzioni == null) {

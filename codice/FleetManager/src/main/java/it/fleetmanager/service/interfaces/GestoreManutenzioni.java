@@ -1,7 +1,6 @@
 package it.fleetmanager.service.interfaces;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import it.fleetmanager.model.Manutenzione;
 import it.fleetmanager.model.Veicolo;
@@ -22,6 +21,4 @@ public interface GestoreManutenzioni {
 	);
 
 	void chiudiManutenzione(int idManutenzione);
-
-	List<Manutenzione> getManutenzioniVeicolo(Veicolo veicolo);
 }

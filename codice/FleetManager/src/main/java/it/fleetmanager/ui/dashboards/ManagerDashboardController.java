@@ -109,4 +109,10 @@ public class ManagerDashboardController implements UserAwareController {
     private void onLogout() {
         SceneManager.changeScene("/ui/views/LoginView.fxml");
     }
+    
+    @FXML
+    private void onGestisciUtenti() {
+        SceneManager.changeScene("/ui/views/utenti/UtentiView.fxml", utente);
+    }
+
 }

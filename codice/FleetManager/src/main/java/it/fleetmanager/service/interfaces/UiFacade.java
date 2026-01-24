@@ -11,14 +11,11 @@ import it.fleetmanager.model.Scadenza;
 import it.fleetmanager.model.Utente;
 import it.fleetmanager.model.Veicolo;
 import it.fleetmanager.util.StatoPrenotazione;
-import it.fleetmanager.util.StatoVeicolo;
 import it.fleetmanager.util.TipoManutenzione;
 
 public interface UiFacade {
 
-    // ===== UTENTI (utility per UI) =====
-    List<Utente> getTuttiUtenti();
-    Utente getUtenteById(int idUtente);
+
 
     // ===== VEICOLI =====
     List<Veicolo> getTuttiVeicoli();
@@ -26,8 +23,7 @@ public interface UiFacade {
     void aggiornaVeicolo(Veicolo v);
     void eliminaVeicolo(String targa);
 
-    // ===== PRENOTAZIONI =====
-    List<Prenotazione> getTuttePrenotazioni();
+
     List<Prenotazione> getPrenotazioniDriver(int idDriver);
     List<Prenotazione> getPrenotazioniByStato(StatoPrenotazione stato);
 
@@ -47,7 +43,6 @@ public interface UiFacade {
     // ===== SCADENZE =====
     List<Scadenza> getTutteScadenze();
     void eliminaScadenza(int idScadenza);
-    void aggiornaScadenza(Scadenza s);
     void controllaScadenzeENotifica(); // prima stava nel ManagerDashboardController
 
     // ===== NOTIFICHE =====
@@ -60,13 +55,9 @@ public interface UiFacade {
 
     // (B) Metodi "alto livello" (li teniamo per compatibilità)
     List<Notifica> getNotifichePerUtente(Utente u);   // manager = tutte, driver = sue
-    void segnaComeLetta(Notifica n);
-    void segnaTutteComeLette(Utente u);
     void inviaSegnalazioneStraordinaria(Utente driver, Veicolo veicolo, String descrizione);
 
 
-    // ===== ACTION SPECIFICA NOTIFICHE =====
-    void impostaVeicoloNonDisponibile(String targa, StatoVeicolo stato);
     
     void salvaScadenza(Scadenza s);
     void salvaVeicolo(Veicolo v);
@@ -74,6 +65,18 @@ public interface UiFacade {
 
 	List<Prenotazione> getPrenotazioniVisibiliOrdinare(Utente utenteLoggato);
 	Map<Integer, Utente> getUtentiById();
-    
+	
+	// ===== UTENTI =====
+
+	List<Utente> getTuttiDriver();
+
+	void creaUtente(Utente u);
+
+	void aggiornaUtente(Utente u);
+
+	void eliminaUtente(int idUtente);
+
+	void salvaUtente(Utente u);
+
     
 }
