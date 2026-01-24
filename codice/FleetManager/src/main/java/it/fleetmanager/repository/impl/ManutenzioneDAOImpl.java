@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,221 +17,266 @@ import it.fleetmanager.repository.dao.ManutenzioneDAO;
 import it.fleetmanager.repository.db.ConnectionProvider;
 import it.fleetmanager.util.TipoManutenzione;
 
+/**
+ * Implementazione del DAO {@link ManutenzioneDAO}.
+ */
 public class ManutenzioneDAOImpl implements ManutenzioneDAO {
 
-    private static final Logger logger = LogManager.getLogger(ManutenzioneDAOImpl.class);
+	private static final Logger logger = LogManager.getLogger(ManutenzioneDAOImpl.class);
 
-    private final ConnectionProvider db;
+	private static final String ERRORE_SQL = "ERRORE SQL";
 
-    public static final Manutenzione MANUTENZIONE_INESISTENTE = new Manutenzione(-1, LocalDateTime.MIN,
-            TipoManutenzione.ORDINARIA, "N/A", "N/A") {
-        @Override
-        public String toString() {
-            return "Manutenzione inesistente";
-        }
-    };
+	private final ConnectionProvider db;
 
-    public ManutenzioneDAOImpl(ConnectionProvider db) {
-        this.db = db;
-    }
+	/**
+	 * Oggetto sentinella utilizzato quando una manutenzione non esiste.
+	 */
+	public static final Manutenzione MANUTENZIONE_INESISTENTE = new Manutenzione(-1, LocalDateTime.MIN,
+			TipoManutenzione.ORDINARIA, "N/A", "N/A") {
+		@Override
+		public String toString() {
+			return "Manutenzione inesistente";
+		}
+	};
 
-    private Manutenzione map(ResultSet rs) throws SQLException {
-        int id = rs.getInt("idManutenzione");
-        LocalDateTime data = rs.getTimestamp("data").toLocalDateTime();
-        TipoManutenzione tipo = TipoManutenzione.valueOf(rs.getString("tipoManutenzione"));
-        String descrizione = rs.getString("descrizione");
-        String targa = rs.getString("targa");
+	/**
+	 * Costruttore.
+	 *
+	 * @param db provider delle connessioni al database
+	 */
+	public ManutenzioneDAOImpl(ConnectionProvider db) {
+		this.db = db;
+	}
 
-        return new Manutenzione(id, data, tipo, descrizione, targa);
-    }
+	/**
+	 * Mappa una riga del {@link ResultSet} in un oggetto {@link Manutenzione}.
+	 *
+	 * @param rs result set posizionato sulla riga corrente
+	 * @return manutenzione mappata
+	 * @throws SQLException in caso di errore SQL
+	 */
+	private Manutenzione map(ResultSet rs) throws SQLException {
+		int id = rs.getInt("idManutenzione");
+		LocalDateTime data = rs.getTimestamp("data").toLocalDateTime();
+		TipoManutenzione tipo = TipoManutenzione.valueOf(rs.getString("tipoManutenzione"));
+		String descrizione = rs.getString("descrizione");
+		String targa = rs.getString("targa");
 
-    @Override
-    public void save(Manutenzione m) {
-        String sql = """
-                INSERT INTO Manutenzione
-                (idManutenzione, data, tipoManutenzione, descrizione, targa)
-                VALUES (?, ?, ?, ?, ?)
-                """;
+		return new Manutenzione(id, data, tipo, descrizione, targa);
+	}
 
-        try (Connection conn = db.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+	/**
+	 * Estrae una singola manutenzione dal {@link ResultSet}.
+	 *
+	 * @param rs result set
+	 * @return manutenzione trovata o oggetto sentinella
+	 * @throws SQLException in caso di errore SQL
+	 */
+	private Manutenzione extractOne(ResultSet rs) throws SQLException {
+		return rs.next() ? map(rs) : MANUTENZIONE_INESISTENTE;
+	}
 
-            ps.setInt(1, m.getIdManutenzione());
-            ps.setTimestamp(2, java.sql.Timestamp.valueOf(m.getData()));
-            ps.setString(3, m.getTipoManutenzione().name());
-            ps.setString(4, m.getDescrizione());
-            ps.setString(5, m.getTarga());
+	/**
+	 * Riempie una lista di manutenzioni a partire da un {@link ResultSet}.
+	 *
+	 * @param rs  result set
+	 * @param out lista di destinazione
+	 * @throws SQLException in caso di errore SQL
+	 */
+	private void fillList(ResultSet rs, List<Manutenzione> out) throws SQLException {
 
-            ps.executeUpdate();
+		while (rs.next()) {
+			out.add(map(rs));
+		}
+	}
 
-        } catch (SQLException e) {
-            logger.error("ERRORE SQL durante save(): {}", e.getMessage(), e);
-        }
-    }
+	@Override
+	public void save(Manutenzione m) {
 
-    @Override
-    public void update(Manutenzione m) {
-        String sql = """
-                UPDATE Manutenzione SET
-                    data = ?,
-                    tipoManutenzione = ?,
-                    descrizione = ?,
-                    targa = ?
-                WHERE idManutenzione = ?
-                """;
+		String sql = """
+				INSERT INTO Manutenzione
+				(idManutenzione, data, tipoManutenzione, descrizione, targa)
+				VALUES (?, ?, ?, ?, ?)
+				""";
 
-        try (Connection conn = db.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+		try (Connection conn = db.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setTimestamp(1, java.sql.Timestamp.valueOf(m.getData()));
-            ps.setString(2, m.getTipoManutenzione().name());
-            ps.setString(3, m.getDescrizione());
-            ps.setString(4, m.getTarga());
-            ps.setInt(5, m.getIdManutenzione());
+			ps.setInt(1, m.getIdManutenzione());
+			ps.setTimestamp(2, Timestamp.valueOf(m.getData()));
+			ps.setString(3, m.getTipoManutenzione().name());
+			ps.setString(4, m.getDescrizione());
+			ps.setString(5, m.getTarga());
 
-            ps.executeUpdate();
+			ps.executeUpdate();
 
-        } catch (SQLException e) {
-            logger.error("ERRORE SQL durante update(): {}", e.getMessage(), e);
-        }
-    }
+		} catch (SQLException e) {
+			logger.error("{} durante save(): {}", ERRORE_SQL, e.getMessage(), e);
+		}
+	}
 
-    @Override
-    public void delete(int id) {
+	@Override
+	public void update(Manutenzione m) {
 
-        String sql = "DELETE FROM Manutenzione WHERE idManutenzione = ?";
+		String sql = """
+				UPDATE Manutenzione SET
+				    data = ?,
+				    tipoManutenzione = ?,
+				    descrizione = ?,
+				    targa = ?
+				WHERE idManutenzione = ?
+				""";
 
-        try (Connection conn = db.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+		try (Connection conn = db.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setInt(1, id);
-            ps.executeUpdate();
+			ps.setTimestamp(1, Timestamp.valueOf(m.getData()));
+			ps.setString(2, m.getTipoManutenzione().name());
+			ps.setString(3, m.getDescrizione());
+			ps.setString(4, m.getTarga());
+			ps.setInt(5, m.getIdManutenzione());
 
-        } catch (SQLException e) {
-            logger.error("ERRORE SQL durante delete(): {}", e.getMessage(), e);
-        }
-    }
+			ps.executeUpdate();
 
-    @Override
-    public Manutenzione getManutenzioneById(int id) {
+		} catch (SQLException e) {
+			logger.error("{} durante update(): {}", ERRORE_SQL, e.getMessage(), e);
+		}
+	}
 
-        String sql = """
-                SELECT idManutenzione, data, tipoManutenzione, descrizione, targa
-                FROM Manutenzione
-                WHERE idManutenzione = ?
-                """;
+	@Override
+	public void delete(int id) {
 
-        try (Connection conn = db.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+		String sql = "DELETE FROM Manutenzione WHERE idManutenzione = ?";
 
-            ps.setInt(1, id);
+		try (Connection conn = db.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next())
-                    return map(rs);
-            }
+			ps.setInt(1, id);
+			ps.executeUpdate();
 
-        } catch (SQLException e) {
-            logger.error("ERRORE SQL durante getManutenzioneById(): {}", e.getMessage(), e);
-        }
+		} catch (SQLException e) {
+			logger.error("{} durante delete(): {}", ERRORE_SQL, e.getMessage(), e);
+		}
+	}
 
-        return MANUTENZIONE_INESISTENTE;
-    }
+	@Override
+	public Manutenzione getManutenzioneById(int id) {
 
-    @Override
-    public List<Manutenzione> findByVeicolo(String targa) {
+		String sql = """
+				SELECT idManutenzione, data, tipoManutenzione,
+				       descrizione, targa
+				FROM Manutenzione
+				WHERE idManutenzione = ?
+				""";
 
-        String sql = """
-                SELECT idManutenzione, data, tipoManutenzione, descrizione, targa
-                FROM Manutenzione
-                WHERE targa = ?
-                ORDER BY data ASC
-                """;
+		try (Connection conn = db.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
-        List<Manutenzione> list = new ArrayList<>();
+			ps.setInt(1, id);
 
-        try (Connection conn = db.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+			try (ResultSet rs = ps.executeQuery()) {
+				return extractOne(rs);
+			}
 
-            ps.setString(1, targa);
+		} catch (SQLException e) {
+			logger.error("{} durante getManutenzioneById(): {}", ERRORE_SQL, e.getMessage(), e);
+		}
 
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next())
-                    list.add(map(rs));
-            }
+		return MANUTENZIONE_INESISTENTE;
+	}
 
-        } catch (SQLException e) {
-            logger.error("ERRORE SQL durante findByVeicolo(): {}", e.getMessage(), e);
-        }
+	@Override
+	public List<Manutenzione> findByVeicolo(String targa) {
 
-        return list;
-    }
+		String sql = """
+				SELECT idManutenzione, data, tipoManutenzione,
+				       descrizione, targa
+				FROM Manutenzione
+				WHERE targa = ?
+				ORDER BY data ASC
+				""";
 
-    @Override
-    public List<Manutenzione> findByTipo(TipoManutenzione tipo) {
+		List<Manutenzione> list = new ArrayList<>();
 
-        String sql = """
-                SELECT idManutenzione, data, tipoManutenzione, descrizione, targa
-                FROM Manutenzione
-                WHERE tipoManutenzione = ?
-                ORDER BY data ASC
-                """;
+		try (Connection conn = db.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
-        List<Manutenzione> list = new ArrayList<>();
+			ps.setString(1, targa);
 
-        try (Connection conn = db.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+			try (ResultSet rs = ps.executeQuery()) {
+				fillList(rs, list);
+			}
 
-            ps.setString(1, tipo.name());
+		} catch (SQLException e) {
+			logger.error("{} durante findByVeicolo(): {}", ERRORE_SQL, e.getMessage(), e);
+		}
 
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next())
-                    list.add(map(rs));
-            }
+		return list;
+	}
 
-        } catch (SQLException e) {
-            logger.error("ERRORE SQL durante findByTipo(): {}", e.getMessage(), e);
-        }
+	@Override
+	public List<Manutenzione> findByTipo(TipoManutenzione tipo) {
 
-        return list;
-    }
+		String sql = """
+				SELECT idManutenzione, data, tipoManutenzione,
+				       descrizione, targa
+				FROM Manutenzione
+				WHERE tipoManutenzione = ?
+				ORDER BY data ASC
+				""";
 
-    @Override
-    public int getMaxId() {
+		List<Manutenzione> list = new ArrayList<>();
 
-        String sql = "SELECT COALESCE(MAX(idManutenzione), 0) FROM Manutenzione";
+		try (Connection conn = db.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
-        try (Connection conn = db.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+			ps.setString(1, tipo.name());
 
-            if (rs.next())
-                return rs.getInt(1);
+			try (ResultSet rs = ps.executeQuery()) {
+				fillList(rs, list);
+			}
 
-        } catch (SQLException e) {
-            logger.error("ERRORE SQL durante getMaxId(): {}", e.getMessage(), e);
-        }
+		} catch (SQLException e) {
+			logger.error("{} durante findByTipo(): {}", ERRORE_SQL, e.getMessage(), e);
+		}
 
-        return 0;
-    }
+		return list;
+	}
 
-    @Override
-    public List<Manutenzione> getTutteManutenzioni() {
+	@Override
+	public int getMaxId() {
 
-        String sql = """
-                SELECT idManutenzione, data, tipoManutenzione, descrizione, targa
-                FROM Manutenzione
-                ORDER BY data ASC
-                """;
+		String sql = "SELECT COALESCE(MAX(idManutenzione), 0) FROM Manutenzione";
 
-        List<Manutenzione> list = new ArrayList<>();
+		try (Connection conn = db.getConnection();
+				PreparedStatement ps = conn.prepareStatement(sql);
+				ResultSet rs = ps.executeQuery()) {
 
-        try (Connection conn = db.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+			return rs.next() ? rs.getInt(1) : 0;
 
-            while (rs.next()) {
-                list.add(map(rs));
-            }
+		} catch (SQLException e) {
+			logger.error("{} durante getMaxId(): {}", ERRORE_SQL, e.getMessage(), e);
+		}
 
-        } catch (SQLException e) {
-            logger.error("ERRORE SQL durante getTutteManutenzioni(): {}", e.getMessage(), e);
-        }
+		return 0;
+	}
 
-        return list;
-    }
+	@Override
+	public List<Manutenzione> getTutteManutenzioni() {
+
+		String sql = """
+				SELECT idManutenzione, data, tipoManutenzione,
+				       descrizione, targa
+				FROM Manutenzione
+				ORDER BY data ASC
+				""";
+
+		List<Manutenzione> list = new ArrayList<>();
+
+		try (Connection conn = db.getConnection();
+				PreparedStatement ps = conn.prepareStatement(sql);
+				ResultSet rs = ps.executeQuery()) {
+
+			fillList(rs, list);
+
+		} catch (SQLException e) {
+			logger.error("{} durante getTutteManutenzioni(): {}", ERRORE_SQL, e.getMessage(), e);
+		}
+
+		return list;
+	}
 }

@@ -19,286 +19,368 @@ import it.fleetmanager.repository.db.ConnectionProvider;
 import it.fleetmanager.util.StatoPrenotazione;
 import it.fleetmanager.util.TipoPrenotazione;
 
+/**
+ * Implementazione del DAO {@link PrenotazioneDAO}.
+ * <p>
+ * Questa classe gestisce tutte le operazioni di persistenza relative all'entità
+ * {@link Prenotazione}, incapsulando l'accesso al database e separando la
+ * logica di mapping dai dettagli SQL.
+ * </p>
+ *
+ * <p>
+ * Eventuali complessità ciclomatiche elevate sono dovute esclusivamente alla
+ * gestione tecnica delle query SQL e del {@link ResultSet}, senza presenza di
+ * logica di business.
+ * </p>
+ */
 public class PrenotazioneDAOImpl implements PrenotazioneDAO {
 
-    private static final Logger logger = LogManager.getLogger(PrenotazioneDAOImpl.class);
-    private static final String ERRORE_SQL = "ERRORE SQL";
+	private static final Logger logger = LogManager.getLogger(PrenotazioneDAOImpl.class);
+	private static final String ERRORE_SQL = "ERRORE SQL";
 
-    private final ConnectionProvider db;
+	private final ConnectionProvider db;
 
-    public static final Prenotazione PRENOTAZIONE_INESISTENTE =
-            new Prenotazione(-1, LocalDateTime.MIN, LocalDateTime.MIN,
-                    StatoPrenotazione.ANNULLATA, TipoPrenotazione.UTENTE, -1, "N/A") {
-                @Override
-                public String toString() {
-                    return "Prenotazione inesistente";
-                }
-            };
+	/**
+	 * Oggetto sentinella utilizzato quando una prenotazione non esiste.
+	 */
+	public static final Prenotazione PRENOTAZIONE_INESISTENTE = new Prenotazione(-1, LocalDateTime.MIN,
+			LocalDateTime.MIN, StatoPrenotazione.ANNULLATA, TipoPrenotazione.UTENTE, -1, "N/A") {
+		@Override
+		public String toString() {
+			return "Prenotazione inesistente";
+		}
+	};
 
-    public PrenotazioneDAOImpl(ConnectionProvider db) {
-        this.db = db;
-    }
+	/**
+	 * Costruttore.
+	 *
+	 * @param db provider delle connessioni al database
+	 */
+	public PrenotazioneDAOImpl(ConnectionProvider db) {
+		this.db = db;
+	}
 
-    private Prenotazione map(ResultSet rs) throws SQLException {
-        int idPren = rs.getInt("idPrenotazione");
-        LocalDateTime dataInizio = rs.getTimestamp("dataInizio").toLocalDateTime();
-        LocalDateTime dataFine = rs.getTimestamp("dataFine").toLocalDateTime();
-        StatoPrenotazione stato = StatoPrenotazione.valueOf(rs.getString("statoPrenotazione"));
-        TipoPrenotazione tipo = TipoPrenotazione.valueOf(rs.getString("tipoPrenotazione"));
-        int idUtente = rs.getInt("idUtente");
-        String targa = rs.getString("targa");
+	/**
+	 * Mappa una riga del {@link ResultSet} in un oggetto {@link Prenotazione}.
+	 *
+	 * @param rs result set posizionato sulla riga corrente
+	 * @return prenotazione mappata
+	 * @throws SQLException in caso di errore SQL
+	 */
+	private Prenotazione map(ResultSet rs) throws SQLException {
+		int idPren = rs.getInt("idPrenotazione");
+		LocalDateTime dataInizio = rs.getTimestamp("dataInizio").toLocalDateTime();
+		LocalDateTime dataFine = rs.getTimestamp("dataFine").toLocalDateTime();
+		StatoPrenotazione stato = StatoPrenotazione.valueOf(rs.getString("statoPrenotazione"));
+		TipoPrenotazione tipo = TipoPrenotazione.valueOf(rs.getString("tipoPrenotazione"));
+		int idUtente = rs.getInt("idUtente");
+		String targa = rs.getString("targa");
 
-        return new Prenotazione(idPren, dataInizio, dataFine, stato, tipo, idUtente, targa);
-    }
+		return new Prenotazione(idPren, dataInizio, dataFine, stato, tipo, idUtente, targa);
+	}
 
+	/*
+	 * ===================================================== Functional interfaces
+	 * di supporto =====================================================
+	 */
 
-    @FunctionalInterface
-    private interface SQLConsumer<T> {
-        void accept(T t) throws SQLException;
-    }
+	@FunctionalInterface
+	private interface SQLConsumer<T> {
+		void accept(T t) throws SQLException;
+	}
 
-    @FunctionalInterface
-    private interface SQLFunction<T, R> {
-        R apply(T t) throws SQLException;
-    }
+	@FunctionalInterface
+	private interface SQLFunction<T, R> {
+		R apply(T t) throws SQLException;
+	}
 
+	/*
+	 * ===================================================== Utility generiche
+	 * =====================================================
+	 */
 
-    private void inTransaction(String ctx, SQLConsumer<Connection> work) {
-        try (Connection conn = db.getConnection()) {
-            conn.setAutoCommit(false);
-            work.accept(conn);
-            conn.commit();
-        } catch (SQLException e) {
-            logger.error("{} {}: {}", ERRORE_SQL, ctx, e.getMessage(), e);
-        }
-    }
+	/**
+	 * Esegue un'operazione all'interno di una transazione.
+	 *
+	 * @param ctx  contesto logico dell'operazione
+	 * @param work codice da eseguire nella transazione
+	 */
+	private void inTransaction(String ctx, SQLConsumer<Connection> work) {
+		try (Connection conn = db.getConnection()) {
+			conn.setAutoCommit(false);
+			work.accept(conn);
+			conn.commit();
+		} catch (SQLException e) {
+			logger.error("{} {}: {}", ERRORE_SQL, ctx, e.getMessage(), e);
+		}
+	}
 
-    private List<Prenotazione> queryList(String ctx, String sql, SQLConsumer<PreparedStatement> binder) {
-        List<Prenotazione> list = new ArrayList<>();
+	/**
+	 * Riempie una lista di prenotazioni a partire da un {@link ResultSet}.
+	 *
+	 * @param rs  result set
+	 * @param out lista di destinazione
+	 * @throws SQLException in caso di errore SQL
+	 */
+	private void fillList(ResultSet rs, List<Prenotazione> out) throws SQLException {
+		while (rs.next()) {
+			out.add(map(rs));
+		}
+	}
 
-        try (Connection conn = db.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+	/**
+	 * Estrae una singola prenotazione da un {@link ResultSet}.
+	 *
+	 * @param rs           result set
+	 * @param defaultValue valore di default se non presente
+	 * @return prenotazione trovata o valore di default
+	 * @throws SQLException in caso di errore SQL
+	 */
+	private Prenotazione extractOne(ResultSet rs, Prenotazione defaultValue) throws SQLException {
+		return rs.next() ? map(rs) : defaultValue;
+	}
 
-            if (binder != null) binder.accept(ps);
+	/**
+	 * Estrae un valore booleano da una query di tipo COUNT.
+	 *
+	 * @param rs result set
+	 * @return true se il conteggio è maggiore di zero
+	 * @throws SQLException in caso di errore SQL
+	 */
+	private boolean extractExists(ResultSet rs) throws SQLException {
+		return rs.next() && rs.getInt(1) > 0;
+	}
 
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    list.add(map(rs));
-                }
-            }
+	/**
+	 * Esegue una query che restituisce una lista di prenotazioni.
+	 */
+	private List<Prenotazione> queryList(String ctx, String sql, SQLConsumer<PreparedStatement> binder) {
 
-        } catch (SQLException e) {
-            logger.error("{} {}: {}", ERRORE_SQL, ctx, e.getMessage(), e);
-        }
+		List<Prenotazione> list = new ArrayList<>();
 
-        return list;
-    }
+		try (Connection conn = db.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
-    private Prenotazione queryOne(
-            String ctx,
-            String sql,
-            SQLConsumer<PreparedStatement> binder,
-            Prenotazione defaultValue) {
+			if (binder != null) {
+				binder.accept(ps);
+			}
 
-        try (Connection conn = db.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+			try (ResultSet rs = ps.executeQuery()) {
+				fillList(rs, list);
+			}
 
-            if (binder != null) binder.accept(ps);
+		} catch (SQLException e) {
+			logger.error("{} {}: {}", ERRORE_SQL, ctx, e.getMessage(), e);
+		}
 
-            try (ResultSet rs = ps.executeQuery()) {
-                if (!rs.next()) return defaultValue;
-                return map(rs);
-            }
+		return list;
+	}
 
-        } catch (SQLException e) {
-            logger.error("{} {}: {}", ERRORE_SQL, ctx, e.getMessage(), e);
-        }
+	/**
+	 * Esegue una query che restituisce una singola prenotazione.
+	 */
+	private Prenotazione queryOne(String ctx, String sql, SQLConsumer<PreparedStatement> binder,
+			Prenotazione defaultValue) {
 
-        return defaultValue;
-    }
+		try (Connection conn = db.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
-    private boolean queryBoolean(
-            String ctx,
-            String sql,
-            SQLConsumer<PreparedStatement> binder,
-            SQLFunction<ResultSet, Boolean> extractor,
-            boolean defaultValue) {
+			if (binder != null) {
+				binder.accept(ps);
+			}
 
-        try (Connection conn = db.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+			try (ResultSet rs = ps.executeQuery()) {
+				return extractOne(rs, defaultValue);
+			}
 
-            if (binder != null) binder.accept(ps);
+		} catch (SQLException e) {
+			logger.error("{} {}: {}", ERRORE_SQL, ctx, e.getMessage(), e);
+		}
 
-            try (ResultSet rs = ps.executeQuery()) {
-                return extractor.apply(rs);
-            }
+		return defaultValue;
+	}
 
-        } catch (SQLException e) {
-            logger.error("{} {}: {}", ERRORE_SQL, ctx, e.getMessage(), e);
-        }
+	/**
+	 * Esegue una query booleana.
+	 */
+	private boolean queryBoolean(String ctx, String sql, SQLConsumer<PreparedStatement> binder,
+			SQLFunction<ResultSet, Boolean> extractor, boolean defaultValue) {
 
-        return defaultValue;
-    }
+		try (Connection conn = db.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
-    private void bindPrenotazioneCommon(PreparedStatement ps, Prenotazione p) throws SQLException {
-        ps.setTimestamp(1, Timestamp.valueOf(p.getDataInizio()));
-        ps.setTimestamp(2, Timestamp.valueOf(p.getDataFine()));
-        ps.setString(3, p.getStato().name());
-        ps.setString(4, p.getTipoPrenotazione().name());
-        ps.setInt(5, p.getIdUtente());
-        ps.setString(6, p.getTarga());
-    }
+			if (binder != null) {
+				binder.accept(ps);
+			}
 
-    // =====================
-    // CRUD
-    // =====================
-    @Override
-    public void save(Prenotazione p) {
+			try (ResultSet rs = ps.executeQuery()) {
+				return extractor.apply(rs);
+			}
 
-        String sql = """
-            INSERT INTO Prenotazione
-            (dataInizio, dataFine, statoPrenotazione, tipoPrenotazione, idUtente, targa)
-            VALUES (?, ?, ?, ?, ?, ?)
-            """;
+		} catch (SQLException e) {
+			logger.error("{} {}: {}", ERRORE_SQL, ctx, e.getMessage(), e);
+		}
 
-        inTransaction("save", conn -> {
-            try (PreparedStatement ps =
-                         conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+		return defaultValue;
+	}
 
-                bindPrenotazioneCommon(ps, p);
-                ps.executeUpdate();
+	/**
+	 * Effettua il binding dei campi comuni di una prenotazione.
+	 */
+	private void bindPrenotazioneCommon(PreparedStatement ps, Prenotazione p) throws SQLException {
 
-                try (ResultSet rs = ps.getGeneratedKeys()) {
-                    if (rs.next()) p.setId(rs.getInt(1));
-                }
-            }
-        });
-    }
+		ps.setTimestamp(1, Timestamp.valueOf(p.getDataInizio()));
+		ps.setTimestamp(2, Timestamp.valueOf(p.getDataFine()));
+		ps.setString(3, p.getStato().name());
+		ps.setString(4, p.getTipoPrenotazione().name());
+		ps.setInt(5, p.getIdUtente());
+		ps.setString(6, p.getTarga());
+	}
 
-    @Override
-    public void update(Prenotazione p) {
+	/*
+	 * ===================================================== CRUD
+	 * =====================================================
+	 */
 
-        String sql = """
-            UPDATE Prenotazione SET
-                dataInizio = ?,
-                dataFine = ?,
-                statoPrenotazione = ?,
-                tipoPrenotazione = ?,
-                idUtente = ?,
-                targa = ?
-            WHERE idPrenotazione = ?
-            """;
+	@Override
+	public void save(Prenotazione p) {
+		String sql = """
+				INSERT INTO Prenotazione
+				(dataInizio, dataFine, statoPrenotazione,
+				 tipoPrenotazione, idUtente, targa)
+				VALUES (?, ?, ?, ?, ?, ?)
+				""";
 
-        inTransaction("update", conn -> {
-            try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                bindPrenotazioneCommon(ps, p);
-                ps.setInt(7, p.getIdPrenotazione());
-                ps.executeUpdate();
-            }
-        });
-    }
+		inTransaction("save", conn -> {
+			try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-    @Override
-    public void delete(int id) {
+				bindPrenotazioneCommon(ps, p);
+				ps.executeUpdate();
 
-        String sql = "DELETE FROM Prenotazione WHERE idPrenotazione = ?";
+				try (ResultSet rs = ps.getGeneratedKeys()) {
+					if (rs.next()) {
+						p.setId(rs.getInt(1));
+					}
+				}
+			}
+		});
+	}
 
-        inTransaction("delete", conn -> {
-            try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                ps.setInt(1, id);
-                ps.executeUpdate();
-            }
-        });
-    }
+	@Override
+	public void update(Prenotazione p) {
+		String sql = """
+				UPDATE Prenotazione SET
+				    dataInizio = ?,
+				    dataFine = ?,
+				    statoPrenotazione = ?,
+				    tipoPrenotazione = ?,
+				    idUtente = ?,
+				    targa = ?
+				WHERE idPrenotazione = ?
+				""";
 
-    // =====================
-    // QUERY
-    // =====================
-    @Override
-    public Prenotazione getById(int id) {
+		inTransaction("update", conn -> {
+			try (PreparedStatement ps = conn.prepareStatement(sql)) {
+				bindPrenotazioneCommon(ps, p);
+				ps.setInt(7, p.getIdPrenotazione());
+				ps.executeUpdate();
+			}
+		});
+	}
 
-        String sql = """
-            SELECT idPrenotazione, dataInizio, dataFine,
-                   statoPrenotazione, tipoPrenotazione, idUtente, targa
-            FROM Prenotazione
-            WHERE idPrenotazione = ?
-            """;
+	@Override
+	public void delete(int id) {
+		String sql = "DELETE FROM Prenotazione WHERE idPrenotazione = ?";
 
-        return queryOne("getById", sql, ps -> ps.setInt(1, id), PRENOTAZIONE_INESISTENTE);
-    }
+		inTransaction("delete", conn -> {
+			try (PreparedStatement ps = conn.prepareStatement(sql)) {
+				ps.setInt(1, id);
+				ps.executeUpdate();
+			}
+		});
+	}
 
-    @Override
-    public List<Prenotazione> findByDriver(int idUtente) {
+	/*
+	 * ===================================================== Query pubbliche
+	 * =====================================================
+	 */
 
-        String sql = """
-            SELECT idPrenotazione, dataInizio, dataFine,
-                   statoPrenotazione, tipoPrenotazione, idUtente, targa
-            FROM Prenotazione
-            WHERE idUtente = ?
-            """;
+	@Override
+	public Prenotazione getById(int id) {
+		String sql = """
+				SELECT idPrenotazione, dataInizio, dataFine,
+				       statoPrenotazione, tipoPrenotazione,
+				       idUtente, targa
+				FROM Prenotazione
+				WHERE idPrenotazione = ?
+				""";
 
-        return queryList("findByDriver", sql, ps -> ps.setInt(1, idUtente));
-    }
+		return queryOne("getById", sql, ps -> ps.setInt(1, id), PRENOTAZIONE_INESISTENTE);
+	}
 
-    @Override
-    public List<Prenotazione> findByVeicolo(String targa) {
+	@Override
+	public List<Prenotazione> findByDriver(int idUtente) {
+		String sql = """
+				SELECT idPrenotazione, dataInizio, dataFine,
+				       statoPrenotazione, tipoPrenotazione,
+				       idUtente, targa
+				FROM Prenotazione
+				WHERE idUtente = ?
+				""";
 
-        String sql = """
-            SELECT idPrenotazione, dataInizio, dataFine,
-                   statoPrenotazione, tipoPrenotazione, idUtente, targa
-            FROM Prenotazione
-            WHERE targa = ?
-            """;
+		return queryList("findByDriver", sql, ps -> ps.setInt(1, idUtente));
+	}
 
-        return queryList("findByVeicolo", sql, ps -> ps.setString(1, targa));
-    }
+	@Override
+	public List<Prenotazione> findByVeicolo(String targa) {
+		String sql = """
+				SELECT idPrenotazione, dataInizio, dataFine,
+				       statoPrenotazione, tipoPrenotazione,
+				       idUtente, targa
+				FROM Prenotazione
+				WHERE targa = ?
+				""";
 
-    @Override
-    public List<Prenotazione> findByStato(StatoPrenotazione stato) {
+		return queryList("findByVeicolo", sql, ps -> ps.setString(1, targa));
+	}
 
-        String sql = """
-            SELECT idPrenotazione, dataInizio, dataFine,
-                   statoPrenotazione, tipoPrenotazione, idUtente, targa
-            FROM Prenotazione
-            WHERE statoPrenotazione = ?
-            """;
+	@Override
+	public List<Prenotazione> findByStato(StatoPrenotazione stato) {
+		String sql = """
+				SELECT idPrenotazione, dataInizio, dataFine,
+				       statoPrenotazione, tipoPrenotazione,
+				       idUtente, targa
+				FROM Prenotazione
+				WHERE statoPrenotazione = ?
+				""";
 
-        return queryList("findByStato", sql, ps -> ps.setString(1, stato.name()));
-    }
+		return queryList("findByStato", sql, ps -> ps.setString(1, stato.name()));
+	}
 
-    @Override
-    public boolean existsOverlapping(String targa, LocalDateTime dataInizio, LocalDateTime dataFine) {
+	@Override
+	public boolean existsOverlapping(String targa, LocalDateTime dataInizio, LocalDateTime dataFine) {
 
-        String sql = """
-            SELECT COUNT(*)
-            FROM Prenotazione
-            WHERE targa = ?
-              AND dataInizio < ?
-              AND dataFine > ?
-            """;
+		String sql = """
+				SELECT COUNT(*)
+				FROM Prenotazione
+				WHERE targa = ?
+				  AND dataInizio < ?
+				  AND dataFine > ?
+				""";
 
-        return queryBoolean(
-                "existsOverlapping",
-                sql,
-                ps -> {
-                    ps.setString(1, targa);
-                    ps.setTimestamp(2, Timestamp.valueOf(dataFine));
-                    ps.setTimestamp(3, Timestamp.valueOf(dataInizio));
-                },
-                rs -> rs.next() && rs.getInt(1) > 0,
-                false
-        );
-    }
+		return queryBoolean("existsOverlapping", sql, ps -> {
+			ps.setString(1, targa);
+			ps.setTimestamp(2, Timestamp.valueOf(dataFine));
+			ps.setTimestamp(3, Timestamp.valueOf(dataInizio));
+		}, this::extractExists, false);
+	}
 
-    @Override
-    public List<Prenotazione> findAll() {
+	@Override
+	public List<Prenotazione> findAll() {
+		String sql = """
+				SELECT idPrenotazione, dataInizio, dataFine,
+				       statoPrenotazione, tipoPrenotazione,
+				       idUtente, targa
+				FROM Prenotazione
+				""";
 
-        String sql = """
-            SELECT idPrenotazione, dataInizio, dataFine,
-                   statoPrenotazione, tipoPrenotazione, idUtente, targa
-            FROM Prenotazione
-            """;
-
-        return queryList("findAll", sql, null);
-    }
+		return queryList("findAll", sql, null);
+	}
 }

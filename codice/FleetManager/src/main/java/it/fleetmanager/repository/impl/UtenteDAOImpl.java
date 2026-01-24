@@ -7,15 +7,28 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import it.fleetmanager.model.Utente;
 import it.fleetmanager.repository.dao.UtenteDAO;
 import it.fleetmanager.repository.db.ConnectionProvider;
 import it.fleetmanager.util.RuoloUtente;
 
+/**
+ * Implementazione del DAO {@link UtenteDAO}.
+ */
 public class UtenteDAOImpl implements UtenteDAO {
+
+	private static final Logger logger = LogManager.getLogger(UtenteDAOImpl.class);
+
+	private static final String ERRORE_SQL = "ERRORE SQL";
 
 	private final ConnectionProvider db;
 
+	/**
+	 * Oggetto sentinella utilizzato quando un utente non esiste.
+	 */
 	public static final Utente UTENTE_INESISTENTE = new Utente(-1, "N/A", "N/A", "N/A", "N/A", RuoloUtente.MANAGER) {
 		@Override
 		public String toString() {
@@ -23,11 +36,28 @@ public class UtenteDAOImpl implements UtenteDAO {
 		}
 	};
 
+	/**
+	 * Costruttore.
+	 *
+	 * @param db provider delle connessioni al database
+	 */
 	public UtenteDAOImpl(ConnectionProvider db) {
 		this.db = db;
 	}
 
-	private Utente map(ResultSet rs) throws Exception {
+	/*
+	 * ===================================================== Mapping
+	 * =====================================================
+	 */
+
+	/**
+	 * Mappa una riga del {@link ResultSet} in un oggetto {@link Utente}.
+	 *
+	 * @param rs result set posizionato sulla riga corrente
+	 * @return utente mappato
+	 * @throws SQLException in caso di errore SQL
+	 */
+	private Utente map(ResultSet rs) throws SQLException {
 		int idUtente = rs.getInt("idUtente");
 		String nome = rs.getString("nome");
 		String cognome = rs.getString("cognome");
@@ -36,14 +66,38 @@ public class UtenteDAOImpl implements UtenteDAO {
 		RuoloUtente ruolo = RuoloUtente.valueOf(rs.getString("ruoloUtente"));
 		String patente = rs.getString("patente");
 
-		if (patente == null)
-			return new Utente(idUtente, nome, cognome, email, password, ruolo);
-		else
-			return new Utente(idUtente, nome, cognome, email, password, ruolo, patente);
+		return (patente == null) ? new Utente(idUtente, nome, cognome, email, password, ruolo)
+				: new Utente(idUtente, nome, cognome, email, password, ruolo, patente);
+	}
+
+	/**
+	 * Estrae un singolo utente dal {@link ResultSet}.
+	 *
+	 * @param rs result set
+	 * @return utente trovato o oggetto sentinella
+	 * @throws SQLException in caso di errore SQL
+	 */
+	private Utente extractOne(ResultSet rs) throws SQLException {
+		return rs.next() ? map(rs) : UTENTE_INESISTENTE;
+	}
+
+	/**
+	 * Riempie una lista di utenti a partire da un {@link ResultSet}.
+	 *
+	 * @param rs  result set
+	 * @param out lista di destinazione
+	 * @throws SQLException in caso di errore SQL
+	 */
+	private void fillList(ResultSet rs, List<Utente> out) throws SQLException {
+
+		while (rs.next()) {
+			out.add(map(rs));
+		}
 	}
 
 	@Override
 	public void save(Utente u) {
+
 		String sql = """
 				INSERT INTO Utente
 				(idUtente, nome, cognome, email, password, ruoloUtente, patente)
@@ -63,16 +117,21 @@ public class UtenteDAOImpl implements UtenteDAO {
 			ps.executeUpdate();
 
 		} catch (SQLException e) {
-			System.err.println("ERRORE SQL save: " + e.getMessage());
+			logger.error("{} durante save(): {}", ERRORE_SQL, e.getMessage(), e);
 		}
 	}
 
 	@Override
 	public void update(Utente u) {
+
 		String sql = """
 				UPDATE Utente SET
-				    nome = ?, cognome = ?, email = ?, password = ?,
-				    ruoloUtente = ?, patente = ?
+				    nome = ?,
+				    cognome = ?,
+				    email = ?,
+				    password = ?,
+				    ruoloUtente = ?,
+				    patente = ?
 				WHERE idUtente = ?
 				""";
 
@@ -89,12 +148,13 @@ public class UtenteDAOImpl implements UtenteDAO {
 			ps.executeUpdate();
 
 		} catch (SQLException e) {
-			System.err.println("ERRORE SQL update: " + e.getMessage());
+			logger.error("{} durante update(): {}", ERRORE_SQL, e.getMessage(), e);
 		}
 	}
 
 	@Override
 	public void delete(int id) {
+
 		String sql = "DELETE FROM Utente WHERE idUtente = ?";
 
 		try (Connection conn = db.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -103,12 +163,13 @@ public class UtenteDAOImpl implements UtenteDAO {
 			ps.executeUpdate();
 
 		} catch (SQLException e) {
-			System.err.println("ERRORE SQL delete: " + e.getMessage());
+			logger.error("{} durante delete(): {}", ERRORE_SQL, e.getMessage(), e);
 		}
 	}
 
 	@Override
 	public Utente getUtenteById(int id) {
+
 		String sql = "SELECT * FROM Utente WHERE idUtente = ?";
 
 		try (Connection conn = db.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -116,18 +177,19 @@ public class UtenteDAOImpl implements UtenteDAO {
 			ps.setInt(1, id);
 
 			try (ResultSet rs = ps.executeQuery()) {
-				if (!rs.next())
-					return UTENTE_INESISTENTE;
-				return map(rs);
+				return extractOne(rs);
 			}
 
-		} catch (Exception e) {
-			return UTENTE_INESISTENTE;
+		} catch (SQLException e) {
+			logger.error("{} durante getUtenteById(): {}", ERRORE_SQL, e.getMessage(), e);
 		}
+
+		return UTENTE_INESISTENTE;
 	}
 
 	@Override
 	public Utente getUtenteByEmail(String email) {
+
 		String sql = "SELECT * FROM Utente WHERE email = ?";
 
 		try (Connection conn = db.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -135,73 +197,73 @@ public class UtenteDAOImpl implements UtenteDAO {
 			ps.setString(1, email);
 
 			try (ResultSet rs = ps.executeQuery()) {
-				if (!rs.next())
-					return UTENTE_INESISTENTE;
-				return map(rs);
+				return extractOne(rs);
 			}
 
-		} catch (Exception e) {
-			return UTENTE_INESISTENTE;
+		} catch (SQLException e) {
+			logger.error("{} durante getUtenteByEmail(): {}", ERRORE_SQL, e.getMessage(), e);
 		}
+
+		return UTENTE_INESISTENTE;
 	}
 
 	@Override
 	public boolean existsByEmail(String email) {
+
 		String sql = "SELECT 1 FROM Utente WHERE email = ?";
-
-		try (Connection conn = db.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-
-			ps.setString(1, email);
-
-			try (ResultSet rs = ps.executeQuery()) {
-				return rs.next();
-			}
-
-		} catch (Exception e) {
-			return false;
-		}
-	}
-
-	@Override
-	public List<Utente> getTuttiUtenti() {
-		String sql = "SELECT * FROM Utente ORDER BY idUtente ASC";
-		List<Utente> lista = new ArrayList<>();
 
 		try (Connection conn = db.getConnection();
 				PreparedStatement ps = conn.prepareStatement(sql);
 				ResultSet rs = ps.executeQuery()) {
 
-			while (rs.next())
-				lista.add(map(rs));
+			return rs.next();
 
-		} catch (Exception e) {
-			System.err.println("ERRORE SQL getTuttiUtenti: " + e.getMessage());
+		} catch (SQLException e) {
+			logger.error("{} durante existsByEmail(): {}", ERRORE_SQL, e.getMessage(), e);
 		}
 
-		return lista;
+		return false;
 	}
-	
+
+	@Override
+	public List<Utente> getTuttiUtenti() {
+
+		String sql = "SELECT * FROM Utente ORDER BY idUtente ASC";
+		List<Utente> list = new ArrayList<>();
+
+		try (Connection conn = db.getConnection();
+				PreparedStatement ps = conn.prepareStatement(sql);
+				ResultSet rs = ps.executeQuery()) {
+
+			fillList(rs, list);
+
+		} catch (SQLException e) {
+			logger.error("{} durante getTuttiUtenti(): {}", ERRORE_SQL, e.getMessage(), e);
+		}
+
+		return list;
+	}
+
 	@Override
 	public Utente getManager() {
-	    String sql = """
-	            SELECT * FROM Utente
-	            WHERE ruoloUtente = 'MANAGER'
-	            ORDER BY idUtente ASC
-	            LIMIT 1
-	            """;
 
-	    try (Connection conn = db.getConnection();
-	         PreparedStatement ps = conn.prepareStatement(sql);
-	         ResultSet rs = ps.executeQuery()) {
+		String sql = """
+				SELECT * FROM Utente
+				WHERE ruoloUtente = 'MANAGER'
+				ORDER BY idUtente ASC
+				LIMIT 1
+				""";
 
-	        if (rs.next())
-	            return map(rs);
+		try (Connection conn = db.getConnection();
+				PreparedStatement ps = conn.prepareStatement(sql);
+				ResultSet rs = ps.executeQuery()) {
 
-	    } catch (Exception e) {
-	        System.err.println("ERRORE SQL getManager: " + e.getMessage());
-	    }
+			return extractOne(rs);
 
-	    return UTENTE_INESISTENTE;
+		} catch (SQLException e) {
+			logger.error("{} durante getManager(): {}", ERRORE_SQL, e.getMessage(), e);
+		}
+
+		return UTENTE_INESISTENTE;
 	}
-
 }
