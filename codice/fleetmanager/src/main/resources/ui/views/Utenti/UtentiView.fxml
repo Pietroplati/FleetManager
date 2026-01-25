@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.geometry.Pos?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="it.fleetmanager.ui.utenti.UtentiController"
+            style="-fx-background-color: #e9f0f7;">
+
+    <!-- ===================== HEADER ===================== -->
+    <top>
+        <VBox alignment="CENTER" spacing="8">
+            <padding>
+                <Insets top="20" right="20" bottom="10" left="20"/>
+            </padding>
+
+            <Label text="Gestione Utenti"
+                   style="-fx-font-size: 26;
+                          -fx-font-weight: bold;
+                          -fx-text-fill: #2f4773;" />
+
+            <Label text="Elenco dei driver registrati nel sistema"
+                   style="-fx-font-size: 14;
+                          -fx-text-fill: #4a76a8;" />
+        </VBox>
+    </top>
+
+    <!-- ===================== TABELLA ===================== -->
+    <center>
+        <VBox alignment="CENTER">
+            <padding>
+                <Insets top="10" right="20" bottom="10" left="20"/>
+            </padding>
+
+            <!--
+                LARGHEZZA FISSA:
+                evita qualunque spazio vuoto a destra
+            -->
+            <TableView fx:id="tableUtenti"
+                       prefWidth="820"
+                       maxWidth="820"
+                       prefHeight="420">
+
+                <columns>
+                    <TableColumn fx:id="colNome" text="Nome" prefWidth="180" />
+                    <TableColumn fx:id="colCognome" text="Cognome" prefWidth="180" />
+                    <TableColumn fx:id="colEmail" text="Email" prefWidth="320" />
+                    <TableColumn fx:id="colPatente" text="Patente" prefWidth="140" />
+                </columns>
+
+            </TableView>
+        </VBox>
+    </center>
+
+    <!-- ===================== AZIONI ===================== -->
+    <bottom>
+        <HBox alignment="CENTER" spacing="15">
+            <padding>
+                <Insets top="15" right="20" bottom="20" left="20"/>
+            </padding>
+
+            <Button text="Aggiungi"
+                    onAction="#onAggiungi"
+                    prefWidth="140"
+                    style="-fx-background-radius: 10;
+                           -fx-font-size: 14;
+                           -fx-font-weight: bold;
+                           -fx-text-fill: white;
+                           -fx-background-color: linear-gradient(to right,#6fbf73,#4fa75b);" />
+
+            <Button text="Modifica"
+                    onAction="#onModifica"
+                    prefWidth="140"
+                    style="-fx-background-radius: 10;
+                           -fx-font-size: 14;
+                           -fx-font-weight: bold;
+                           -fx-text-fill: white;
+                           -fx-background-color: linear-gradient(to right,#f0ad4e,#ec971f);" />
+
+            <Button text="Elimina"
+                    onAction="#onElimina"
+                    prefWidth="140"
+                    style="-fx-background-radius: 10;
+                           -fx-font-size: 14;
+                           -fx-font-weight: bold;
+                           -fx-text-fill: white;
+                           -fx-background-color: linear-gradient(to right,#d9534f,#c9302c);" />
+
+            <Button text="Indietro"
+                    onAction="#onIndietro"
+                    prefWidth="140"
+                    style="-fx-background-radius: 10;
+                           -fx-font-size: 14;
+                           -fx-font-weight: bold;
+                           -fx-text-fill: white;
+                           -fx-background-color: linear-gradient(to right,#b2c7db,#92aac4);" />
+        </HBox>
+    </bottom>
+
+</BorderPane>

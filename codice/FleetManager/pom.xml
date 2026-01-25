@@ -1,21 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>PlaBas</groupId>
+  <groupId>it.fleetmanager</groupId>
   <artifactId>FleetManager</artifactId>
   <version>0.0.1-SNAPSHOT</version>
+  
+<developers>
+  <developer><id>p.plati</id><name>Pietro Plati</name></developer>
+  <developer><id>f.basis</id><name>Francesco Basis</name></developer>
+</developers>
 
   <name>FleetManager</name>
-  <!-- FIXME change it to the project's website -->
-  <url>http://www.example.com</url>
+	<url>https://github.com/Pietroplati/FleetManager</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.release>17</maven.compiler.release>
+
+    <!-- versioni librerie -->
+    <log4j2.version>2.22.1</log4j2.version>
+    <h2.version>2.2.224</h2.version>
+    <pmd.version>3.21.2</pmd.version>
   </properties>
 
+  <!-- BOM JUnit: gestisce le versioni delle dipendenze JUnit 5.* -->
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -29,28 +40,110 @@
   </dependencyManagement>
 
   <dependencies>
+  	<!-- JavaFX -->
+	<dependency>
+	    <groupId>org.openjfx</groupId>
+	    <artifactId>javafx-controls</artifactId>
+	    <version>21.0.1</version>
+	</dependency>
+	
+	<dependency>
+	    <groupId>org.openjfx</groupId>
+	    <artifactId>javafx-fxml</artifactId>
+	    <version>21.0.1</version>
+	</dependency>
+	
+	<dependency>
+	    <groupId>org.openjfx</groupId>
+	    <artifactId>javafx-graphics</artifactId>
+	    <version>21.0.1</version>
+	</dependency>
+	
+	<dependency>
+	    <groupId>org.openjfx</groupId>
+	    <artifactId>javafx-base</artifactId>
+	    <version>21.0.1</version>
+	</dependency>
+	
+	<dependency>
+	    <groupId>org.openjfx</groupId>
+	    <artifactId>javafx-media</artifactId>
+	    <version>21.0.1</version>
+	</dependency>
+	
+	<dependency>
+	    <groupId>org.openjfx</groupId>
+	    <artifactId>javafx-web</artifactId>
+	    <version>21.0.1</version>
+	</dependency>
+    <!-- JUnit 5 API + Params + Engine (necessario per eseguire i test) -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
       <scope>test</scope>
     </dependency>
-    <!-- Optionally: parameterized tests support -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-params</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- Log4j2 -->
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <version>${log4j2.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <version>${log4j2.version}</version>
+    </dependency>
+
+    <!-- H2 embedded -->
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <version>${h2.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    
+   <dependency>
+ 	 <groupId>com.fasterxml.jackson.core</groupId>
+ 	 <artifactId>jackson-databind</artifactId>
+ 	 <version>2.17.0</version>
+	</dependency>
+
+	<dependency>
+   		<groupId>com.fasterxml.jackson.datatype</groupId>
+    	<artifactId>jackson-datatype-jsr310</artifactId>
+    	<version>2.17.0</version>
+	</dependency>
   </dependencies>
+  
+  
 
   <build>
-    <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
+    
+    <pluginManagement>
       <plugins>
-        <!-- clean lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle -->
+		<plugin>
+		    <groupId>org.openjfx</groupId>
+		    <artifactId>javafx-maven-plugin</artifactId>
+		    <version>0.0.8</version>
+		    <configuration>
+		        <mainClass>it.fleetmanager.App</mainClass>
+		    </configuration>
+		</plugin>
         <plugin>
           <artifactId>maven-clean-plugin</artifactId>
           <version>3.4.0</version>
         </plugin>
-        <!-- default lifecycle, jar packaging: see https://maven.apache.org/ref/current/maven-core/default-bindings.html#Plugin_bindings_for_jar_packaging -->
         <plugin>
           <artifactId>maven-resources-plugin</artifactId>
           <version>3.3.1</version>
@@ -75,7 +168,6 @@
           <artifactId>maven-deploy-plugin</artifactId>
           <version>3.1.2</version>
         </plugin>
-        <!-- site lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#site_Lifecycle -->
         <plugin>
           <artifactId>maven-site-plugin</artifactId>
           <version>3.12.1</version>
@@ -86,5 +178,39 @@
         </plugin>
       </plugins>
     </pluginManagement>
+
+		<!-- plugin effettivamente usati in build -->
+    <plugins>
+			<!-- Surefire configurato per JUnit 5 -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+					<!-- evita problemi con il module path su JDK 17 -->
+          <useModulePath>false</useModulePath>
+          <includes>
+            <include>**/*Test.java</include>
+            <include>**/*Tests.java</include>
+          </includes>
+        </configuration>
+      </plugin>
+
+			<!-- JavaDoc (utile per documentazione finale) -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.6.3</version>
+      </plugin>
+
+			<!-- PMD per qualità del codice (report sotto target/site) -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>${pmd.version}</version>
+        <configuration>
+          <printFailingErrors>true</printFailingErrors>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
 </project>

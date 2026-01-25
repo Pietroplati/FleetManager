@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="it.fleetmanager.ui.manutenzioni.NuovaManutenzioneController"
+            style="-fx-background-color: #e9f0f7;">
+
+    <center>
+        <AnchorPane>
+            <children>
+
+                <VBox alignment="CENTER" spacing="20"
+                      AnchorPane.topAnchor="0"
+                      AnchorPane.bottomAnchor="0"
+                      AnchorPane.leftAnchor="0"
+                      AnchorPane.rightAnchor="0">
+
+                    <Label text="Nuova Manutenzione"
+                           style="-fx-font-size: 30; -fx-font-weight: bold; -fx-text-fill:#2f4773;" />
+
+                    <VBox spacing="15" alignment="CENTER_LEFT" maxWidth="700"
+                          style="-fx-background-color: white;
+                                 -fx-background-radius: 15;
+                                 -fx-padding: 25;
+                                 -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 15, 0.2, 0, 4);">
+
+                        <Label text="Targa veicolo:" />
+                        <ComboBox fx:id="cbTarga" prefWidth="300" />
+
+                        <Label text="Tipo manutenzione:" />
+                        <ComboBox fx:id="cbTipo" prefWidth="300" />
+
+                        <Label text="Data:" />
+                        <DatePicker fx:id="dpData" prefWidth="200" />
+
+                        <Label text="Ora inizio (HH:mm)" />
+                        <TextField fx:id="txtOraInizio" promptText="09:00" prefWidth="120" />
+
+                        <Label text="Descrizione:" />
+                        <TextArea fx:id="txtDescrizione" prefHeight="120" wrapText="true" />
+                    </VBox>
+
+                    <HBox alignment="CENTER" spacing="20">
+                        <Button text="Conferma" onAction="#onConferma" prefWidth="180" />
+                        <Button text="Annulla" onAction="#onAnnulla" prefWidth="180" />
+                    </HBox>
+
+                </VBox>
+
+            </children>
+        </AnchorPane>
+    </center>
+
+</BorderPane>

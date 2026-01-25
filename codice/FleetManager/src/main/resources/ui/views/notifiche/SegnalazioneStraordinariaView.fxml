@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+	xmlns:fx="http://javafx.com/fxml"
+	fx:controller="it.fleetmanager.ui.notifiche.SegnalazioneStraordinariaController"
+	prefWidth="420" prefHeight="320"
+	style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 10;">
+
+	<top>
+		<Label text="Segnalazione Straordinaria"
+			style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill:#2f4773;"
+			BorderPane.alignment="CENTER" />
+	</top>
+
+	<center>
+		<VBox spacing="15" alignment="CENTER_LEFT">
+
+			<Label text="Veicolo:" style="-fx-font-size: 14;" />
+			<ComboBox fx:id="comboVeicoli" prefWidth="350" />
+
+			<Label text="Descrizione:" style="-fx-font-size: 14;" />
+			<TextArea fx:id="txtDescrizione" prefWidth="350"
+				prefHeight="140" promptText="Descrivi il problema riscontrato" />
+		</VBox>
+	</center>
+
+	<bottom>
+		<HBox spacing="15" alignment="CENTER_RIGHT">
+
+			<Button text="Annulla" onAction="#onAnnulla"
+				style="-fx-background-radius: 8; -fx-padding: 6 15;
+                           -fx-background-color: #ccc; -fx-font-weight: bold;" />
+
+			<Button text="Invia Segnalazione" onAction="#onInvia"
+				style="-fx-background-radius: 8; -fx-padding: 6 15;
+                           -fx-background-color: linear-gradient(to right,#e45757,#b33030);
+                           -fx-text-fill: white; -fx-font-weight: bold;" />
+		</HBox>
+	</bottom>
+
+</BorderPane>

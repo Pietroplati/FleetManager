@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="it.fleetmanager.ui.veicoli.VeicoloFormController"
+      spacing="15" alignment="CENTER" prefWidth="400">
+
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <Label text="Dettaglio Veicolo"
+           style="-fx-font-size:20; -fx-font-weight:bold; -fx-text-fill:#2f4773;"/>
+
+    <GridPane hgap="10" vgap="10">
+
+        <Label text="Targa:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+        <TextField fx:id="txtTarga" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+        <Label text="Tipo:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+        <ComboBox fx:id="cmbTipo" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+        <Label text="Marca:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+        <TextField fx:id="txtMarca" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+        <Label text="Modello:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+        <TextField fx:id="txtModello" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+        <Label text="Anno:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+        <TextField fx:id="txtAnno" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+
+        <Label text="Stato:" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+        <ComboBox fx:id="cmbStato" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+
+        <Label text="Km:" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+        <TextField fx:id="txtKm" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+
+    </GridPane>
+
+    <Button text="Salva" onAction="#onSalva"
+            style="-fx-background-color:#4a76a8; -fx-text-fill:white; -fx-background-radius:10;"
+            prefWidth="150"/>
+
+</VBox>

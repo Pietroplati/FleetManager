@@ -1,0 +1,78 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2867
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww25400\viewh15280\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 @startuml\
+\
+\
+top to bottom direction\
+skinparam linetype ortho\
+skinparam shadowing false\
+\
+skinparam nodesep 180\
+skinparam ranksep 300\
+scale 1.3\
+\
+\
+object "driver:Utente" as Driver\
+object "dashCtrl:DriverDashboardController" as DDC\
+object "sceneMgr:SceneManager" as SM\
+\
+object "nuovaPrenCtrl:NuovaPrenotazioneController" as NPC\
+object "uiFacade:UiFacade" as UF\
+object "gestorePren:GestorePrenotazione" as GP\
+\
+object "p:Prenotazione" as P\
+object "prenDAO:PrenotazioneDAO" as PDAO\
+object "db:DataBase" as DB\
+\
+object "notifSys:SistemaNotifiche" as SN\
+object "n:Notifica" as N\
+\
+\
+Driver -[hidden]-> DDC\
+DDC   -[hidden]-> SM\
+\
+SM    -[hidden]-> NPC\
+NPC   -[hidden]-> UF\
+UF    -[hidden]-> GP\
+\
+GP    -[hidden]-> P\
+P     -[hidden]-> PDAO\
+PDAO  -[hidden]-> DB\
+\
+GP    -[hidden]-> SN\
+SN    -[hidden]-> N\
+\
+\
+Driver -> DDC : 1: onNuovaPrenotazione\
+DDC -> SM     : 2: changeScene\
+SM -> SM      : 2.1: switchScene\
+\
+Driver -> NPC : 3: onConferma\
+NPC -> UF     : 3.1: creaPrenotazione\
+UF  -> GP     : 3.2: creaPrenotazione\
+\
+GP -> UF      : 4: exception\
+note right of UF\
+4.1 [patente==NULL]\
+4.2 [disponibilita==FALSE]\
+end note\
+\
+GP -> P       : 4.3.1: <<create>>\
+GP -> PDAO    : 4.3.2: save\
+PDAO -> DB    : 4.3.2.1: commit\
+\
+GP -> SN      : 4.3.3: notificaRichiestaPrenotazione\
+SN -> N       : 4.3.3.1: <<create>>\
+\
+GP --> UF     : 4.3.4: prenotazione\
+UF --> NPC    : 4.3.4.1: prenotazione\
+NPC -> Driver : 4.3.4.2: alertInfo\
+NPC -> NPC    : 4.3.5: tornaAllePrenotazioni\
+\
+@enduml\
+}

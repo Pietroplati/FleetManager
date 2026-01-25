@@ -1,0 +1,32 @@
+@startuml
+group seq
+Driver -> DriverDashboardController: onNuovaPrenotazione()
+DriverDashboardController -> SceneManager: changeScene("PrenotazioniView.fxml", utente)
+SceneManager -> SceneManager: switchScene(fxmlPath, utente, false)
+Driver -> NuovaPrenotazioneController: onConferma()
+NuovaPrenotazioneController -> UiFacade: creaPrenotazione(utente, veicolo, dataInizio, dataFine)
+UiFacade -> GestorePrenotazione: creaPrenotazione(driver, veicolo, dataInizio, dataFine)
+
+alt driver.getPatente() == null
+GestorePrenotazione --> UiFacade: //IllegalArgumentException("L’utente non ha la patente, non può prenotare veicoli.")//
+
+else !validadisponibilita(veicolo, dataInizio, dataFine)
+GestorePrenotazione --> UiFacade: //IllegalArgumentException("Il veicolo " + veicolo.getTarga() + " non è disponibile nelle date richieste.")//
+
+else
+GestorePrenotazione -> Prenotazione **: create
+GestorePrenotazione -> PrenotazioneDAO: save(prenotazione)
+PrenotazioneDAO -> PrenotazioneDAO: inTransaction("save", conn)
+PrenotazioneDAO -> DataBase: commit()
+GestorePrenotazione -> SistemaNotifiche: notificaRichiestaPrenotazione(driver, p) 
+SistemaNotifiche -> SistemaNotifiche: salva()
+SistemaNotifiche -> Notifica **: create
+GestorePrenotazione --> UiFacade: prenotazione
+UiFacade --> NuovaPrenotazioneController: prenotazione
+NuovaPrenotazioneController -> Driver: alertInfo("Prenotazione creata con successo.");
+NuovaPrenotazioneController -> NuovaPrenotazioneController: tornaAllePrenotazioni()
+
+end
+
+end
+@enduml

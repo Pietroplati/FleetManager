@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.geometry.Pos?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.effect.DropShadow?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="it.fleetmanager.ui.prenotazioni.NuovaPrenotazioneController"
+            style="-fx-background-color: #e9f0f7;">
+
+    <!-- HEADER -->
+    <top>
+        <VBox alignment="CENTER" spacing="5"
+              style="-fx-padding: 20 0 15 0;">
+            <Label text="Nuova Prenotazione"
+                   style="-fx-font-size: 30; -fx-font-weight: bold; -fx-text-fill:#2f4773;" />
+
+            <Label text="Compila i dati per creare una nuova prenotazione"
+                   style="-fx-font-size: 15; -fx-text-fill:#4a76a8;" />
+        </VBox>
+    </top>
+
+
+    <!-- FORM CARD -->
+    <center>
+        <VBox alignment="CENTER" spacing="20">
+
+            <VBox spacing="20" prefWidth="460"
+                  style="
+                      -fx-background-color: white;
+                      -fx-background-radius: 15;
+                      -fx-padding: 30;
+                      -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 15, 0.2, 0, 4);
+                  ">
+
+                <!-- ComboBox Veicolo -->
+                <VBox spacing="5">
+                    <Label text="Seleziona un veicolo:"
+                           style="-fx-font-size: 16; -fx-text-fill:#2f4773;" />
+                    <ComboBox fx:id="comboVeicoli" prefWidth="300" />
+                </VBox>
+
+                <!-- Date pickers -->
+                <VBox spacing="5">
+                    <Label text="Data inizio:"
+                           style="-fx-font-size: 16; -fx-text-fill:#2f4773;" />
+                    <DatePicker fx:id="dateInizio" />
+                </VBox>
+
+                <VBox spacing="5">
+                    <Label text="Data fine:"
+                           style="-fx-font-size: 16; -fx-text-fill:#2f4773;" />
+                    <DatePicker fx:id="dateFine" />
+                </VBox>
+
+                <!-- ORARI -->
+                <HBox spacing="20" alignment="CENTER">
+                    <VBox spacing="5">
+                        <Label text="Ora inizio:" style="-fx-text-fill:#2f4773;" />
+                        <TextField fx:id="oraInizio" promptText="HH:mm" prefWidth="100" />
+                    </VBox>
+
+                    <VBox spacing="5">
+                        <Label text="Ora fine:" style="-fx-text-fill:#2f4773;" />
+                        <TextField fx:id="oraFine" promptText="HH:mm" prefWidth="100" />
+                    </VBox>
+                </HBox>
+
+                <!-- BUTTONS -->
+                <HBox alignment="CENTER" spacing="20">
+
+                    <Button text="Conferma"
+                            onAction="#onConferma"
+                            prefWidth="180"
+                            style="
+                                -fx-background-radius: 10;
+                                -fx-font-size: 16;
+                                -fx-font-weight: bold;
+                                -fx-text-fill: white;
+                                -fx-padding: 10 20;
+                                -fx-background-color: linear-gradient(to right,
+                                    #4a76a8, #2f4773);
+                            " />
+
+                    <Button text="Annulla"
+                            onAction="#onBack"
+                            prefWidth="180"
+                            style="
+                                -fx-background-radius: 10;
+                                -fx-font-size: 16;
+                                -fx-font-weight: bold;
+                                -fx-text-fill: white;
+                                -fx-padding: 10 20;
+                                -fx-background-color: linear-gradient(to right,
+                                    #b2c7db, #92aac4);
+                            " />
+
+                </HBox>
+
+            </VBox>
+
+        </VBox>
+    </center>
+
+</BorderPane>

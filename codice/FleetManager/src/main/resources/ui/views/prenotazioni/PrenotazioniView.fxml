@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+	xmlns:fx="http://javafx.com/fxml"
+	fx:controller="it.fleetmanager.ui.prenotazioni.PrenotazioniController"
+	style="-fx-background-color: #e9f0f7;">
+
+	<!-- =================== HEADER =================== -->
+	<top>
+		<VBox alignment="CENTER" spacing="5"
+			style="-fx-padding: 25 0 15 0;">
+
+			<Label text="Gestione Prenotazioni"
+				style="-fx-font-size: 30; -fx-font-weight: bold; -fx-text-fill:#2f4773;" />
+
+			<Label fx:id="lblDescrizioneRuolo" text="Caricamento..."
+				style="-fx-font-size: 15; -fx-text-fill:#4a76a8;" />
+
+			<!-- Spinner caricamento -->
+			<ProgressIndicator fx:id="loadingIndicator"
+				visible="false" prefWidth="40" prefHeight="40" />
+		</VBox>
+	</top>
+
+	<!-- =================== CONTENUTO =================== -->
+	<center>
+		<VBox alignment="CENTER" spacing="20">
+
+			<VBox alignment="CENTER" prefWidth="1100" spacing="15"
+				style="
+                     -fx-background-color: white;
+                     -fx-background-radius: 15;
+                     -fx-padding: 20;
+                     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 15, 0.2, 0, 4);
+                  ">
+
+				<!-- TABELLA -->
+				<TableView fx:id="tablePrenotazioni" prefHeight="450"
+					prefWidth="1050">
+
+					<columns>
+						<TableColumn fx:id="colId" text="ID" prefWidth="60" />
+						<TableColumn fx:id="colVeicolo" text="Targa"
+							prefWidth="100" />
+						<TableColumn fx:id="colDriver" text="Driver"
+							prefWidth="180" />
+						<TableColumn fx:id="colInizio" text="Inizio"
+							prefWidth="180" />
+						<TableColumn fx:id="colFine" text="Fine"
+							prefWidth="180" />
+						<TableColumn fx:id="colStato" text="Stato"
+							prefWidth="120" />
+						<TableColumn fx:id="colTipo" text="Tipo"
+							prefWidth="120" />
+					</columns>
+
+				</TableView>
+
+			</VBox>
+
+			<!-- =================== BOTTONI =================== -->
+			<HBox alignment="CENTER" spacing="20">
+
+				<!-- Refresh -->
+				<Button fx:id="btnRefresh" text="↻"
+					onAction="#onRefreshClick" prefWidth="45" prefHeight="45"
+					style="
+                            -fx-background-radius: 50;
+                            -fx-font-size: 22;
+                            -fx-font-weight: bold;
+                            -fx-text-fill: white;
+                            -fx-background-color: linear-gradient(to right,#4e9ac7,#35739c);
+                        " />
+
+				<!-- Manager only -->
+				<Button fx:id="btnConferma" text="Conferma" visible="false"
+					managed="false" onAction="#onConferma" prefWidth="160"
+					style="
+                           -fx-background-radius: 10;
+                           -fx-font-size: 16;
+                           -fx-font-weight: bold;
+                           -fx-text-fill: white;
+                           -fx-background-color: linear-gradient(to right,#4a76a8,#2f4773);
+                        " />
+
+				<Button fx:id="btnCompleta" text="Completa" visible="false"
+					managed="false" onAction="#onCompleta" prefWidth="160"
+					style="
+                           -fx-background-radius: 10;
+                           -fx-font-size: 16;
+                           -fx-font-weight: bold;
+                           -fx-text-fill: white;
+                           -fx-background-color: linear-gradient(to right,#5e8bbf,#466c9c);
+                        " />
+
+				<!-- Manager & Driver -->
+				<Button fx:id="btnAnnulla" text="Annulla"
+					onAction="#onAnnulla" prefWidth="160"
+					style="
+                           -fx-background-radius: 10;
+                           -fx-font-size: 16;
+                           -fx-font-weight: bold;
+                           -fx-text-fill: white;
+                           -fx-background-color: linear-gradient(to right,#8fb3d6,#6b8eb9);
+                        " />
+
+				<!-- Driver only -->
+				<Button fx:id="btnNuova" text="Nuova Prenotazione"
+					visible="false" managed="false" onAction="#onNuovaPrenotazione"
+					prefWidth="200"
+					style="
+                           -fx-background-radius: 10;
+                           -fx-font-size: 16;
+                           -fx-font-weight: bold;
+                           -fx-text-fill: white;
+                           -fx-background-color: linear-gradient(to right,#4a76a8,#2f4773);
+                        " />
+
+				<Button text="Torna alla Dashboard" onAction="#onBack"
+					prefWidth="200"
+					style="
+                           -fx-background-radius: 10;
+                           -fx-font-size: 16;
+                           -fx-font-weight: bold;
+                           -fx-text-fill: white;
+                           -fx-background-color: linear-gradient(to right,#b2c7db,#92aac4);
+                        " />
+
+			</HBox>
+
+		</VBox>
+	</center>
+
+</BorderPane>

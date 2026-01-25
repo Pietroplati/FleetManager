@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="it.fleetmanager.ui.manutenzioni.NuovaStraordinariaController"
+            prefWidth="800" prefHeight="500"
+            style="-fx-background-color: #e9f0f7;">
+
+    <center>
+        <VBox alignment="CENTER" spacing="20">
+
+            <!-- TITOLO -->
+            <Label text="Segnalazione Straordinaria"
+                   style="-fx-font-size: 30; -fx-font-weight: bold; -fx-text-fill:#2f4773;" />
+
+            <!-- CARD -->
+            <VBox spacing="15" alignment="CENTER_LEFT"
+                  prefWidth="600"
+                  style="
+                      -fx-background-color: white;
+                      -fx-background-radius: 15;
+                      -fx-padding: 25;
+                      -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 15, 0.2, 0, 4);
+                  ">
+
+                <!-- TARGA -->
+                <Label text="Targa veicolo:" style="-fx-font-size: 16; -fx-text-fill:#2f4773;" />
+                <ComboBox fx:id="cbTarga" prefWidth="300"/>
+
+                <!-- DESCRIZIONE -->
+                <Label text="Descrizione del problema:"
+                       style="-fx-font-size: 16; -fx-text-fill:#2f4773;" />
+                <TextArea fx:id="txtDescrizione"
+                          prefWidth="500"
+                          prefHeight="150"
+                          wrapText="true" />
+            </VBox>
+
+            <!-- BOTTONI -->
+            <HBox alignment="CENTER" spacing="20">
+                <Button text="Conferma"
+                        onAction="#onConferma"
+                        prefWidth="180"
+                        style="-fx-background-radius: 10;
+                               -fx-font-size: 16;
+                               -fx-font-weight: bold;
+                               -fx-text-fill: white;
+                               -fx-background-color: linear-gradient(to right,#4a76a8,#2f4773);" />
+
+                <Button text="Annulla"
+                        onAction="#onAnnulla"
+                        prefWidth="180"
+                        style="-fx-background-radius: 10;
+                               -fx-font-size: 16;
+                               -fx-font-weight: bold;
+                               -fx-text-fill: white;
+                               -fx-background-color: linear-gradient(to right,#8fb3d6,#6b8eb9);" />
+            </HBox>
+
+        </VBox>
+    </center>
+
+</BorderPane>

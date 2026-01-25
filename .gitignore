@@ -56,3 +56,6 @@ Thumbs.db
 *.env
 *.secret
 *.key
+
+# Esclude file di analisi SonarLint
+.sonarlint/
