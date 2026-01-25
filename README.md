@@ -61,9 +61,7 @@ Il progetto utilizza Maven e il plugin JavaFX.
 
 Dalla root del progetto eseguire:
 
-```bash
 mvn javafx:run
-```
 
 L’applicazione JavaFX viene avviata utilizzando un database H2 embedded già configurato.
 
@@ -81,9 +79,7 @@ L’esecuzione mostra l’esito dei test tramite l’interfaccia grafica di Ecli
 
 In alternativa, è possibile eseguire l’intera suite di test anche tramite Maven:
 
-```bash
 mvn test
-```
 
 I test utilizzano un database **H2 in-memory** e non richiedono configurazioni esterne.
 
@@ -91,13 +87,11 @@ I test utilizzano un database **H2 in-memory** e non richiedono configurazioni e
 
 ## Struttura del repository
 
-```
 /codice        -> sorgenti Java e progetto Maven
 /documenti    -> documentazione PDF (Project Plan, Requisiti, Design, Testing, Maintenance)
 /uml           -> progetto Papyrus e diagrammi UML
 README.md
 CHANGELOG.md
-```
 
 ---
 
