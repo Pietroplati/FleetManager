@@ -1,6 +1,7 @@
 package it.fleetmanager.repository;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,204 +15,156 @@ import it.fleetmanager.repository.db.H2DatabaseManager;
 import it.fleetmanager.repository.impl.ManutenzioneDAOImpl;
 import it.fleetmanager.util.TipoManutenzione;
 
+/**
+ * Test di integrazione per {@link ManutenzioneDAOImpl}.
+ * <p>
+ * Verifica le principali operazioni CRUD e le query di ricerca del DAO,
+ * utilizzando il database H2 resettato ad ogni test.
+ * </p>
+ */
 public class ManutenzioneDAOImplTest {
 
-    private ManutenzioneDAO manutenzioneDAO;
+	private ManutenzioneDAO manutenzioneDAO;
 
-    @BeforeEach
-    void setup() throws Exception {
-        DatabaseTestUtils.resetDatabase();
-        manutenzioneDAO = new ManutenzioneDAOImpl(H2DatabaseManager.getInstance());
-    }
+	/**
+	 * Inizializza il database di test e il DAO prima di ogni test.
+	 *
+	 * @throws Exception in caso di errori durante il reset del database
+	 */
+	@BeforeEach
+	void setup() throws Exception {
+		DatabaseTestUtils.resetDatabase();
+		manutenzioneDAO = new ManutenzioneDAOImpl(H2DatabaseManager.getInstance());
+	}
 
-    // ============================================================
-    // SAVE + GET BY ID
-    // ============================================================
-    @Test
-    void testSaveAndGetById() {
+	/**
+	 * Verifica la corretta esecuzione di save() e getManutenzioneById().
+	 */
+	@Test
+	void testSaveAndGetById() {
 
-        Manutenzione m = new Manutenzione(
-                100,
-                LocalDateTime.of(2025, 1, 10, 9, 0),
-                TipoManutenzione.ORDINARIA,
-                "Cambio olio",
-                "AB123CD"
-        );
+		Manutenzione m = new Manutenzione(100, LocalDateTime.of(2025, 1, 10, 9, 0), TipoManutenzione.ORDINARIA,
+				"Cambio olio", "AB123CD");
 
-        manutenzioneDAO.save(m);
+		manutenzioneDAO.save(m);
 
-        Manutenzione loaded = manutenzioneDAO.getManutenzioneById(100);
+		Manutenzione loaded = manutenzioneDAO.getManutenzioneById(100);
 
-        assertEquals(100, loaded.getIdManutenzione());
-        assertEquals(TipoManutenzione.ORDINARIA, loaded.getTipoManutenzione());
-        assertEquals("Cambio olio", loaded.getDescrizione());
-        assertEquals("AB123CD", loaded.getTarga());
-    }
+		assertEquals(100, loaded.getIdManutenzione());
+		assertEquals(TipoManutenzione.ORDINARIA, loaded.getTipoManutenzione());
+		assertEquals("Cambio olio", loaded.getDescrizione());
+		assertEquals("AB123CD", loaded.getTarga());
+	}
 
-    // ============================================================
-    // GET BY ID NOT FOUND
-    // ============================================================
-    @Test
-    void testGetManutenzioneById_NotFound() {
-        Manutenzione m = manutenzioneDAO.getManutenzioneById(9999);
-        assertEquals(-1, m.getIdManutenzione());
-    }
+	/**
+	 * Verifica che la ricerca per ID di una manutenzione inesistente restituisca
+	 * l'oggetto sentinella.
+	 */
+	@Test
+	void testGetManutenzioneByIdNotFound() {
+	    Manutenzione m = manutenzioneDAO.getManutenzioneById(9999);
+	    assertEquals(-1, m.getIdManutenzione());
+	}
 
-    // ============================================================
-    // UPDATE
-    // ============================================================
-    @Test
-    void testUpdate() {
 
-        Manutenzione m = new Manutenzione(
-                101,
-                LocalDateTime.of(2025, 2, 5, 10, 0),
-                TipoManutenzione.STRAORDINARIA,
-                "Freni",
-                "GH819RJ"
-        );
+	/**
+	 * Verifica la corretta esecuzione di update().
+	 */
+	@Test
+	void testUpdate() {
 
-        manutenzioneDAO.save(m);
+		Manutenzione m = new Manutenzione(101, LocalDateTime.of(2025, 2, 5, 10, 0), TipoManutenzione.STRAORDINARIA,
+				"Freni", "GH819RJ");
 
-        m.setDescrizione("Freni + dischi");
-        manutenzioneDAO.update(m);
+		manutenzioneDAO.save(m);
 
-        Manutenzione updated = manutenzioneDAO.getManutenzioneById(101);
-        assertEquals("Freni + dischi", updated.getDescrizione());
-    }
+		m.setDescrizione("Freni + dischi");
+		manutenzioneDAO.update(m);
 
-    // ============================================================
-    // DELETE
-    // ============================================================
-    @Test
-    void testDelete() {
+		Manutenzione updated = manutenzioneDAO.getManutenzioneById(101);
+		assertEquals("Freni + dischi", updated.getDescrizione());
+	}
 
-        Manutenzione m = new Manutenzione(
-                102,
-                LocalDateTime.now(),
-                TipoManutenzione.REVISIONE,
-                "Revisione",
-                "ZZ000AA"
-        );
+	/**
+	 * Verifica la corretta esecuzione di delete().
+	 */
+	@Test
+	void testDelete() {
 
-        manutenzioneDAO.save(m);
-        manutenzioneDAO.delete(102);
+		Manutenzione m = new Manutenzione(102, LocalDateTime.now(), TipoManutenzione.REVISIONE, "Revisione", "ZZ000AA");
 
-        Manutenzione deleted = manutenzioneDAO.getManutenzioneById(102);
-        assertEquals(-1, deleted.getIdManutenzione());
-    }
+		manutenzioneDAO.save(m);
+		manutenzioneDAO.delete(102);
 
-    // ============================================================
-    // FIND BY VEICOLO
-    // ============================================================
-    @Test
-    void testFindByVeicolo() {
+		Manutenzione deleted = manutenzioneDAO.getManutenzioneById(102);
+		assertEquals(-1, deleted.getIdManutenzione());
+	}
 
-        manutenzioneDAO.save(new Manutenzione(
-                200,
-                LocalDateTime.of(2025, 3, 1, 9, 0),
-                TipoManutenzione.ORDINARIA,
-                "Tagliando",
-                "T1"
-        ));
+	/**
+	 * Verifica la corretta esecuzione di findByVeicolo().
+	 */
+	@Test
+	void testFindByVeicolo() {
 
-        manutenzioneDAO.save(new Manutenzione(
-                201,
-                LocalDateTime.of(2025, 3, 5, 9, 0),
-                TipoManutenzione.REVISIONE,
-                "Revisione",
-                "T1"
-        ));
+		manutenzioneDAO.save(new Manutenzione(200, LocalDateTime.of(2025, 3, 1, 9, 0), TipoManutenzione.ORDINARIA,
+				"Tagliando", "T1"));
 
-        List<Manutenzione> list = manutenzioneDAO.findByVeicolo("T1");
+		manutenzioneDAO.save(new Manutenzione(201, LocalDateTime.of(2025, 3, 5, 9, 0), TipoManutenzione.REVISIONE,
+				"Revisione", "T1"));
 
-        assertEquals(2, list.size());
-        assertTrue(list.get(0).getData().isBefore(list.get(1).getData()));
-    }
+		List<Manutenzione> list = manutenzioneDAO.findByVeicolo("T1");
 
-    // ============================================================
-    // FIND BY TIPO
-    // ============================================================
-    @Test
-    void testFindByTipo() {
+		assertEquals(2, list.size());
+		assertTrue(list.get(0).getData().isBefore(list.get(1).getData()));
+	}
 
-        manutenzioneDAO.save(new Manutenzione(
-                300,
-                LocalDateTime.now(),
-                TipoManutenzione.ORDINARIA,
-                "Filtro aria",
-                "V1"
-        ));
+	/**
+	 * Verifica la corretta esecuzione di findByTipo().
+	 */
+	@Test
+	void testFindByTipo() {
 
-        manutenzioneDAO.save(new Manutenzione(
-                301,
-                LocalDateTime.now().plusMinutes(1),
-                TipoManutenzione.ORDINARIA,
-                "Filtro olio",
-                "V2"
-        ));
+		manutenzioneDAO
+				.save(new Manutenzione(300, LocalDateTime.now(), TipoManutenzione.ORDINARIA, "Filtro aria", "V1"));
 
-        List<Manutenzione> list =
-                manutenzioneDAO.findByTipo(TipoManutenzione.ORDINARIA);
+		manutenzioneDAO.save(new Manutenzione(301, LocalDateTime.now().plusMinutes(1), TipoManutenzione.ORDINARIA,
+				"Filtro olio", "V2"));
 
-        assertEquals(2, list.size());
-        assertTrue(list.stream().allMatch(
-                m -> m.getTipoManutenzione() == TipoManutenzione.ORDINARIA
-        ));
-    }
+		List<Manutenzione> list = manutenzioneDAO.findByTipo(TipoManutenzione.ORDINARIA);
 
-    // ============================================================
-    // GET MAX ID
-    // ============================================================
-    @Test
-    void testGetMaxId() {
+		assertEquals(2, list.size());
+		assertTrue(list.stream().allMatch(m -> m.getTipoManutenzione() == TipoManutenzione.ORDINARIA));
+	}
 
-        manutenzioneDAO.save(new Manutenzione(
-                400,
-                LocalDateTime.now(),
-                TipoManutenzione.ORDINARIA,
-                "Test",
-                "V3"
-        ));
+	/**
+	 * Verifica la corretta esecuzione di getMaxId().
+	 */
+	@Test
+	void testGetMaxId() {
 
-        manutenzioneDAO.save(new Manutenzione(
-                401,
-                LocalDateTime.now(),
-                TipoManutenzione.ORDINARIA,
-                "Test2",
-                "V3"
-        ));
+		manutenzioneDAO.save(new Manutenzione(400, LocalDateTime.now(), TipoManutenzione.ORDINARIA, "Test", "V3"));
 
-        int maxId = manutenzioneDAO.getMaxId();
-        assertEquals(401, maxId);
-    }
+		manutenzioneDAO.save(new Manutenzione(401, LocalDateTime.now(), TipoManutenzione.ORDINARIA, "Test2", "V3"));
 
-    // ============================================================
-    // GET TUTTE MANUTENZIONI
-    // ============================================================
-    @Test
-    void testGetTutteManutenzioni() {
+		int maxId = manutenzioneDAO.getMaxId();
+		assertEquals(401, maxId);
+	}
 
-        manutenzioneDAO.save(new Manutenzione(
-                500,
-                LocalDateTime.of(2025, 1, 1, 8, 0),
-                TipoManutenzione.ORDINARIA,
-                "M1",
-                "AB123CD"
-        ));
+	/**
+	 * Verifica la corretta esecuzione di getTutteManutenzioni().
+	 */
+	@Test
+	void testGetTutteManutenzioni() {
 
-        manutenzioneDAO.save(new Manutenzione(
-                501,
-                LocalDateTime.of(2025, 1, 2, 8, 0),
-                TipoManutenzione.REVISIONE,
-                "M2",
-                "GH819RJ"
-        ));
+		manutenzioneDAO.save(
+				new Manutenzione(500, LocalDateTime.of(2025, 1, 1, 8, 0), TipoManutenzione.ORDINARIA, "M1", "AB123CD"));
 
-        List<Manutenzione> list =
-                manutenzioneDAO.getTutteManutenzioni();
+		manutenzioneDAO.save(
+				new Manutenzione(501, LocalDateTime.of(2025, 1, 2, 8, 0), TipoManutenzione.REVISIONE, "M2", "GH819RJ"));
 
-        assertEquals(2, list.size());
-        assertTrue(list.get(0).getData().isBefore(list.get(1).getData()));
-    }
+		List<Manutenzione> list = manutenzioneDAO.getTutteManutenzioni();
+
+		assertEquals(2, list.size());
+		assertTrue(list.get(0).getData().isBefore(list.get(1).getData()));
+	}
 }
