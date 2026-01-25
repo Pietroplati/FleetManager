@@ -41,10 +41,7 @@ public class ElencaTabelle {
      */
     public static void main(String[] args) {
         try (Connection conn = H2DatabaseManager.getInstance().getConnection()) {
-            if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("SCHEMA DATABASE: {}", H2DatabaseManager.getUrl());
-            }
-
+            LOGGER.info("SCHEMA DATABASE: {}", H2DatabaseManager.getUrl());
             DatabaseMetaData meta = conn.getMetaData();
 
             try (ResultSet rsTables = meta.getTables(null, "PUBLIC", "%", new String[] { "TABLE" })) {
@@ -70,10 +67,8 @@ public class ElencaTabelle {
         String table = rsTables.getString("TABLE_NAME");
 
         printLine();
-        if (LOGGER.isInfoEnabled()) {
-            LOGGER.info("→ {}.{}", schema, table);
-            LOGGER.info("   Colonne:");
-        }
+        LOGGER.info("→ {}.{}", schema, table);
+        LOGGER.info("   Colonne:");
 
         Map<String, String> pkCols = caricaPrimaryKeys(meta, schema, table);
         Map<String, String> fkRefs = caricaForeignKeys(meta, schema, table);
@@ -155,9 +150,7 @@ public class ElencaTabelle {
 
                 String info = descriviColonna(col, autoinc, nullable, pkCols, fkRefs);
 
-                if (LOGGER.isInfoEnabled()) {
-                    LOGGER.info("   - {} ({}[{}]) {}", padRight(col, 20), type, size, info);
-                }
+                LOGGER.info("   - {} ({ }[{}]) {}", padRight(col, 20), type, size, info);
             }
         }
     }
@@ -198,10 +191,8 @@ public class ElencaTabelle {
      * Stampa una linea separatrice per migliorare la leggibilità dell'output.
      */
     private static void printLine() {
-        if (LOGGER.isInfoEnabled()) {
-            LOGGER.info(
-                    "────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────");
-        }
+        LOGGER.info(
+                "────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────");
     }
 
     /**
@@ -212,26 +203,12 @@ public class ElencaTabelle {
      * @return stringa con padding a destra
      */
     private static String padRight(String s, int n) {
-        String value;
-
-        if (s == null) {
-            value = "";
-        } else {
-            value = s;
-        }
-
-        if (value.length() >= n) {
-            return value.substring(0, n);
-        }
+        if (s == null) s = "";
+        if (s.length() >= n) return s.substring(0, n);
 
         StringBuilder sb = new StringBuilder(n);
-        sb.append(value);
-
-        for (int i = value.length(); i < n; i++) {
-            sb.append(' ');
-        }
-
+        sb.append(s);
+        for (int i = s.length(); i < n; i++) sb.append(' ');
         return sb.toString();
     }
-
 }

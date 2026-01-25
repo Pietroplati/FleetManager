@@ -35,11 +35,8 @@ import it.fleetmanager.util.TipoPrenotazione;
  */
 public class PrenotazioneDAOImpl implements PrenotazioneDAO {
 
-	private static final Logger LOGGER = LogManager.getLogger(PrenotazioneDAOImpl.class);
+	private static final Logger logger = LogManager.getLogger(PrenotazioneDAOImpl.class);
 	private static final String ERRORE_SQL = "ERRORE SQL";
-
-	// Evita duplicazione del literal "{} {}: {}" (SonarQube)
-	private static final String LOG_FMT_SQL = "{} {}: {}";
 
 	private final ConnectionProvider db;
 
@@ -114,9 +111,7 @@ public class PrenotazioneDAOImpl implements PrenotazioneDAO {
 			work.accept(conn);
 			conn.commit();
 		} catch (SQLException e) {
-			if (LOGGER.isErrorEnabled()) {
-				LOGGER.error(LOG_FMT_SQL, ERRORE_SQL, ctx, e.getMessage(), e);
-			}
+			logger.error("{} {}: {}", ERRORE_SQL, ctx, e.getMessage(), e);
 		}
 	}
 
@@ -174,9 +169,7 @@ public class PrenotazioneDAOImpl implements PrenotazioneDAO {
 			}
 
 		} catch (SQLException e) {
-			if (LOGGER.isErrorEnabled()) {
-				LOGGER.error(LOG_FMT_SQL, ERRORE_SQL, ctx, e.getMessage(), e);
-			}
+			logger.error("{} {}: {}", ERRORE_SQL, ctx, e.getMessage(), e);
 		}
 
 		return list;
@@ -199,9 +192,7 @@ public class PrenotazioneDAOImpl implements PrenotazioneDAO {
 			}
 
 		} catch (SQLException e) {
-			if (LOGGER.isErrorEnabled()) {
-				LOGGER.error(LOG_FMT_SQL, ERRORE_SQL, ctx, e.getMessage(), e);
-			}
+			logger.error("{} {}: {}", ERRORE_SQL, ctx, e.getMessage(), e);
 		}
 
 		return defaultValue;
@@ -224,9 +215,7 @@ public class PrenotazioneDAOImpl implements PrenotazioneDAO {
 			}
 
 		} catch (SQLException e) {
-			if (LOGGER.isErrorEnabled()) {
-				LOGGER.error(LOG_FMT_SQL, ERRORE_SQL, ctx, e.getMessage(), e);
-			}
+			logger.error("{} {}: {}", ERRORE_SQL, ctx, e.getMessage(), e);
 		}
 
 		return defaultValue;

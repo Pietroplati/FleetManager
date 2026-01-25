@@ -7,7 +7,6 @@ import java.sql.SQLException;
  * Astrazione minimale per ottenere connessioni JDBC.
  * Serve a disaccoppiare i DAO dall'implementazione concreta (H2, test, ecc.).
  */
-@FunctionalInterface
 public interface ConnectionProvider {
     Connection getConnection() throws SQLException;
 }
