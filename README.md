@@ -106,7 +106,7 @@ La documentazione del progetto include:
 * Testing
 * Maintenance
 
-Tutta la documentazione è disponibile nella cartella `/documenti`.
+Tutta la documentazione è disponibile nella cartella /documenti.
 
 ---
 
@@ -114,7 +114,7 @@ Tutta la documentazione è disponibile nella cartella `/documenti`.
 
 Il progetto è stato sviluppato in modo incrementale utilizzando GitHub per il controllo di versione, con l’uso di branch e merge.
 
-L’evoluzione del progetto è tracciata nel file `CHANGELOG.md`, organizzato per mesi e milestone.
+L’evoluzione del progetto è tracciata nel file CHANGELOG.md, organizzato per mesi e milestone.
 
 ---
 
