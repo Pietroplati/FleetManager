@@ -1,5 +1,4 @@
 Tutti i cambiamenti rilevanti del progetto FleetManager sono documentati in questo file.
-Il formato segue le linee guida di *Keep a Changelog* e Semantic Versioning.
 
 ---
 
