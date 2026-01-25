@@ -3,9 +3,14 @@ package it.fleetmanager.repository.impl;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import it.fleetmanager.model.Veicolo;
 import it.fleetmanager.repository.dao.VeicoloDAO;
@@ -14,6 +19,10 @@ import it.fleetmanager.util.StatoVeicolo;
 import it.fleetmanager.util.TipoVeicolo;
 
 public class VeicoloDAOImpl implements VeicoloDAO {
+
+	private static final Logger LOGGER = LogManager.getLogger(VeicoloDAOImpl.class);
+
+	private static final String ERRORE_SQL = "ERRORE SQL";
 
 	private final ConnectionProvider db;
 
@@ -25,11 +34,11 @@ public class VeicoloDAOImpl implements VeicoloDAO {
 		}
 	};
 
-	public VeicoloDAOImpl(ConnectionProvider  db) {
+	public VeicoloDAOImpl(ConnectionProvider db) {
 		this.db = db;
 	}
 
-	private Veicolo map(ResultSet rs) throws Exception {
+	private Veicolo map(ResultSet rs) throws SQLException {
 		String targa = rs.getString("targa");
 		TipoVeicolo tipo = TipoVeicolo.valueOf(rs.getString("tipoVeicolo"));
 		String marca = rs.getString("marca");
@@ -60,8 +69,10 @@ public class VeicoloDAOImpl implements VeicoloDAO {
 
 			ps.executeUpdate();
 
-		} catch (Exception e) {
-			System.err.println("ERRORE SQL save: " + e.getMessage());
+		} catch (SQLException e) {
+			if (LOGGER.isErrorEnabled()) {
+				LOGGER.error("{} save: {}", ERRORE_SQL, e.getMessage(), e);
+			}
 		}
 	}
 
@@ -86,8 +97,10 @@ public class VeicoloDAOImpl implements VeicoloDAO {
 
 			ps.executeUpdate();
 
-		} catch (Exception e) {
-			System.err.println("ERRORE SQL update: " + e.getMessage());
+		} catch (SQLException e) {
+			if (LOGGER.isErrorEnabled()) {
+				LOGGER.error("{} update: {}", ERRORE_SQL, e.getMessage(), e);
+			}
 		}
 	}
 
@@ -100,8 +113,10 @@ public class VeicoloDAOImpl implements VeicoloDAO {
 			ps.setString(1, targa);
 			ps.executeUpdate();
 
-		} catch (Exception e) {
-			System.err.println("ERRORE SQL delete: " + e.getMessage());
+		} catch (SQLException e) {
+			if (LOGGER.isErrorEnabled()) {
+				LOGGER.error("{} delete: {}", ERRORE_SQL, e.getMessage(), e);
+			}
 		}
 	}
 
@@ -114,13 +129,16 @@ public class VeicoloDAOImpl implements VeicoloDAO {
 			ps.setString(1, targa);
 
 			try (ResultSet rs = ps.executeQuery()) {
-				if (!rs.next())
+				if (!rs.next()) {
 					return VEICOLO_INESISTENTE;
+				}
 				return map(rs);
 			}
 
-		} catch (Exception e) {
-			System.err.println("ERRORE SQL getVeicoloByTarga: " + e.getMessage());
+		} catch (SQLException e) {
+			if (LOGGER.isErrorEnabled()) {
+				LOGGER.error("{} getVeicoloByTarga: {}", ERRORE_SQL, e.getMessage(), e);
+			}
 			return VEICOLO_INESISTENTE;
 		}
 	}
@@ -134,11 +152,14 @@ public class VeicoloDAOImpl implements VeicoloDAO {
 				PreparedStatement ps = conn.prepareStatement(sql);
 				ResultSet rs = ps.executeQuery()) {
 
-			while (rs.next())
+			while (rs.next()) {
 				list.add(map(rs));
+			}
 
-		} catch (Exception e) {
-			System.err.println("ERRORE SQL getTuttiVeicoli: " + e.getMessage());
+		} catch (SQLException e) {
+			if (LOGGER.isErrorEnabled()) {
+				LOGGER.error("{} getTuttiVeicoli: {}", ERRORE_SQL, e.getMessage(), e);
+			}
 		}
 
 		return list;
@@ -162,16 +183,19 @@ public class VeicoloDAOImpl implements VeicoloDAO {
 
 		try (Connection conn = db.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
-			ps.setTimestamp(1, java.sql.Timestamp.valueOf(dataFine));
-			ps.setTimestamp(2, java.sql.Timestamp.valueOf(dataInizio));
+			ps.setTimestamp(1, Timestamp.valueOf(dataFine));
+			ps.setTimestamp(2, Timestamp.valueOf(dataInizio));
 
 			try (ResultSet rs = ps.executeQuery()) {
-				while (rs.next())
+				while (rs.next()) {
 					list.add(map(rs));
+				}
 			}
 
-		} catch (Exception e) {
-			System.err.println("ERRORE SQL getDisponibili: " + e.getMessage());
+		} catch (SQLException e) {
+			if (LOGGER.isErrorEnabled()) {
+				LOGGER.error("{} getDisponibili: {}", ERRORE_SQL, e.getMessage(), e);
+			}
 		}
 
 		return list;

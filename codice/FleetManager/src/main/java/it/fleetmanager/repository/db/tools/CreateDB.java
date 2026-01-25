@@ -12,7 +12,7 @@ import it.fleetmanager.repository.db.H2DatabaseManager;
 
 public class CreateDB {
 
-    private static final Logger logger = LogManager.getLogger(CreateDB.class);
+    private static final Logger LOGGER = LogManager.getLogger(CreateDB.class);
 
     private static final String DB_REL_FILE = "./data/fleetdb";
 
@@ -21,14 +21,18 @@ public class CreateDB {
         try (Connection conn = H2DatabaseManager.getInstance().getConnection()) {
 
             DatabaseMetaData meta = conn.getMetaData();
-            logger.info("Driver DB: {}", meta.getDriverName());
-            logger.info("Nuovo database creato o aperto.");
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("Driver DB: {}", meta.getDriverName());
+                LOGGER.info("Nuovo database creato o aperto.");
+            }
 
             File dbFile = new File(DB_REL_FILE + ".mv.db");
-            logger.debug("Il file esiste? {}", dbFile.exists());
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Il file esiste? {}", dbFile.exists());
+            }
 
         } catch (SQLException e) {
-            logger.error("Errore durante la creazione/apertura del database H2.", e);
+            LOGGER.error("Errore durante la creazione/apertura del database H2.", e);
         }
     }
 }

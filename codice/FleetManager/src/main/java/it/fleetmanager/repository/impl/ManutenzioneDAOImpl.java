@@ -22,7 +22,7 @@ import it.fleetmanager.util.TipoManutenzione;
  */
 public class ManutenzioneDAOImpl implements ManutenzioneDAO {
 
-	private static final Logger logger = LogManager.getLogger(ManutenzioneDAOImpl.class);
+	private static final Logger LOGGER = LogManager.getLogger(ManutenzioneDAOImpl.class);
 
 	private static final String ERRORE_SQL = "ERRORE SQL";
 
@@ -110,7 +110,9 @@ public class ManutenzioneDAOImpl implements ManutenzioneDAO {
 			ps.executeUpdate();
 
 		} catch (SQLException e) {
-			logger.error("{} durante save(): {}", ERRORE_SQL, e.getMessage(), e);
+			if (LOGGER.isErrorEnabled()) {
+				LOGGER.error("{} durante save(): {}", ERRORE_SQL, e.getMessage(), e);
+			}
 		}
 	}
 
@@ -137,7 +139,9 @@ public class ManutenzioneDAOImpl implements ManutenzioneDAO {
 			ps.executeUpdate();
 
 		} catch (SQLException e) {
-			logger.error("{} durante update(): {}", ERRORE_SQL, e.getMessage(), e);
+			if (LOGGER.isErrorEnabled()) {
+				LOGGER.error("{} durante update(): {}", ERRORE_SQL, e.getMessage(), e);
+			}
 		}
 	}
 
@@ -152,7 +156,9 @@ public class ManutenzioneDAOImpl implements ManutenzioneDAO {
 			ps.executeUpdate();
 
 		} catch (SQLException e) {
-			logger.error("{} durante delete(): {}", ERRORE_SQL, e.getMessage(), e);
+			if (LOGGER.isErrorEnabled()) {
+				LOGGER.error("{} durante delete(): {}", ERRORE_SQL, e.getMessage(), e);
+			}
 		}
 	}
 
@@ -175,7 +181,9 @@ public class ManutenzioneDAOImpl implements ManutenzioneDAO {
 			}
 
 		} catch (SQLException e) {
-			logger.error("{} durante getManutenzioneById(): {}", ERRORE_SQL, e.getMessage(), e);
+			if (LOGGER.isErrorEnabled()) {
+				LOGGER.error("{} durante getManutenzioneById(): {}", ERRORE_SQL, e.getMessage(), e);
+			}
 		}
 
 		return MANUTENZIONE_INESISTENTE;
@@ -203,7 +211,9 @@ public class ManutenzioneDAOImpl implements ManutenzioneDAO {
 			}
 
 		} catch (SQLException e) {
-			logger.error("{} durante findByVeicolo(): {}", ERRORE_SQL, e.getMessage(), e);
+			if (LOGGER.isErrorEnabled()) {
+				LOGGER.error("{} durante findByVeicolo(): {}", ERRORE_SQL, e.getMessage(), e);
+			}
 		}
 
 		return list;
@@ -231,7 +241,9 @@ public class ManutenzioneDAOImpl implements ManutenzioneDAO {
 			}
 
 		} catch (SQLException e) {
-			logger.error("{} durante findByTipo(): {}", ERRORE_SQL, e.getMessage(), e);
+			if (LOGGER.isErrorEnabled()) {
+				LOGGER.error("{} durante findByTipo(): {}", ERRORE_SQL, e.getMessage(), e);
+			}
 		}
 
 		return list;
@@ -249,7 +261,9 @@ public class ManutenzioneDAOImpl implements ManutenzioneDAO {
 			return rs.next() ? rs.getInt(1) : 0;
 
 		} catch (SQLException e) {
-			logger.error("{} durante getMaxId(): {}", ERRORE_SQL, e.getMessage(), e);
+			if (LOGGER.isErrorEnabled()) {
+				LOGGER.error("{} durante getMaxId(): {}", ERRORE_SQL, e.getMessage(), e);
+			}
 		}
 
 		return 0;
@@ -274,7 +288,9 @@ public class ManutenzioneDAOImpl implements ManutenzioneDAO {
 			fillList(rs, list);
 
 		} catch (SQLException e) {
-			logger.error("{} durante getTutteManutenzioni(): {}", ERRORE_SQL, e.getMessage(), e);
+			if (LOGGER.isErrorEnabled()) {
+				LOGGER.error("{} durante getTutteManutenzioni(): {}", ERRORE_SQL, e.getMessage(), e);
+			}
 		}
 
 		return list;

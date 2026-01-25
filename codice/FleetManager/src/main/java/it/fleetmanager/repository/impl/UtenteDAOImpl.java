@@ -20,7 +20,7 @@ import it.fleetmanager.util.RuoloUtente;
  */
 public class UtenteDAOImpl implements UtenteDAO {
 
-	private static final Logger logger = LogManager.getLogger(UtenteDAOImpl.class);
+	private static final Logger LOGGER = LogManager.getLogger(UtenteDAOImpl.class);
 
 	private static final String ERRORE_SQL = "ERRORE SQL";
 
@@ -117,7 +117,9 @@ public class UtenteDAOImpl implements UtenteDAO {
 			ps.executeUpdate();
 
 		} catch (SQLException e) {
-			logger.error("{} durante save(): {}", ERRORE_SQL, e.getMessage(), e);
+			if (LOGGER.isErrorEnabled()) {
+				LOGGER.error("{} durante save(): {}", ERRORE_SQL, e.getMessage(), e);
+			}
 		}
 	}
 
@@ -148,7 +150,9 @@ public class UtenteDAOImpl implements UtenteDAO {
 			ps.executeUpdate();
 
 		} catch (SQLException e) {
-			logger.error("{} durante update(): {}", ERRORE_SQL, e.getMessage(), e);
+			if (LOGGER.isErrorEnabled()) {
+				LOGGER.error("{} durante update(): {}", ERRORE_SQL, e.getMessage(), e);
+			}
 		}
 	}
 
@@ -163,7 +167,9 @@ public class UtenteDAOImpl implements UtenteDAO {
 			ps.executeUpdate();
 
 		} catch (SQLException e) {
-			logger.error("{} durante delete(): {}", ERRORE_SQL, e.getMessage(), e);
+			if (LOGGER.isErrorEnabled()) {
+				LOGGER.error("{} durante delete(): {}", ERRORE_SQL, e.getMessage(), e);
+			}
 		}
 	}
 
@@ -181,7 +187,9 @@ public class UtenteDAOImpl implements UtenteDAO {
 			}
 
 		} catch (SQLException e) {
-			logger.error("{} durante getUtenteById(): {}", ERRORE_SQL, e.getMessage(), e);
+			if (LOGGER.isErrorEnabled()) {
+				LOGGER.error("{} durante getUtenteById(): {}", ERRORE_SQL, e.getMessage(), e);
+			}
 		}
 
 		return UTENTE_INESISTENTE;
@@ -201,7 +209,9 @@ public class UtenteDAOImpl implements UtenteDAO {
 			}
 
 		} catch (SQLException e) {
-			logger.error("{} durante getUtenteByEmail(): {}", ERRORE_SQL, e.getMessage(), e);
+			if (LOGGER.isErrorEnabled()) {
+				LOGGER.error("{} durante getUtenteByEmail(): {}", ERRORE_SQL, e.getMessage(), e);
+			}
 		}
 
 		return UTENTE_INESISTENTE;
@@ -221,7 +231,9 @@ public class UtenteDAOImpl implements UtenteDAO {
 			}
 
 		} catch (SQLException e) {
-			logger.error("{} durante existsByEmail(): {}", ERRORE_SQL, e.getMessage(), e);
+			if (LOGGER.isErrorEnabled()) {
+				LOGGER.error("{} durante existsByEmail(): {}", ERRORE_SQL, e.getMessage(), e);
+			}
 		}
 
 		return false;
@@ -240,7 +252,9 @@ public class UtenteDAOImpl implements UtenteDAO {
 			fillList(rs, list);
 
 		} catch (SQLException e) {
-			logger.error("{} durante getTuttiUtenti(): {}", ERRORE_SQL, e.getMessage(), e);
+			if (LOGGER.isErrorEnabled()) {
+				LOGGER.error("{} durante getTuttiUtenti(): {}", ERRORE_SQL, e.getMessage(), e);
+			}
 		}
 
 		return list;
@@ -263,7 +277,9 @@ public class UtenteDAOImpl implements UtenteDAO {
 			return extractOne(rs);
 
 		} catch (SQLException e) {
-			logger.error("{} durante getManager(): {}", ERRORE_SQL, e.getMessage(), e);
+			if (LOGGER.isErrorEnabled()) {
+				LOGGER.error("{} durante getManager(): {}", ERRORE_SQL, e.getMessage(), e);
+			}
 		}
 
 		return UTENTE_INESISTENTE;

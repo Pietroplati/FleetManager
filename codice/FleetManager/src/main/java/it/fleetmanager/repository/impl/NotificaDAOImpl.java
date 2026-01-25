@@ -24,7 +24,7 @@ import it.fleetmanager.util.TipoNotifica;
  */
 public class NotificaDAOImpl implements NotificaDAO {
 
-	private static final Logger logger = LogManager.getLogger(NotificaDAOImpl.class);
+	private static final Logger LOGGER = LogManager.getLogger(NotificaDAOImpl.class);
 
 	private static final String ERRORE_SQL = "ERRORE SQL";
 
@@ -127,7 +127,9 @@ public class NotificaDAOImpl implements NotificaDAO {
 			ps.executeUpdate();
 
 		} catch (SQLException e) {
-			logger.error("{} durante save(): {}", ERRORE_SQL, e.getMessage(), e);
+			if (LOGGER.isErrorEnabled()) {
+				LOGGER.error("{} durante save(): {}", ERRORE_SQL, e.getMessage(), e);
+			}
 		}
 	}
 
@@ -163,7 +165,9 @@ public class NotificaDAOImpl implements NotificaDAO {
 			ps.executeUpdate();
 
 		} catch (SQLException e) {
-			logger.error("{} durante update(): {}", ERRORE_SQL, e.getMessage(), e);
+			if (LOGGER.isErrorEnabled()) {
+				LOGGER.error("{} durante update(): {}", ERRORE_SQL, e.getMessage(), e);
+			}
 		}
 	}
 
@@ -178,7 +182,9 @@ public class NotificaDAOImpl implements NotificaDAO {
 			ps.executeUpdate();
 
 		} catch (SQLException e) {
-			logger.error("{} durante delete(): {}", ERRORE_SQL, e.getMessage(), e);
+			if (LOGGER.isErrorEnabled()) {
+				LOGGER.error("{} durante delete(): {}", ERRORE_SQL, e.getMessage(), e);
+			}
 		}
 	}
 
@@ -201,7 +207,9 @@ public class NotificaDAOImpl implements NotificaDAO {
 			}
 
 		} catch (SQLException e) {
-			logger.error("{} durante getNotificaById(): {}", ERRORE_SQL, e.getMessage(), e);
+			if (LOGGER.isErrorEnabled()) {
+				LOGGER.error("{} durante getNotificaById(): {}", ERRORE_SQL, e.getMessage(), e);
+			}
 		}
 
 		return NOTIFICA_INESISTENTE;
@@ -229,7 +237,9 @@ public class NotificaDAOImpl implements NotificaDAO {
 			}
 
 		} catch (SQLException e) {
-			logger.error("{} durante findByUtente(): {}", ERRORE_SQL, e.getMessage(), e);
+			if (LOGGER.isErrorEnabled()) {
+				LOGGER.error("{} durante findByUtente(): {}", ERRORE_SQL, e.getMessage(), e);
+			}
 		}
 
 		return list;
@@ -257,7 +267,9 @@ public class NotificaDAOImpl implements NotificaDAO {
 			}
 
 		} catch (SQLException e) {
-			logger.error("{} durante findNonLette(): {}", ERRORE_SQL, e.getMessage(), e);
+			if (LOGGER.isErrorEnabled()) {
+				LOGGER.error("{} durante findNonLette(): {}", ERRORE_SQL, e.getMessage(), e);
+			}
 		}
 
 		return list;
@@ -289,7 +301,9 @@ public class NotificaDAOImpl implements NotificaDAO {
 			}
 
 		} catch (SQLException e) {
-			logger.error("{} durante findByScadenza(): {}", ERRORE_SQL, e.getMessage(), e);
+			if (LOGGER.isErrorEnabled()) {
+				LOGGER.error("{} durante findByScadenza(): {}", ERRORE_SQL, e.getMessage(), e);
+			}
 		}
 
 		return list;
@@ -314,7 +328,9 @@ public class NotificaDAOImpl implements NotificaDAO {
 			fillList(rs, list);
 
 		} catch (SQLException e) {
-			logger.error("{} durante findAll(): {}", ERRORE_SQL, e.getMessage(), e);
+			if (LOGGER.isErrorEnabled()) {
+				LOGGER.error("{} durante findAll(): {}", ERRORE_SQL, e.getMessage(), e);
+			}
 		}
 
 		return list;
