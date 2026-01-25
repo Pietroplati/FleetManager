@@ -7,7 +7,7 @@ import java.sql.SQLException;
 /**
  * Gestore delle connessioni H2.
  * 
- * LOGICA IDENTICA alla versione precedente:
+ * LOGICA :
  * - singleton
  * - supporto testUrl
  * - autoCommit = true
@@ -16,7 +16,8 @@ import java.sql.SQLException;
  * Nota: la Connection NON viene chiusa qui perché questo
  * è un provider; la responsabilità della chiusura è del chiamante.
  */
-public class H2DatabaseManager implements ConnectionProvider {
+
+public final class H2DatabaseManager implements ConnectionProvider {
 
     private static final String DEFAULT_URL =
             "jdbc:h2:./data/fleetdb;AUTO_RECONNECT=TRUE;MODE=PostgreSQL";
@@ -40,7 +41,7 @@ public class H2DatabaseManager implements ConnectionProvider {
     }
 
     @Override
-    @SuppressWarnings("resource") // Connection chiusa dal chiamante
+    @SuppressWarnings("resource")
     public Connection getConnection() throws SQLException {
         String url = (testUrl != null) ? testUrl : DEFAULT_URL;
 

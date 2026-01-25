@@ -11,14 +11,12 @@ import it.fleetmanager.repository.db.H2DatabaseManager;
 
 public class CreateTable {
 
-    private static final Logger logger = LogManager.getLogger(CreateTable.class);
+    private static final Logger LOGGER = LogManager.getLogger(CreateTable.class);
 
     public static void main(String[] args) {
 
         try (Connection conn = H2DatabaseManager.getInstance().getConnection();
              Statement stmt = conn.createStatement()) {
-
- 
 
             stmt.execute("""
                 CREATE TYPE IF NOT EXISTS tipo_veicolo 
@@ -59,7 +57,6 @@ public class CreateTable {
                 CREATE TYPE IF NOT EXISTS tipo_notifica 
                 AS ENUM ('SCADENZA','MANUTENZIONE','PRENOTAZIONE','SEGNALAZIONE');
             """);
-
 
             stmt.execute("""
                 CREATE TABLE IF NOT EXISTS Veicolo (
@@ -135,10 +132,14 @@ public class CreateTable {
                 );
             """);
 
-            logger.info("Database creato correttamente.");
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("Database creato correttamente.");
+            }
 
         } catch (SQLException e) {
-            logger.error("Errore durante la creazione delle tabelle del database", e);
+            if (LOGGER.isErrorEnabled()) {
+                LOGGER.error("Errore durante la creazione delle tabelle del database", e);
+            }
         }
     }
 }

@@ -45,7 +45,7 @@ import it.fleetmanager.service.interfaces.UiFacade;
  * methods sincronizzati per l'accesso alle dipendenze condivise.
  * </p>
  */
-public class AppContext {
+public final class AppContext {
 
 	/**
 	 * Istanza singleton del contesto applicativo.
@@ -223,8 +223,16 @@ public class AppContext {
 	 */
 	public synchronized UiFacade getUiFacade() {
 		if (uiFacade == null) {
-			uiFacade = new UiFacadeImpl(veicoloDAO, prenotazioneDAO, manutenzioneDAO, scadenzaDAO, notificaDAO,
-					utenteDAO, getGestorePrenotazioni(), getGestoreManutenzioni(), sistemaNotifiche);
+			uiFacade = new UiFacadeImpl(
+					veicoloDAO,
+					prenotazioneDAO,
+					manutenzioneDAO,
+					scadenzaDAO,
+					notificaDAO,
+					utenteDAO,
+					getGestorePrenotazioni(),
+					getGestoreManutenzioni(),
+					sistemaNotifiche);
 		}
 		return uiFacade;
 	}

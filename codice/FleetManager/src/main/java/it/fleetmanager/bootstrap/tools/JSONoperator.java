@@ -12,15 +12,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+@SuppressWarnings({ "PMD.CommentRequired" })
 public class JSONoperator {
 
-    private static final Logger logger = LogManager.getLogger(JSONoperator.class);
+    private static final Logger LOGGER = LogManager.getLogger(JSONoperator.class);
 
     private static final String JSON_ID_UTENTE = "idUtente";
 
     public static void main(String[] args) throws Exception {
-        logger.info("Classe Avviata");
-        logger.info("Inserire id dell'utente da eliminare: ");
+        LOGGER.info("Classe Avviata");
+        LOGGER.info("Inserire id dell'utente da eliminare: ");
 
         try (Scanner scanner = new Scanner(System.in)) {
             int id = scanner.nextInt();
@@ -40,7 +41,6 @@ public class JSONoperator {
         ArrayNode prenotazioni = (ArrayNode) root.get("prenotazioni");
         ArrayNode notifiche = (ArrayNode) root.get("notifiche");
 
-        // UTENTI
         ArrayNode nuoviUtenti = mapper.createArrayNode();
         for (JsonNode u : utenti) {
             if (u.get(JSON_ID_UTENTE).asInt() != idTarget) {
@@ -48,7 +48,6 @@ public class JSONoperator {
             }
         }
 
-        // PRENOTAZIONI
         ArrayNode nuovePrenotazioni = mapper.createArrayNode();
         for (JsonNode p : prenotazioni) {
             if (p.get(JSON_ID_UTENTE).asInt() != idTarget) {
@@ -56,7 +55,6 @@ public class JSONoperator {
             }
         }
 
-        // NOTIFICHE
         ArrayNode nuoveNotifiche = mapper.createArrayNode();
         for (JsonNode n : notifiche) {
             JsonNode idUt = n.get(JSON_ID_UTENTE);
@@ -69,9 +67,8 @@ public class JSONoperator {
         root.set("prenotazioni", nuovePrenotazioni);
         root.set("notifiche", nuoveNotifiche);
 
-        // Scrivi il file
         mapper.writerWithDefaultPrettyPrinter().writeValue(file, root);
 
-        logger.info("Rimozione utente {} completata.", idTarget);
+        LOGGER.info("Rimozione utente {} completata.", idTarget);
     }
 }
