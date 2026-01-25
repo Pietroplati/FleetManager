@@ -16,7 +16,7 @@ FleetManager consente di:
 * gestire le scadenze (bollo, assicurazione, revisione);
 * pianificare e tracciare le manutenzioni;
 * generare notifiche automatiche sugli eventi rilevanti.
-* * consentire al manager di aggiungere, modificare o eliminare driver.
+*  consentire al manager di aggiungere, modificare o eliminare driver.
 
 ---
 
